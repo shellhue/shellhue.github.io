@@ -20,7 +20,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/asyncdisplaykit.png">
 <meta property="article:published_time" content="2017-07-21T06:35:29.000Z">
-<meta property="article:modified_time" content="2020-02-09T16:29:18.586Z">
+<meta property="article:modified_time" content="2020-02-09T16:34:11.026Z">
 <meta property="article:author" content="轻墨">
 <meta property="article:tag" content="iOS">
 <meta name="twitter:card" content="summary">
@@ -148,7 +148,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    42 分钟 读完 (大约 6337 个字)
+                    41 分钟 读完 (大约 6169 个字)
                 </span>
                 
                 
@@ -162,8 +162,8 @@
         </h1>
         <div class="content">
             <p>一个第三方库能做到像新产品一样，值得大家去写写使用体会的，并不多见，<code>AsyncDisplayKit</code>却完全可以，因为<code>AsyncDisplayKit</code>不仅仅是一个工具，它更像一个系统UI框架，改变整个编码体验。也正是这种极强的侵入性，导致不少听过、star过，甚至下过demo跑过<code>AsyncDisplayKit</code>的你我，望而却步，驻足观望。但列表界面稍微复杂时，烦人的高度计算，因为性能不得不放弃<code>Autolayout</code>而选择上古时代的<code>frame layout</code>，令人精疲力尽，这时<code>AsyncDisplayKit</code>总会不自然浮现眼前，让你跃跃欲试。</p>
-<p>去年10月份，我们入坑了。<br>$\Omega(f) = \gamma T + \frac{1}{2} \lambda \parallel w \parallel ^2 \tag{3}$<br>${\sum_{i} l(\hat{y}_i, y_i)}$</p>
-<script type="math/tex; mode=display">L^{(t)} \simeq \sum_{i}^{n} \left [ \color{red}{l(y_{i}, \hat{y_i}^{(t-1)}) + g_i \ f_t(X_i) + h_i \ f_t^2(X_i))} \right ] +  \Omega(f_t) \tag{5}\label{5}</script><script type="math/tex; mode=display">\begin{aligned} \hat{L}^{(t)} &= \underbrace{\sum_{i}^{n} \left [ g_i \ f_t(X_i) + h_i \ f_t^2(X_i)) \right ]}_{对样本进行积累} +  \color{red}{ \gamma T + \frac{1}{2} \lambda \underbrace{\sum_{j=1}^{T} \parallel w_j \parallel ^2}_{对叶子节点进行积累}} \\ &= \sum_{i}^{n} \left [ g_i \ \color{blue}{w_{q(X_i)}} + h_i \color{blue}{\ w_{q(X_i)}^2} \right ] +   \gamma T + \frac{1}{2} \lambda \sum_{j=1}^{T} \parallel w_j \parallel ^2 \\ &= \sum_{j=1}^{T}\left[ (\sum_{i \in I_j} g_i) w_j + \frac{1}{2} (\sum_{i\in I_{j}} h_i + \lambda ) w_j^2 \right] + \gamma T \end{aligned} \tag{7}\label{7}</script><p>当时还只是拿简单的列表页试水，基本上手后，去年底在稍微空闲的时候用<code>AsyncDisplayKit</code>重构了帖子详情，今年三月份，又借着公司聊天增加群聊的契机，用<code>AsyncDisplayKit</code>重构整个聊天。林林总总，从简单到复杂，踩过的坑大大小小，将近一年的时光转眼飞逝，可以写写总结了。</p>
+<p>去年10月份，我们入坑了。</p>
+<p>当时还只是拿简单的列表页试水，基本上手后，去年底在稍微空闲的时候用<code>AsyncDisplayKit</code>重构了帖子详情，今年三月份，又借着公司聊天增加群聊的契机，用<code>AsyncDisplayKit</code>重构整个聊天。林林总总，从简单到复杂，踩过的坑大大小小，将近一年的时光转眼飞逝，可以写写总结了。</p>
 <h1 id="学习曲线"><a href="#学习曲线" class="headerlink" title="学习曲线"></a>学习曲线</h1><p>先说说学习曲线，这是大家都比较关心的问题。<br><a id="more"></a><br>跟大多人一样，一开始我以为<code>AsyncDisplayKit</code>会像<code>Rxswift</code>等<code>MVVM</code>框架一样，有着陡峭的学习曲线。但事实上，<code>AsyncDisplayKit</code>的学习曲线还算平滑。</p>
 <p>主要是因为<code>AsyncDisplayKit</code>只是对<code>UIKit</code>的再一次封装，基本沿用了<code>UIKit</code>的<code>API</code>设计，大部分情况下，只是将<code>view</code>改成<code>node</code>，<code>UI</code>前缀改为<code>AS</code>，写着写着，恍惚间，你以为自己还是在写<code>UIKit</code>呢。</p>
 <p>比如<code>ASDisplayNode</code>与<code>UIView</code>：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> nodeA = <span class="hljs-type">ASDisplayNode</span>()<br><span class="hljs-keyword">let</span> nodeB = <span class="hljs-type">ASDisplayNode</span>()<br><span class="hljs-keyword">let</span> nodeC = <span class="hljs-type">ASDisplayNode</span>()<br>nodeA.addSubnode(nodeB)<br>nodeA.addSubnode(nodeC)<br>nodeA.backgroundColor = .red<br>nodeA.frame = <span class="hljs-type">CGRect</span>(x: <span class="hljs-number">0</span>, y: <span class="hljs-number">0</span>, width: <span class="hljs-number">100</span>, height: <span class="hljs-number">100</span>)<br>nodeC.removeFromSupernode()<br><br><span class="hljs-keyword">let</span> viewA = <span class="hljs-type">UIView</span>()<br><span class="hljs-keyword">let</span> viewB = <span class="hljs-type">UIView</span>()<br><span class="hljs-keyword">let</span> viewC = <span class="hljs-type">UIView</span>()<br>viewA.addSubview(viewB)<br>viewA.addSubview(viewC)<br>viewA.backgroundColor = .red<br>viewA.frame = <span class="hljs-type">CGRect</span>(x: <span class="hljs-number">0</span>, y: <span class="hljs-number">0</span>, width: <span class="hljs-number">100</span>, height: <span class="hljs-number">100</span>)<br>viewC.removeFromSuperview()<br></code></pre></td></tr></table></figure><br>相信你看两眼也就摸出门道了，大部分API一模一样。</p>
