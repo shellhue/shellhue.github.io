@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    41 分钟 读完 (大约 6169 个字)
+                    42 分钟 读完 (大约 6337 个字)
                 </span>
                 
                 
@@ -170,9 +170,9 @@
         </h1>
         <div class="content">
             <p>一个第三方库能做到像新产品一样，值得大家去写写使用体会的，并不多见，<code>AsyncDisplayKit</code>却完全可以，因为<code>AsyncDisplayKit</code>不仅仅是一个工具，它更像一个系统UI框架，改变整个编码体验。也正是这种极强的侵入性，导致不少听过、star过，甚至下过demo跑过<code>AsyncDisplayKit</code>的你我，望而却步，驻足观望。但列表界面稍微复杂时，烦人的高度计算，因为性能不得不放弃<code>Autolayout</code>而选择上古时代的<code>frame layout</code>，令人精疲力尽，这时<code>AsyncDisplayKit</code>总会不自然浮现眼前，让你跃跃欲试。</p>
-<p>去年10月份，我们入坑了。</p>
-<p>当时还只是拿简单的列表页试水，基本上手后，去年底在稍微空闲的时候用<code>AsyncDisplayKit</code>重构了帖子详情，今年三月份，又借着公司聊天增加群聊的契机，用<code>AsyncDisplayKit</code>重构整个聊天。林林总总，从简单到复杂，踩过的坑大大小小，将近一年的时光转眼飞逝，可以写写总结了。</p>
-<h1 id="学习曲线"><a href="#学习曲线" class="headerlink" title="学习曲线"></a>学习曲线</h1><p>先说说学习曲线，这是大家都比较关心的问题。</p>
+<p>去年10月份，我们入坑了。<br>$\Omega(f) = \gamma T + \frac{1}{2} \lambda \parallel w \parallel ^2 \tag{3}$<br>${\sum_{i} l(\hat{y}_i, y_i)}$</p>
+<script type="math/tex; mode=display">L^{(t)} \simeq \sum_{i}^{n} \left [ \color{red}{l(y_{i}, \hat{y_i}^{(t-1)}) + g_i \ f_t(X_i) + h_i \ f_t^2(X_i))} \right ] +  \Omega(f_t) \tag{5}\label{5}</script><script type="math/tex; mode=display">\begin{aligned} \hat{L}^{(t)} &= \underbrace{\sum_{i}^{n} \left [ g_i \ f_t(X_i) + h_i \ f_t^2(X_i)) \right ]}_{对样本进行积累} +  \color{red}{ \gamma T + \frac{1}{2} \lambda \underbrace{\sum_{j=1}^{T} \parallel w_j \parallel ^2}_{对叶子节点进行积累}} \\ &= \sum_{i}^{n} \left [ g_i \ \color{blue}{w_{q(X_i)}} + h_i \color{blue}{\ w_{q(X_i)}^2} \right ] +   \gamma T + \frac{1}{2} \lambda \sum_{j=1}^{T} \parallel w_j \parallel ^2 \\ &= \sum_{j=1}^{T}\left[ (\sum_{i \in I_j} g_i) w_j + \frac{1}{2} (\sum_{i\in I_{j}} h_i + \lambda ) w_j^2 \right] + \gamma T \end{aligned} \tag{7}\label{7}</script><p>当时还只是拿简单的列表页试水，基本上手后，去年底在稍微空闲的时候用<code>AsyncDisplayKit</code>重构了帖子详情，今年三月份，又借着公司聊天增加群聊的契机，用<code>AsyncDisplayKit</code>重构整个聊天。林林总总，从简单到复杂，踩过的坑大大小小，将近一年的时光转眼飞逝，可以写写总结了。</p>
+<h1 id="学习曲线"><a href="#学习曲线" class="headerlink" title="学习曲线"></a>学习曲线</h1><p>先说说学习曲线，这是大家都比较关心的问题。<br>
         </div>
         
         
@@ -229,7 +229,7 @@
         <div class="content">
             <p>当指肚轻触屏幕，整个系统像沉睡的生灵突然被惊醒，然后经历过腥风血雨的一段奇幻旅行，最终又归于沉寂。</p>
 <p>整个iOS触摸事件从产生到寂灭大致如下图：</p>
-<p><img src="/images/uitouchflow.png" alt=""></p>
+<p><img src="/images/uitouchflow.png" alt=""><br>
         </div>
         
         
@@ -285,7 +285,7 @@
         </h1>
         <div class="content">
             <p>当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。</p>
-<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：</p>
+<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：<br>
         </div>
         
         
@@ -746,25 +746,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

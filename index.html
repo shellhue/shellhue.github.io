@@ -146,7 +146,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    41 分钟 读完 (大约 6169 个字)
+                    42 分钟 读完 (大约 6337 个字)
                 </span>
                 
                 
@@ -160,9 +160,9 @@
         </h1>
         <div class="content">
             <p>一个第三方库能做到像新产品一样，值得大家去写写使用体会的，并不多见，<code>AsyncDisplayKit</code>却完全可以，因为<code>AsyncDisplayKit</code>不仅仅是一个工具，它更像一个系统UI框架，改变整个编码体验。也正是这种极强的侵入性，导致不少听过、star过，甚至下过demo跑过<code>AsyncDisplayKit</code>的你我，望而却步，驻足观望。但列表界面稍微复杂时，烦人的高度计算，因为性能不得不放弃<code>Autolayout</code>而选择上古时代的<code>frame layout</code>，令人精疲力尽，这时<code>AsyncDisplayKit</code>总会不自然浮现眼前，让你跃跃欲试。</p>
-<p>去年10月份，我们入坑了。</p>
-<p>当时还只是拿简单的列表页试水，基本上手后，去年底在稍微空闲的时候用<code>AsyncDisplayKit</code>重构了帖子详情，今年三月份，又借着公司聊天增加群聊的契机，用<code>AsyncDisplayKit</code>重构整个聊天。林林总总，从简单到复杂，踩过的坑大大小小，将近一年的时光转眼飞逝，可以写写总结了。</p>
-<h1 id="学习曲线"><a href="#学习曲线" class="headerlink" title="学习曲线"></a>学习曲线</h1><p>先说说学习曲线，这是大家都比较关心的问题。</p>
+<p>去年10月份，我们入坑了。<br>$\Omega(f) = \gamma T + \frac{1}{2} \lambda \parallel w \parallel ^2 \tag{3}$<br>${\sum_{i} l(\hat{y}_i, y_i)}$</p>
+<script type="math/tex; mode=display">L^{(t)} \simeq \sum_{i}^{n} \left [ \color{red}{l(y_{i}, \hat{y_i}^{(t-1)}) + g_i \ f_t(X_i) + h_i \ f_t^2(X_i))} \right ] +  \Omega(f_t) \tag{5}\label{5}</script><script type="math/tex; mode=display">\begin{aligned} \hat{L}^{(t)} &= \underbrace{\sum_{i}^{n} \left [ g_i \ f_t(X_i) + h_i \ f_t^2(X_i)) \right ]}_{对样本进行积累} +  \color{red}{ \gamma T + \frac{1}{2} \lambda \underbrace{\sum_{j=1}^{T} \parallel w_j \parallel ^2}_{对叶子节点进行积累}} \\ &= \sum_{i}^{n} \left [ g_i \ \color{blue}{w_{q(X_i)}} + h_i \color{blue}{\ w_{q(X_i)}^2} \right ] +   \gamma T + \frac{1}{2} \lambda \sum_{j=1}^{T} \parallel w_j \parallel ^2 \\ &= \sum_{j=1}^{T}\left[ (\sum_{i \in I_j} g_i) w_j + \frac{1}{2} (\sum_{i\in I_{j}} h_i + \lambda ) w_j^2 \right] + \gamma T \end{aligned} \tag{7}\label{7}</script><p>当时还只是拿简单的列表页试水，基本上手后，去年底在稍微空闲的时候用<code>AsyncDisplayKit</code>重构了帖子详情，今年三月份，又借着公司聊天增加群聊的契机，用<code>AsyncDisplayKit</code>重构整个聊天。林林总总，从简单到复杂，踩过的坑大大小小，将近一年的时光转眼飞逝，可以写写总结了。</p>
+<h1 id="学习曲线"><a href="#学习曲线" class="headerlink" title="学习曲线"></a>学习曲线</h1><p>先说说学习曲线，这是大家都比较关心的问题。<br>
         </div>
         
         
@@ -219,7 +219,7 @@
         <div class="content">
             <p>一般一个App只有一个客户端，因此也只有一份代码仓库，也就无所谓复用不复用。但两个客户端也不是没有，美团、饿了么等就分商家版和买家版，贝聊App也分为老师版和家长版两个客户端。有两个客户端代码复用就在所难免，比如基本的工具类，比如一些共用的业务。本文就以贝聊App为例，分享当有两个客户端时代码复用的小技巧。</p>
 <h2 id="repository仓库划分"><a href="#repository仓库划分" class="headerlink" title="repository仓库划分"></a>repository仓库划分</h2><p>贝聊APP远程仓库划分为三个，一个<code>家长端repository</code>，一个<code>老师端repository</code>，一个两端共用的<code>BLKit repository</code>。</p>
-<p><img src="/images/remoterepository.png" alt=""></p>
+<p><img src="/images/remoterepository.png" alt=""><br>
         </div>
         
         
@@ -281,7 +281,7 @@
 <p>这没啥不好，途中会有焦虑，会有进步，会有责罚，会有掌声，会有层出不穷的新事物。但总觉得有点烦闷，因为一切都是可期的。</p>
 <p>我们渴望着惊喜，因为惊喜让生命充盈、丰厚。</p>
 <p>或在某个小巷，遇到一个丁香一样的姑娘，或在某个不经意的抬头，看见散落满天的星，或在某次与人会谈时，获得生命的顿悟，或在举步维艰之际，遇到一生的贵人。</p>
-<p>生命难逃惯性，我们总期望着惊喜。惊喜也总会不期而至，但并不是无缘无故。今日生命的惊喜大多是我们昨日努力种下的种。</p>
+<p>生命难逃惯性，我们总期望着惊喜。惊喜也总会不期而至，但并不是无缘无故。今日生命的惊喜大多是我们昨日努力种下的种。<br>
         </div>
         
         
@@ -339,9 +339,7 @@
             <p>深入理解<code>git</code>中<code>commit</code>和<code>branch</code>，有助于在日常开发中，更好的运用<code>git</code>。</p>
 <h2 id="commit的本质"><a href="#commit的本质" class="headerlink" title="commit的本质"></a>commit的本质</h2><h4 id="初始化目录"><a href="#初始化目录" class="headerlink" title="初始化目录"></a>初始化目录</h4><p>为便于讲解，先创建一个如下目录结构的<code>BeiLiao</code>（贝聊是我所在的公司）目录:</p>
 <p><img src="/images/file_tree1.png" alt=""></p>
-<p>在命令行中输出文件的目录结构如下：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: tree<br>.<br>└── BeiLiao<br>    ├── Component<br>    │   └── App.js<br>    ├── index.html<br>    └── index.js<br></code></pre></td></tr></table></figure>
-<p>如果以竖向文件层级树的样式看是这样的（深色表示文件目录，浅色表示文件），</p>
+<p>在命令行中输出文件的目录结构如下：<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: tree<br>.<br>└── BeiLiao<br>    ├── Component<br>    │   └── App.js<br>    ├── index.html<br>    └── index.js<br></code></pre></td></tr></table></figure><br>如果以竖向文件层级树的样式看是这样的（深色表示文件目录，浅色表示文件），<br>
         </div>
         
         
@@ -398,7 +396,7 @@
         <div class="content">
             <p>结构型设计模式是从程序的结构上解决模块之间的耦合问题，主要包括适配器模式、桥接模式、组合模式、装饰器模式、外观模式、享元模式和代理模式等7种经典设计模式，在iOS系统框架中组合模式、装饰器模式和享元模式是有经典实现的，而适配器模式、桥接模式、外观模式和代理模式iOS系统框架中的实现并不明显，但在第三方框架或者贝聊（我所在的公司）的App是有用到的，为便于讲解，本文会挑选最恰当的例子。</p>
 <p>本文是设计模式之iOS系统框架实践系列中的第二篇（总共三篇），如果您对《创建型设计模式》感兴趣，建议看看我的前一篇文章<a href="http://shellhue.github.io/2017/03/11/creationalDesignPattern/">《创建型设计模式》之iOS系统框架实践</a>。</p>
-<h2 id="适配器模式（Adapter）"><a href="#适配器模式（Adapter）" class="headerlink" title="适配器模式（Adapter）##"></a>适配器模式（Adapter）##</h2><p>适配器模式是将一种接口，转换成另外一种接口，一般被适配的类的功能与外界所希望的一致，只是接口与外界所希望的不同，所以需要适配接口。一般需要新旧接口的转换时用到。</p>
+<h2 id="适配器模式（Adapter）"><a href="#适配器模式（Adapter）" class="headerlink" title="适配器模式（Adapter）"></a>适配器模式（Adapter）</h2><p>适配器模式是将一种接口，转换成另外一种接口，一般被适配的类的功能与外界所希望的一致，只是接口与外界所希望的不同，所以需要适配接口。一般需要新旧接口的转换时用到。<br>
         </div>
         
         
@@ -456,7 +454,7 @@
             <p>为了API的易用性、易维护性和健壮性，苹果工程师在iOS系统框架中其实运用了不少经典设计模式，而这些实践也正是因为良好的封装性，开发中我们虽日日相对，却也难以察觉它的存在。相对于其他生搬硬造隔靴搔痒的例子，这些我们熟悉的不能再熟悉的API方是学习设计模式的最佳案例。因此本系列拟以iOS系统框架中相关设计模式的实践为起点，探讨研究23种经典设计模式。</p>
 <p>本文先讲述《创建型设计模式》(Creational Patterns)。</p>
 <p>创建型设计模式是在创建一个类时用到的设计模式，总共有5种，其中工厂方法模式还可以根据实现的不同，分出简单工厂模式和工厂方法模式。</p>
-<h2 id="简单工厂模式-Factory-Method"><a href="#简单工厂模式-Factory-Method" class="headerlink" title="简单工厂模式(Factory Method)"></a>简单工厂模式(Factory Method)</h2><p>iOS系统<code>Foundation</code>框架中的<code>NSNumber</code>所应用的就是简单工厂模式。</p>
+<h2 id="简单工厂模式-Factory-Method"><a href="#简单工厂模式-Factory-Method" class="headerlink" title="简单工厂模式(Factory Method)"></a>简单工厂模式(Factory Method)</h2><p>iOS系统<code>Foundation</code>框架中的<code>NSNumber</code>所应用的就是简单工厂模式。<br>
         </div>
         
         
@@ -513,7 +511,7 @@
         <div class="content">
             <p>当指肚轻触屏幕，整个系统像沉睡的生灵突然被惊醒，然后经历过腥风血雨的一段奇幻旅行，最终又归于沉寂。</p>
 <p>整个iOS触摸事件从产生到寂灭大致如下图：</p>
-<p><img src="/images/uitouchflow.png" alt=""></p>
+<p><img src="/images/uitouchflow.png" alt=""><br>
         </div>
         
         
@@ -569,7 +567,7 @@
         </h1>
         <div class="content">
             <p>当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。</p>
-<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：</p>
+<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：<br>
         </div>
         
         
@@ -626,7 +624,7 @@
         <div class="content">
             <h2 id="这一年"><a href="#这一年" class="headerlink" title="这一年"></a>这一年</h2><p>每当总结过去一年的时候，总感觉时间匆匆，一转眼又是一夏，一转眼又过一秋，时间流逝不止，我们只能以成长搪塞逐渐衰老的年华。</p>
 <p>我是6月20日来到贝聊的，处于程序员小白水平的我，当时只能勤奋的追赶，努力的做些小项目练手，同时也疯狂的补齐残缺的编程知识。半年以后到今天，积累起来，完成的项目大大小小，林林总总，也有一二。如网络日志feature、班级列表刷新、老师端班级语音播报、家长端老师端发现改版及再改版、老师端和家长端好习惯首页和详情页、弹窗基础框架、优惠券详情页和帖子详情红包页、一系列小的工具拓展、大图浏览、客服、专属客服、客服评价等等。我是一个不喜欢拖累大家的人，不愿意大家因为我的原因出现拖延，因此这些项目大部分如时的交付，而且作为初学者，写代码时如履薄冰战战兢兢的，千般思虑，万般测试，因此上线后的bug并不多见，整体还算优良。</p>
-<p>其实回想起这段日子，我能分明的感受到自己对编程的认识是一个层次一个层次的成长，每做一个大的feature项目，基本就会遇到一个大的问题，然后就向前进一步。</p>
+<p>其实回想起这段日子，我能分明的感受到自己对编程的认识是一个层次一个层次的成长，每做一个大的feature项目，基本就会遇到一个大的问题，然后就向前进一步。<br>
         </div>
         
         
@@ -682,7 +680,7 @@
         </h1>
         <div class="content">
             <p>仔细端详着年初许下的誓言，孤零零的转行二字高悬，简单的有点简陋，隐藏了背后所有的心酸。</p>
-<p>2015年下半年，我紧闭着双眼，静静凝视着自己的灵魂，发现多年浸润土木，灵魂却渐渐干瘪了，随处可见的疮痍，应该是多少次默默承受苦痛，留下的伤疤，慢慢溃烂。不转行不行了，多次探索寻觅，最终走上了编程这条又臭又烂的不归路。数不清多少个通宵达旦的刻苦修炼，也不知道多少个无休无止的知识学习，2015年初，终于许下来年开始找工作的誓言和宏远。</p>
+<p>2015年下半年，我紧闭着双眼，静静凝视着自己的灵魂，发现多年浸润土木，灵魂却渐渐干瘪了，随处可见的疮痍，应该是多少次默默承受苦痛，留下的伤疤，慢慢溃烂。不转行不行了，多次探索寻觅，最终走上了编程这条又臭又烂的不归路。数不清多少个通宵达旦的刻苦修炼，也不知道多少个无休无止的知识学习，2015年初，终于许下来年开始找工作的誓言和宏远。<br>
         </div>
         
         
@@ -1162,25 +1160,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

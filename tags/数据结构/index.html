@@ -168,8 +168,7 @@
 </blockquote>
 <p>HomeBrew作者，天才程序员Max Howell兴致盎然地去Google面试（估计是刚好路过），结果却因不会在白板上翻转二叉树被Google粗鲁地拒绝了，舆论甚是哗然，其中缘由<a href="https://www.zhihu.com/question/31202353">知乎</a>上也讨论的热火朝天。谁料，始作俑者<code>翻转二叉树</code>这道题目，一时也热地不要不要的。作为程序员小白的我，从未翻过二叉树。最近闲来无事，闲暇之余，想及至此，就顺手用Swift翻转了二叉树。</p>
 <p>如果您对二叉树的概念不甚清晰，可以先到维基百科上（不推荐百度百科，因为要养成良好的搜索习惯）再温习温习<a href="https://en.wikipedia.org/wiki/Binary_tree">二叉树</a>相关知识。</p>
-<h1 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h1><p>先定义一个二叉树类<code>Tree</code>，主要定义树的三个必要属性，关键值<code>key</code>，左子树<code>leftTree</code>和右子树<code>rightTree</code>。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//define Tree class</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tree</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> key: <span class="hljs-type">Int</span><br>    <span class="hljs-keyword">var</span> leftTree: <span class="hljs-type">Tree?</span><br>    <span class="hljs-keyword">var</span> rightTree: <span class="hljs-type">Tree?</span><br>    <br>    <span class="hljs-keyword">init</span>(key: <span class="hljs-type">Int</span>) &#123;<br>        <span class="hljs-keyword">self</span>.key = key<br>    &#125;<br>    <br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h1><p>先定义一个二叉树类<code>Tree</code>，主要定义树的三个必要属性，关键值<code>key</code>，左子树<code>leftTree</code>和右子树<code>rightTree</code>。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//define Tree class</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tree</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> key: <span class="hljs-type">Int</span><br>    <span class="hljs-keyword">var</span> leftTree: <span class="hljs-type">Tree?</span><br>    <span class="hljs-keyword">var</span> rightTree: <span class="hljs-type">Tree?</span><br>    <br>    <span class="hljs-keyword">init</span>(key: <span class="hljs-type">Int</span>) &#123;<br>        <span class="hljs-keyword">self</span>.key = key<br>    &#125;<br>    <br>&#125;<br></code></pre></td></tr></table></figure><br>
         </div>
         
         
@@ -630,25 +629,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

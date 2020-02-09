@@ -158,8 +158,7 @@
             <p>alias在英语中是别名之意，那<code>typealias</code>，顾名思义，是指类型的别名。Swift的官方文档中对<code>typealias</code>关键词的演示，也是以<code>＝</code>赋值的形式，给一个现有类型取一个恰当的别名，便于在上下文中使用：</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span><br>    <span class="hljs-comment">//some other things</span><br>     …<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">IntStack</span>: <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span> = <span class="hljs-type">Int</span><br>     <span class="hljs-comment">//some other things</span><br>    …<br>&#125;<br></code></pre></td></tr></table></figure>
 <a id="more"></a>
-<p>如果ItemType的类型不是已有类型，还需另外定义：</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SomeType</span> </span>&#123; &#125;<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SomeStack</span>: <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span> = <span class="hljs-type">SomeType</span><br>    <span class="hljs-comment">//some other things</span><br>     …<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>如果ItemType的类型不是已有类型，还需另外定义：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SomeType</span> </span>&#123; &#125;<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SomeStack</span>: <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span> = <span class="hljs-type">SomeType</span><br>    <span class="hljs-comment">//some other things</span><br>     …<br>&#125;<br></code></pre></td></tr></table></figure></p>
 <h4 id="typealias的两种用法"><a href="#typealias的两种用法" class="headerlink" title="typealias的两种用法"></a>typealias的两种用法</h4><p>根据上述<code>typealias</code>关键词的演示可知，<code>typealias</code>的使用一般分为两步：</p>
 <ol>
 <li>独立定义一个目标类型<code>SomeType</code>；</li>
@@ -167,7 +166,6 @@
 </ol>
 <p><code>typealias</code>的两步使用法，结构清晰，意义明了，但也略显啰嗦。如果目标类型<code>SomeType</code>比较轻，是一些简单的类型，则两步可以合为一步，直接在实现<code>Container protocol</code>的类型中，定义一个与别名同名的类型即可：</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SomeStack</span>: <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ItemType</span> ｛ ｝<br>    //<span class="hljs-title">some</span> <span class="hljs-title">other</span> <span class="hljs-title">things</span><br>    …<br>&#125;</span><br></code></pre></td></tr></table></figure>
-
 <p>这样代码是不是显的更加紧凑简洁？当然这只适合于<code>typealias</code>的目标类型量级比较轻，且只用于<code>typealias</code>所在类型内时的情形。当<code>typealias</code>的目标类型体型庞大，应用范围不限于<code>typealias</code>所在类型时，还是分开定义为佳。</p>
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><code>typealias</code>的两种用法表明，别名并不只是别名，它指代的是一个类型，这个类型的获得，既可以通过赋值，也可以自定义，也即千万不要把<code>typealias</code>局限于别名的意义。</p>
 
@@ -670,25 +668,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

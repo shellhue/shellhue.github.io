@@ -171,7 +171,7 @@
         <div class="content">
             <p>当指肚轻触屏幕，整个系统像沉睡的生灵突然被惊醒，然后经历过腥风血雨的一段奇幻旅行，最终又归于沉寂。</p>
 <p>整个iOS触摸事件从产生到寂灭大致如下图：</p>
-<p><img src="/images/uitouchflow.png" alt=""></p>
+<p><img src="/images/uitouchflow.png" alt=""><br>
         </div>
         
         
@@ -227,7 +227,7 @@
         </h1>
         <div class="content">
             <p>当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。</p>
-<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：</p>
+<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：<br>
         </div>
         
         
@@ -688,28 +688,31 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
-</html>class="media">
+</html>ent">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
             
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
@@ -1095,25 +1098,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

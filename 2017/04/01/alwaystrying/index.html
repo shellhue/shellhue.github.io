@@ -168,9 +168,7 @@
 <p>这没啥不好，途中会有焦虑，会有进步，会有责罚，会有掌声，会有层出不穷的新事物。但总觉得有点烦闷，因为一切都是可期的。</p>
 <p>我们渴望着惊喜，因为惊喜让生命充盈、丰厚。</p>
 <p>或在某个小巷，遇到一个丁香一样的姑娘，或在某个不经意的抬头，看见散落满天的星，或在某次与人会谈时，获得生命的顿悟，或在举步维艰之际，遇到一生的贵人。</p>
-<p>生命难逃惯性，我们总期望着惊喜。惊喜也总会不期而至，但并不是无缘无故。今日生命的惊喜大多是我们昨日努力种下的种。</p>
-<a id="more"></a>
-<p>所以当此刻想起什么非常想做最终却不曾开始的事，努力开始吧，不因资源匮乏，不因能力欠缺，不因自卑，不因懒惰，不因忙碌。殊不知。我们内心真实的渴望，才是生命的惊喜汩汩不穷的源泉。</p>
+<p>生命难逃惯性，我们总期望着惊喜。惊喜也总会不期而至，但并不是无缘无故。今日生命的惊喜大多是我们昨日努力种下的种。<br><a id="more"></a><br>所以当此刻想起什么非常想做最终却不曾开始的事，努力开始吧，不因资源匮乏，不因能力欠缺，不因自卑，不因懒惰，不因忙碌。殊不知。我们内心真实的渴望，才是生命的惊喜汩汩不穷的源泉。</p>
 <p><img src="/images/lifeisgood.jpg" alt=""></p>
 <p>有时偷懒一件事，错过一生。</p>
 <p>有时多做一件事，繁华一世。</p>
@@ -681,25 +679,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

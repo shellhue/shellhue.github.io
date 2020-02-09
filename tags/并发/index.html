@@ -164,7 +164,7 @@
         </h1>
         <div class="content">
             <p>在进行iOS开发过程中，我们常会遇到网络请求、复杂计算、数据存取等比较耗时的操作，如果处理不合理，将对APP的流畅度产生较大影响。除了优化APP架构，并发（concurrency）是一个常用且较好的解决方法，但并发涉及串行、并发、并行、同步、异步、多线程、GCD、NSOperation和NSOperationQueue等诸多容易混淆的概念，为求概念清晰明了，还请茗茶静坐，听我徐徐道来。</p>
-<h1 id="线程和任务"><a href="#线程和任务" class="headerlink" title="线程和任务"></a>线程和任务</h1><p>线程（thread） 和任务（task）是其他并发概念的基础，因此也是首要需理清的概念，以下是其要点，详细可参考<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29">Thread (computing)</a>和<a href="https://en.wikipedia.org/wiki/Task_(computing)">Task (computing)</a>。</p>
+<h1 id="线程和任务"><a href="#线程和任务" class="headerlink" title="线程和任务"></a>线程和任务</h1><p>线程（thread） 和任务（task）是其他并发概念的基础，因此也是首要需理清的概念，以下是其要点，详细可参考<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29">Thread (computing)</a>和<a href="https://en.wikipedia.org/wiki/Task_(computing">Task (computing)</a>)。<br>
         </div>
         
         
@@ -625,25 +625,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

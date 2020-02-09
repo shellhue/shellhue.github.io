@@ -165,8 +165,8 @@
         <div class="content">
             <p>根据Swift官方文档，闭包（closure）会自动捕捉其所在上下文中的外部变量，即使是定义这些变量的上下文已经消失。寥寥数字，其实已经将闭包捕捉说的足够清晰明了，只是其中隐含的诸如捕捉的具体含义、捕捉的时机、被捕捉变量的特性和捕捉列表的意义等细节，如不详加研究，使用闭包还是会错误百出，难以挥洒自如。</p>
 <p>本文中所有代码均在playground中运行，若欲在实际项目中测试，需做部分修改，但基本逻辑和结论不变</p>
-<p>————– 本文部分结论和例子根据部分读者意见做了修正更新，感谢他们 ————–</p>
-<h2 id="捕捉的含义"><a href="#捕捉的含义" class="headerlink" title="捕捉的含义"></a>捕捉的含义</h2><h3 id="闭包捕捉等同于copy"><a href="#闭包捕捉等同于copy" class="headerlink" title="闭包捕捉等同于copy"></a>闭包捕捉等同于copy</h3><p>闭包捕捉某个变量就意味着copy一份这个变量，值类型的变量直接复制值，引用类型的变量复制引用。复制后的变量名同被捕捉的变量，复制后的变量仍为变量，常量仍为常量。</p>
+<p>——————— 本文部分结论和例子根据部分读者意见做了修正更新，感谢他们 ———————</p>
+<h2 id="捕捉的含义"><a href="#捕捉的含义" class="headerlink" title="捕捉的含义"></a>捕捉的含义</h2><h3 id="闭包捕捉等同于copy"><a href="#闭包捕捉等同于copy" class="headerlink" title="闭包捕捉等同于copy"></a>闭包捕捉等同于copy</h3><p>闭包捕捉某个变量就意味着copy一份这个变量，值类型的变量直接复制值，引用类型的变量复制引用。复制后的变量名同被捕捉的变量，复制后的变量仍为变量，常量仍为常量。<br>
         </div>
         
         
@@ -627,25 +627,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

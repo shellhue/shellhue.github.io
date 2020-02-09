@@ -11,12 +11,12 @@
 <title>commit和branch理解深入 - 轻墨</title>
 
 
-    <meta name="description" content="深入理解git中commit和branch，有助于在日常开发中，更好的运用git。 commit的本质初始化目录为便于讲解，先创建一个如下目录结构的BeiLiao（贝聊是我所在的公司）目录:  在命令行中输出文件的目录结构如下： ~ qingmo$: tree.└── BeiLiao    ├── Component    │   └── App.js    ├── index.html    └">
+    <meta name="description" content="深入理解git中commit和branch，有助于在日常开发中，更好的运用git。 commit的本质初始化目录为便于讲解，先创建一个如下目录结构的BeiLiao（贝聊是我所在的公司）目录:  在命令行中输出文件的目录结构如下：~ qingmo$: tree.└── BeiLiao    ├── Component    │   └── App.js    ├── index.html    └─">
 <meta property="og:type" content="article">
 <meta property="og:title" content="commit和branch理解深入">
 <meta property="og:url" content="http://yoursite.com/2017/03/22/gitcommit/index.html">
 <meta property="og:site_name" content="轻墨">
-<meta property="og:description" content="深入理解git中commit和branch，有助于在日常开发中，更好的运用git。 commit的本质初始化目录为便于讲解，先创建一个如下目录结构的BeiLiao（贝聊是我所在的公司）目录:  在命令行中输出文件的目录结构如下： ~ qingmo$: tree.└── BeiLiao    ├── Component    │   └── App.js    ├── index.html    └">
+<meta property="og:description" content="深入理解git中commit和branch，有助于在日常开发中，更好的运用git。 commit的本质初始化目录为便于讲解，先创建一个如下目录结构的BeiLiao（贝聊是我所在的公司）目录:  在命令行中输出文件的目录结构如下：~ qingmo$: tree.└── BeiLiao    ├── Component    │   └── App.js    ├── index.html    └─">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/gitcommit.png">
 <meta property="article:published_time" content="2017-03-22T12:47:10.000Z">
@@ -165,14 +165,8 @@
             <p>深入理解<code>git</code>中<code>commit</code>和<code>branch</code>，有助于在日常开发中，更好的运用<code>git</code>。</p>
 <h2 id="commit的本质"><a href="#commit的本质" class="headerlink" title="commit的本质"></a>commit的本质</h2><h4 id="初始化目录"><a href="#初始化目录" class="headerlink" title="初始化目录"></a>初始化目录</h4><p>为便于讲解，先创建一个如下目录结构的<code>BeiLiao</code>（贝聊是我所在的公司）目录:</p>
 <p><img src="/images/file_tree1.png" alt=""></p>
-<p>在命令行中输出文件的目录结构如下：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: tree<br>.<br>└── BeiLiao<br>    ├── Component<br>    │   └── App.js<br>    ├── index.html<br>    └── index.js<br></code></pre></td></tr></table></figure>
-<p>如果以竖向文件层级树的样式看是这样的（深色表示文件目录，浅色表示文件），</p>
-<a id="more"></a>
-<p><img src="/images/tree.png" alt=""><br>其中<code>App.js</code>、<code>index.html</code>和<code>index.js</code>都填充了相应的内容。</p>
-<h4 id="初始化git并提交第一个commit"><a href="#初始化git并提交第一个commit" class="headerlink" title="初始化git并提交第一个commit"></a>初始化git并提交第一个commit</h4><p>先初始化<code>git</code>，然后添加所有文件到<code>git</code>的暂存区，成功后提交一个<code>commit</code>，最后<code>log</code>一下版本历史记录：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: cd ~/../BeiLiao(切换到BeiLiao这个文件目录)<br>~ qingmo$: git init<br>~ qingmo$: git add .<br>~ qingmo$: git commit -m “init project”<br>~ qingmo$: git log<br><br>commit 5bb33508dd4f00dd4d63c6e28546e044ebb51ac0<br>Author: qingmo &lt;qingmo@163.com&gt;<br>Date:   Sun Mar 26 15:18:01 2017 +0800<br><br>    init project<br></code></pre></td></tr></table></figure>
-
+<p>在命令行中输出文件的目录结构如下：<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: tree<br>.<br>└── BeiLiao<br>    ├── Component<br>    │   └── App.js<br>    ├── index.html<br>    └── index.js<br></code></pre></td></tr></table></figure><br>如果以竖向文件层级树的样式看是这样的（深色表示文件目录，浅色表示文件），<br><a id="more"></a><br><img src="/images/tree.png" alt=""><br>其中<code>App.js</code>、<code>index.html</code>和<code>index.js</code>都填充了相应的内容。</p>
+<h4 id="初始化git并提交第一个commit"><a href="#初始化git并提交第一个commit" class="headerlink" title="初始化git并提交第一个commit"></a>初始化git并提交第一个commit</h4><p>先初始化<code>git</code>，然后添加所有文件到<code>git</code>的暂存区，成功后提交一个<code>commit</code>，最后<code>log</code>一下版本历史记录：<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: cd ~/../BeiLiao(切换到BeiLiao这个文件目录)<br>~ qingmo$: git init<br>~ qingmo$: git add .<br>~ qingmo$: git commit -m “init project”<br>~ qingmo$: git log<br><br>commit 5bb33508dd4f00dd4d63c6e28546e044ebb51ac0<br>Author: qingmo &lt;qingmo@163.com&gt;<br>Date:   Sun Mar 26 15:18:01 2017 +0800<br><br>    init project<br></code></pre></td></tr></table></figure></p>
 <p>完成上述我们开发中的日常操作后，<code>git</code>便开始成功追踪<code>BeiLiao</code>整个文件夹，很炫很酷，但问题是<code>git</code>到底是如何做到的，而我们日常开发熟悉不能再熟悉的<code>commit</code>的本质又是什么？</p>
 <p>其实当我们运行<code>git commit -m “init project”</code>命令时，<code>git</code>主要进行了三个操作。</p>
 <ul>
@@ -188,22 +182,14 @@
 <p><img src="/images/file_tree2.png" alt=""></p>
 <p>下图把<code>.git/objects/</code>中的每一个<code>object</code>对应的内容文件一一标注了出来，可以很清晰的看到每一个数据<code>object</code>到底是什么。</p>
 <p><img src="/images/file_tree3.png" alt=""></p>
-<h4 id="添加文件并提交第二个commit"><a href="#添加文件并提交第二个commit" class="headerlink" title="添加文件并提交第二个commit"></a>添加文件并提交第二个commit</h4><p>在<code>Component</code>文件夹添加一个新文件<code>Footer.js</code>，形成新的文件目录结构：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: tree<br>.<br>└── BeiLiao<br>    ├── Component<br>    │   ├── App.js<br>    │   └── Footer.js<br>    ├── index.html<br>    └── index.js<br></code></pre></td></tr></table></figure>
-<p>然后添加一个新的提交</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: git add .<br>~ qingmo$: git commit -m “add footer”<br></code></pre></td></tr></table></figure>
-<p>此时生成的<code>object</code>引用图表如下图：</p>
+<h4 id="添加文件并提交第二个commit"><a href="#添加文件并提交第二个commit" class="headerlink" title="添加文件并提交第二个commit"></a>添加文件并提交第二个commit</h4><p>在<code>Component</code>文件夹添加一个新文件<code>Footer.js</code>，形成新的文件目录结构：<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: tree<br>.<br>└── BeiLiao<br>    ├── Component<br>    │   ├── App.js<br>    │   └── Footer.js<br>    ├── index.html<br>    └── index.js<br></code></pre></td></tr></table></figure><br>然后添加一个新的提交<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">~ qingmo$: git add .<br>~ qingmo$: git commit -m “add footer”<br></code></pre></td></tr></table></figure><br>此时生成的<code>object</code>引用图表如下图：</p>
 <p><img src="/images/commit2.png" alt=""></p>
 <p>可以看出，新添加的<code>Footer.js</code>生成了一个快照<code>efdfb8</code>，其所在的文件夹<code>Component</code>也因新添加的文件而产生了内容的变化，因此也生成了新的快照<code>017bde</code>，同样的根文件夹<code>BeiLiao</code>也生成了新的快照<code>3d7c8c</code>。最终的形成新的commit<code>d34903</code>指向最新的根文件<code>BeiLiao</code>的快照<code>3d7c8c</code>。</p>
 <p>需要注意的是，只有变化的文件或文件夹才会形成新的快照，没有变化的文件不会形成新的快照。</p>
 <h2 id="一个branch是什么"><a href="#一个branch是什么" class="headerlink" title="一个branch是什么"></a>一个branch是什么</h2><p><code>branch</code>的信息记录在<code>.git/refs/heads/</code>目录下，</p>
 <p><img src="/images/file_tree_branch.png" alt=""></p>
-<p>用文本编辑器打开 <code>master</code>文件，内容是：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">d34903acaba24d2eccc8f5227ca61e6b0f7bd783<br></code></pre></td></tr></table></figure>
-<p>这是最新<code>commit</code>的键值，所以<code>branch</code>仅仅是指向一个<code>commit</code>的指针而已，指向一个<code>commit</code>，而一个<code>commit</code>同时指向其父<code>commit</code>，如此循环最终形成了一个<code>branch</code>。<br><img src="/images/branch1.png" alt=""></p>
-<h2 id="HEAD指针"><a href="#HEAD指针" class="headerlink" title="HEAD指针"></a>HEAD指针</h2><p>那<code>git</code>是怎么知道项目在<code>master</code>分支上呢？<code>HEAD</code>指针。<code>git</code>有一个独立的<code>HEAD</code>指针，记录项目现在所在的位置，比如现在我们在<code>master</code>分支上，查看<code>.git/HEAD</code>文件，内容为：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">ref: refs/heads/master<br></code></pre></td></tr></table></figure>
-<p>此时<code>HEAD</code>指针指向<code>master</code>，所以项目在<code>master</code>分支上。</p>
+<p>用文本编辑器打开 <code>master</code>文件，内容是：<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">d34903acaba24d2eccc8f5227ca61e6b0f7bd783<br></code></pre></td></tr></table></figure><br>这是最新<code>commit</code>的键值，所以<code>branch</code>仅仅是指向一个<code>commit</code>的指针而已，指向一个<code>commit</code>，而一个<code>commit</code>同时指向其父<code>commit</code>，如此循环最终形成了一个<code>branch</code>。<br><img src="/images/branch1.png" alt=""></p>
+<h2 id="HEAD指针"><a href="#HEAD指针" class="headerlink" title="HEAD指针"></a>HEAD指针</h2><p>那<code>git</code>是怎么知道项目在<code>master</code>分支上呢？<code>HEAD</code>指针。<code>git</code>有一个独立的<code>HEAD</code>指针，记录项目现在所在的位置，比如现在我们在<code>master</code>分支上，查看<code>.git/HEAD</code>文件，内容为：<br><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">ref: refs/heads/master<br></code></pre></td></tr></table></figure><br>此时<code>HEAD</code>指针指向<code>master</code>，所以项目在<code>master</code>分支上。</p>
 <p><img src="/images/branch2.png" alt=""></p>
 <p>当我们创建一个新的分支<code>test</code>时，git会在<code>.git/refs/heads/</code>目录下生成一个文件<code>test</code>，并将其指向当前<code>HEAD</code>所指向的分支<code>master</code>所指向的提交<code>d34903</code>（有点绕），并把<code>HEAD</code>指向新的分支<code>test</code>。<br><img src="/images/branch3.png" alt=""></p>
 <p>当我们在新的分支生成新的<code>commit</code>时，<code>git</code>会将<code>HEAD</code>所指向的分支<code>test</code>所指向的<code>commit</code>作为新<code>commit</code>的父<code>commit</code>，然后将<code>HEAD</code>所指向的分支<code>test</code>移动指向新的提交。<br><img src="/images/branch4.png" alt=""></p>
@@ -710,25 +696,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

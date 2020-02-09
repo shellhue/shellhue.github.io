@@ -171,7 +171,7 @@
         <div class="content">
             <p>结构型设计模式是从程序的结构上解决模块之间的耦合问题，主要包括适配器模式、桥接模式、组合模式、装饰器模式、外观模式、享元模式和代理模式等7种经典设计模式，在iOS系统框架中组合模式、装饰器模式和享元模式是有经典实现的，而适配器模式、桥接模式、外观模式和代理模式iOS系统框架中的实现并不明显，但在第三方框架或者贝聊（我所在的公司）的App是有用到的，为便于讲解，本文会挑选最恰当的例子。</p>
 <p>本文是设计模式之iOS系统框架实践系列中的第二篇（总共三篇），如果您对《创建型设计模式》感兴趣，建议看看我的前一篇文章<a href="http://shellhue.github.io/2017/03/11/creationalDesignPattern/">《创建型设计模式》之iOS系统框架实践</a>。</p>
-<h2 id="适配器模式（Adapter）"><a href="#适配器模式（Adapter）" class="headerlink" title="适配器模式（Adapter）##"></a>适配器模式（Adapter）##</h2><p>适配器模式是将一种接口，转换成另外一种接口，一般被适配的类的功能与外界所希望的一致，只是接口与外界所希望的不同，所以需要适配接口。一般需要新旧接口的转换时用到。</p>
+<h2 id="适配器模式（Adapter）"><a href="#适配器模式（Adapter）" class="headerlink" title="适配器模式（Adapter）"></a>适配器模式（Adapter）</h2><p>适配器模式是将一种接口，转换成另外一种接口，一般被适配的类的功能与外界所希望的一致，只是接口与外界所希望的不同，所以需要适配接口。一般需要新旧接口的转换时用到。<br>
         </div>
         
         
@@ -229,7 +229,7 @@
             <p>为了API的易用性、易维护性和健壮性，苹果工程师在iOS系统框架中其实运用了不少经典设计模式，而这些实践也正是因为良好的封装性，开发中我们虽日日相对，却也难以察觉它的存在。相对于其他生搬硬造隔靴搔痒的例子，这些我们熟悉的不能再熟悉的API方是学习设计模式的最佳案例。因此本系列拟以iOS系统框架中相关设计模式的实践为起点，探讨研究23种经典设计模式。</p>
 <p>本文先讲述《创建型设计模式》(Creational Patterns)。</p>
 <p>创建型设计模式是在创建一个类时用到的设计模式，总共有5种，其中工厂方法模式还可以根据实现的不同，分出简单工厂模式和工厂方法模式。</p>
-<h2 id="简单工厂模式-Factory-Method"><a href="#简单工厂模式-Factory-Method" class="headerlink" title="简单工厂模式(Factory Method)"></a>简单工厂模式(Factory Method)</h2><p>iOS系统<code>Foundation</code>框架中的<code>NSNumber</code>所应用的就是简单工厂模式。</p>
+<h2 id="简单工厂模式-Factory-Method"><a href="#简单工厂模式-Factory-Method" class="headerlink" title="简单工厂模式(Factory Method)"></a>简单工厂模式(Factory Method)</h2><p>iOS系统<code>Foundation</code>框架中的<code>NSNumber</code>所应用的就是简单工厂模式。<br>
         </div>
         
         
@@ -690,25 +690,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
