@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html  lang="zh">
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8" />
+
+<meta name="generator" content="Hexo 4.2.0" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<title>iOS并发（concurrency）概念浅析 - 轻墨</title>
+
+
+    <meta name="description" content="在进行iOS开发过程中，我们常会遇到网络请求、复杂计算、数据存取等比较耗时的操作，如果处理不合理，将对APP的流畅度产生较大影响。除了优化APP架构，并发（concurrency）是一个常用且较好的解决方法，但并发涉及串行、并发、并行、同步、异步、多线程、GCD、NSOperation和NSOperationQueue等诸多容易混淆的概念，为求概念清晰明了，还请茗茶静坐，听我徐徐道来。 线程和任务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS并发（concurrency）概念浅析">
+<meta property="og:url" content="http://yoursite.com/2016/04/15/concurrency/index.html">
+<meta property="og:site_name" content="轻墨">
+<meta property="og:description" content="在进行iOS开发过程中，我们常会遇到网络请求、复杂计算、数据存取等比较耗时的操作，如果处理不合理，将对APP的流畅度产生较大影响。除了优化APP架构，并发（concurrency）是一个常用且较好的解决方法，但并发涉及串行、并发、并行、同步、异步、多线程、GCD、NSOperation和NSOperationQueue等诸多容易混淆的概念，为求概念清晰明了，还请茗茶静坐，听我徐徐道来。 线程和任务">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/og_image.png">
+<meta property="article:published_time" content="2016-04-15T12:47:10.000Z">
+<meta property="article:modified_time" content="2020-02-09T09:12:56.706Z">
+<meta property="article:author" content="轻墨">
+<meta property="article:tag" content="swift">
+<meta property="article:tag" content="并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/og_image.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/../images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/../images/logo.png" alt="iOS并发（concurrency）概念浅析" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/.">首页</a>
+                
+                <a class="navbar-item"
+                href="/archives">归档</a>
+                
+                <a class="navbar-item"
+                href="/tags">标签</a>
+                
+                <a class="navbar-item"
+                href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    <a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/shellhue">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main">
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-04-15T12:47:10.000Z">2016-04-15</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    26 分钟 读完 (大约 3880 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                iOS并发（concurrency）概念浅析
+            
+        </h1>
+        <div class="content">
+            <p>在进行iOS开发过程中，我们常会遇到网络请求、复杂计算、数据存取等比较耗时的操作，如果处理不合理，将对APP的流畅度产生较大影响。除了优化APP架构，并发（concurrency）是一个常用且较好的解决方法，但并发涉及串行、并发、并行、同步、异步、多线程、GCD、NSOperation和NSOperationQueue等诸多容易混淆的概念，为求概念清晰明了，还请茗茶静坐，听我徐徐道来。</p>
+<h1 id="线程和任务"><a href="#线程和任务" class="headerlink" title="线程和任务"></a>线程和任务</h1><p>线程（thread） 和任务（task）是其他并发概念的基础，因此也是首要需理清的概念，以下是其要点，详细可参考<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29">Thread (computing)</a>和<a href="https://en.wikipedia.org/wiki/Task_(computing)">Task (computing)</a>。</p>
+<a id="more"></a>
+<h2 id="任务（task）"><a href="#任务（task）" class="headerlink" title="任务（task）##"></a>任务（task）##</h2><p>a）任务（task）是从程序中划分出来，可以独立执行的代码片段；<br>b）任务间可以添加依赖关系，如B任务依赖A任务，<code>taskB.addDependency(taskA)</code>，这意味着B任务的执行以A任务完成为前提。</p>
+<p>需要注意的是一个任务是否可以添加依赖，完全取决于任务封装类和其相关管理类的具体实现，GCD不支持任务依赖，<code>NSOperationQueue</code>就支持任务依赖。</p>
+<p>下面的代码是对一个任务的简单封装，并支持任务间的依赖。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//Task是一个任务的简单封装类</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Task</span> </span>&#123;<br>    <span class="hljs-keyword">let</span> taskBlock: () -&gt; ()<br>    <span class="hljs-keyword">var</span> dependencies = [<span class="hljs-type">Task</span>]()<br><br>    <span class="hljs-keyword">init</span>(block: () -&gt; ()) &#123;<br>        taskBlock = block<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">addDependency</span><span class="hljs-params">(task: Task)</span></span> &#123;<br>        dependencies.append(task)<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">//初始化两个自定义任务</span><br><span class="hljs-keyword">var</span> taskA = <span class="hljs-type">Task</span>()&#123;<br>    <span class="hljs-comment">//自定义任务A，自定义需要执行的代码</span><br>    ...<br>&#125;<br><span class="hljs-keyword">var</span> taskB = <span class="hljs-type">Task</span>()&#123;<br>    <span class="hljs-comment">//自定义任务B，自定义需要执行的代码</span><br>    ...<br>&#125;<br><span class="hljs-comment">//添加依赖关系</span><br>taskB.addDependency(taskA)<br></code></pre></td></tr></table></figure>
+
+<h2 id="线程（thread）"><a href="#线程（thread）" class="headerlink" title="线程（thread）##"></a>线程（thread）##</h2><p>a）线程（thread）是代码执行的独立路径，一条线程只能同时执行一行代码（一行代码，其实就是一条处理器命令）。<br>b）线程中代码管理是以任务（task）为单位，一条线程逐行执行一个任务中的代码（任务可以取消），完成后再逐行执行下一个任务中的代码。<br>c）一条线程跳出一个任务的执行，即意味着这个任务的完成。因此，一条线程不能执行taskA一段时间后，还未完成就开始执行taskB，然后又返回执行taskA（这其实是单线程内的并发，与单核处理器的并发概念相同，具体实践中不存在线程内并发）。</p>
+<h1 id="概念释疑"><a href="#概念释疑" class="headerlink" title="概念释疑"></a>概念释疑</h1><h2 id="并行（parallelism）和并发（concurrency）"><a href="#并行（parallelism）和并发（concurrency）" class="headerlink" title="并行（parallelism）和并发（concurrency）##"></a>并行（parallelism）和并发（concurrency）##</h2><p>并发和并行都是指多个任务可以同时执行，都属于多线程编程概念，因此二者必然十分相近，容易混淆。二者区别只有一点，即是否多任务执行于严格的同一时刻。并发不是，并行是。</p>
+<p>单核处理器时代（一个处理器同一时刻只能执行一条命令），为了实现多任务的同时执行，系统利用时间分片（time-slicing）技术，将处理器的执行时间切分为多个小片段，一会执行threadA，一会执行threadB，一会再执行threadA，即在多个线程（任务是在线程上执行的）之间来回跳动执行。虽不是真的多线程多任务同时执行，但由于处理器的处理速度非常快，在用户看来，仍然是同时执行的。这种伪多线程就是并发。</p>
+<p>多核处理器时代（不同处理器相互独立，可以同时执行各自的命令），多条线程完全可以严格同一时刻执行，这种真多线程就是并行。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//三个线程的并发</span><br>thread1 -&gt; |---<span class="hljs-type">A</span>---|             -&gt;|---<span class="hljs-type">A</span>---|<br>                    \             /         \<br>thread2 ------&gt;    -&gt;|------<span class="hljs-type">B</span>----|           \<br>thread3 ------------------------------------&gt; |------<span class="hljs-type">C</span>------|<br></code></pre></td></tr></table></figure>
+<p>上述代码是三个线程的并发执行，可以看出thread1、thread2和thread3不可能严格同一时刻执行，但也都获得了处理器的一小段执行时间。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//三个线程的并行</span><br>thread1 -&gt; |-----<span class="hljs-type">A</span>-----|<br>thread2 -&gt;       |------<span class="hljs-type">B</span>----|<br>thread3 -&gt;     |------<span class="hljs-type">C</span>------|<br></code></pre></td></tr></table></figure>
+<p>上述代码是三个线程的并行执行，可以看出thread1、thread2和thread3有一段时间同时执行。</p>
+<p>现在的终端设备无论是手机还是PC的处理器，大多都已是多核处理器，可以实现并行计算，但为了最大化的利用处理器的性能，现代处理器还是融合了time-slicing技术和多核技术，因此实际运行中，有时并发，有时并行。但相对来说，并发是个更广泛的概念，因此Apple的多线程编程叫做<code>concurrency programming</code>并发编程。汉语中，并发和并行的区别其实没那么清晰，可以互用，而且有时用并行更加明确，如串并行比串行、并发针对性更强。<strong>（为概念清晰期间，下文中有时会用并行，其实即是并发。）</strong></p>
+<h2 id="串并行与线程"><a href="#串并行与线程" class="headerlink" title="串并行与线程"></a>串并行与线程</h2><h3 id="串行（serial）和并行"><a href="#串行（serial）和并行" class="headerlink" title="串行（serial）和并行"></a>串行（serial）和并行</h3><p>串行和并行主要区别在于一个任务的执行是否以上一个任务的完成为前提。串行中，一个任务的执行必须以上一个任务执行结束为前提，并行中，一个任务的执行与上一个任务的执行状态无关。以排队买票为例，串行像单个买票队伍，单个卖票窗口，必须一个一个来，串行像单个买票队伍，多个卖票窗口，多个人可以同时买票。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//三个串行任务</span><br>|-----<span class="hljs-type">A</span>-----||------<span class="hljs-type">B</span>--------||----<span class="hljs-type">C</span>--|<br></code></pre></td></tr></table></figure>
+<p>上文为三个串行任务，任务A完成后，才执行任务B，B结束后，才最后执行任务C。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//三个并发任务</span><br>|-----<span class="hljs-type">A</span>-----|<br>      |------<span class="hljs-type">B</span>----|<br>   |--<span class="hljs-type">C</span>---|<br></code></pre></td></tr></table></figure>
+<p>上文为三个并行任务，任务A早于任务C开始，却晚于任务C结束。</p>
+<h3 id="串并行与线程-1"><a href="#串并行与线程-1" class="headerlink" title="串并行与线程"></a>串并行与线程</h3><p>串并行主要关注多个任务之间的相互依赖关系，与线程无关。但实际中，任务是在线程中执行的，是否串行一定在单线程上执行，并行一定在多个线程中执行呢？并非如此。<br>单线程既可以实现串行，也可以实现并行。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//单线程串行</span><br><span class="hljs-number">1</span> thread -&gt;   |----<span class="hljs-type">A</span>-----||-----<span class="hljs-type">B</span>-----------||-------<span class="hljs-type">C</span>------|<br><span class="hljs-comment">//单线程并行（理论上，实际中不可行）</span><br>         <span class="hljs-type">A</span>-<span class="hljs-type">Start</span> ---------------------------------------- <span class="hljs-type">A</span>-<span class="hljs-type">End</span>   <br>           | <span class="hljs-type">B</span>-<span class="hljs-type">Start</span> ----------------------------------------|--- <span class="hljs-type">B</span>-<span class="hljs-type">End</span>   <br>           |   |     <span class="hljs-type">C</span>-<span class="hljs-type">Start</span> -------------------- <span class="hljs-type">C</span>-<span class="hljs-type">End</span>      |     |   <br>           <span class="hljs-type">V</span>   <span class="hljs-type">V</span>       <span class="hljs-type">V</span>                           <span class="hljs-type">V</span>         <span class="hljs-type">V</span>     <span class="hljs-type">V</span>      <br><span class="hljs-number">1</span> thread-&gt; |-<span class="hljs-type">A</span>-|---<span class="hljs-type">B</span>---|-<span class="hljs-type">C</span>-|-<span class="hljs-type">A</span>-|-<span class="hljs-type">C</span>-|--<span class="hljs-type">A</span>--|-<span class="hljs-type">B</span>-|--<span class="hljs-type">C</span>--|---<span class="hljs-type">A</span>-----|--<span class="hljs-type">B</span>--|<br></code></pre></td></tr></table></figure>
+<p>需要指出的是单线程内的并行已经类似单核处理器，并不是本文提及的常规线程，现实中也不常见。</p>
+<p>多线程既可以实现串行，也可以实现并行，实际上，多线程串行和并行都很常见。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//多线程串行</span><br>thread1 -&gt; |----<span class="hljs-type">A</span>-----|   <br>                       \  <br>thread2 ---------------&gt;|-----<span class="hljs-type">B</span>-----------|   <br>                                           \   <br>thread3 -----------------------------------&gt;|-------<span class="hljs-type">C</span>------|<br><span class="hljs-comment">//多线程并发</span><br> thread1 -&gt;     |----<span class="hljs-type">A</span>-----|<br> thread2 -----&gt;     |-----<span class="hljs-type">B</span>-----------| <br> thread3 ---------&gt;     |-------<span class="hljs-type">C</span>----------|<br></code></pre></td></tr></table></figure>
+<h2 id="同步（synchronize）、异步（asynchronous）与线程"><a href="#同步（synchronize）、异步（asynchronous）与线程" class="headerlink" title="同步（synchronize）、异步（asynchronous）与线程"></a>同步（synchronize）、异步（asynchronous）与线程</h2><p>同步和异步是站在当前线程的角度，考察添加任务到新线程后，何时返回到当前线程执行下面的代码的问题，也即新添加的线程阻不阻塞当前线程。</p>
+<h3 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h3><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">override</span> viewDidLoad() &#123;<br>    <span class="hljs-keyword">super</span>.viewDidLoad()<br>    <span class="hljs-keyword">let</span> queue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)<br>    dispatch_sync(queue) &#123;<br>        <span class="hljs-comment">//block1</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----1-----"</span>) <span class="hljs-comment">//1</span><br>        <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----2-----"</span>) <span class="hljs-comment">//2</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>block1是添加到系统全局队列中的新任务，由于是同步的，因此block1执行返回后，才会回到当前主线程，执行//2及以后的代码。输出结果为：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">-----<span class="hljs-number">1</span>-----<br>-----<span class="hljs-number">2</span>-----<br></code></pre></td></tr></table></figure>
+<h3 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h3><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//viewDidLoad()在主线程中执行，因此当前线程为主线程</span><br><span class="hljs-keyword">override</span> viewDidLoad() &#123;<br>    <span class="hljs-keyword">super</span>.viewDidLoad()<br>    <span class="hljs-keyword">let</span> queue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)<br>    dispatch_async(queue) &#123;<br>        <span class="hljs-comment">//block1</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----1-----"</span>) <span class="hljs-comment">//1</span><br>        <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----2-----"</span>) <span class="hljs-comment">//2</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>block1是添加到系统全局队列中的新任务，由于是异步的，因此block1添加全局队列后（会在另外一个线程上执行），不等到执行完成，就会返回到当前主线程，执行//2及以后的代码，所以输出结果可能为 21 12。但由于block1和主线程中的任务都是不耗时的简单任务，而创建新的线程是要消耗一定时间的（主线程一直存在，不用新创建），因此很可能的输出结果是：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">-----<span class="hljs-number">2</span>-----<br>-----<span class="hljs-number">1</span>-----<br></code></pre></td></tr></table></figure>
+
+<h3 id="同异步结合的情形"><a href="#同异步结合的情形" class="headerlink" title="同异步结合的情形"></a>同异步结合的情形</h3><p>如果同异步结合:</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//viewDidLoad()在主线程中执行，因此当前线程为主线程</span><br><span class="hljs-keyword">override</span> viewDidLoad() &#123;<br>    <span class="hljs-keyword">super</span>.viewDidLoad()<br>    <span class="hljs-keyword">let</span> queue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)<br>    dispatch_async(queue) &#123;<br>        <span class="hljs-comment">//block1</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----A-----"</span>) <span class="hljs-comment">//1</span><br>        dispatch_async(dispatch_get_main_queue()) &#123;<br>            <span class="hljs-comment">//block2</span><br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----B-----"</span>) <span class="hljs-comment">//2</span><br>        &#125;<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----C-----"</span>) <span class="hljs-comment">//3</span><br>        <span class="hljs-keyword">return</span><br>    &#125;	<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----D-----"</span>) <span class="hljs-comment">//4</span><br>    <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>) &#123; &#125; <span class="hljs-comment">//5</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-----E-----"</span>) <span class="hljs-comment">//6</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>block1是添加到系统全局队列中的新任务，由于是异步的，因此block1添加全局队列后（会在另外一个线程上执行），不等到执行完成，就返回到当前主线程，执行//4及以后的代码，结果是block1所在的线程与主线程同时执行，因此理论上，D和A谁先输出不一定。但由于block1和主线程中的任务都是不耗时的简单任务，而创建新的线程是要消耗一定时间的（主线程一直存在，不用新创建），因此一般输出结果为DA。</p>
+<p>block1所在线程输出完A后，将block2添加到主调度队列中，由于是异步的，因此block2添加主调度队列后（会在主线程上执行），不等到执行完成，就返回到block2所在的线程，继续执行，因此A和C一定会输出，且C一定在A之后输出。但block2却不一定能执行，因为block1在执行时，主线程也在执行（主线程是串行单线程，任务按顺序一个一个执行），如果此时主线程执行到//5对应的死循环，则block2一定不能被执行，B一定不能被输出，如果此时主线程尚未执行到//5对应的死循环，block2已经添加到主线程中，则block2会被执行，B能被输出。但由于主线程无需另外创建，block1（所对应的线程需另外创建）执行到添加block2到主调度队列时，主线程很可能已经执行到//5对应的死循环，因此block2很可能不被执行。</p>
+<p>//6前有个死循环，因此E一定不会被输出。</p>
+<p>因此可能的输出结果是；DAC ADC ADCB DACB ACDB ACBD ABDC ABCD<br>但很可能的输出结果为：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">-----<span class="hljs-type">D</span>-----<br>-----<span class="hljs-type">A</span>-----<br>-----<span class="hljs-type">C</span>-----<br></code></pre></td></tr></table></figure>
+
+<h2 id="同异步与串并行"><a href="#同异步与串并行" class="headerlink" title="同异步与串并行"></a>同异步与串并行</h2><p>串行和同步，并行和异步似是完全不同的概念，一个关注任务的独立关系，一个看中的是返回的时机。但事实上，串行和同步近似，并发和异步相同，他们指代的事情几乎完全相同。<br>就同步和串行而言，需要任务执行结束后才能返回，其实就是一个任务执行完成后，才能执行其他的任务，反应的就是串行依赖关系。</p>
+<p>而异步和并行就更相同了，不等任务执行完成，就直接返回，反应的就是并发任务之间的独立性。</p>
+<p>当然，同异步所暗含的串行和并行是当前线程的任务与新线程的任务之间的相互关系。</p>
+<h1 id="GCD与NSOperationQueue"><a href="#GCD与NSOperationQueue" class="headerlink" title="GCD与NSOperationQueue"></a>GCD与NSOperationQueue</h1><p>GCD(grand central dispatch)和NSOperationQueue二者均是系统级的多线程封装，在使用时，我们只需创建任务队列即可，其他的如线程创立、任务分配等，均由系统自动处理。不得不说，这让多线程编程变得更高效，更简单，当然并不是没有坑。<br>需要强调的是，GCD和NSOperationQueue的使用核心是任务（task）和任务队列（task queue），暂时可以忘了线程（thread）这烦人的概念。</p>
+<p>关于GCD和NSOperationQueue网上已经有不少高质量的文章对其详细介绍，我推荐<a href="http://www.cocoachina.com/ios/20160201/15179.html">《iOS并行开发：从NSOperation和调度队列开始》</a>，其对基本概念、使用方法等的介绍非常清晰详尽，我这里就不再赘述了，只写一些我认为容易忽略却影响认知深度的小知识点。当然如果你英语过硬，去直接看官方文档<a href="https://developer.apple.com/library/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html">《ConcurrencyProgrammingGuide》</a>是最好的。</p>
+<h2 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h2><p>GCD是基于C的API，因此比较底层。</p>
+<p>GCD所管理的调度队列（dispatch queue）主要有三类，串行队列（private dispatch queue）、并发队列 （global dispatch queue，又称全局调度队列）和主队列（main dispatch queue）。</p>
+<p>我们常用的 <code>dispatch_get_global_queue(_:_:)</code>所获得的dispatch queue就是全局调度队列(global dispatch queue)，并发，而且全局调度队列是全局共用的，每一个优先级的全局调度队列只有一个实体。四种不同优先级的全局调度队列对应的四种优先级的线程，同一个优先级的全局调度队列可以同时拥有多条相应优先级的线程。</p>
+<p> <code>dispatch_get_main_queue()</code>所获得的dispatch queue是主调度队列，主调度队列是串行队列。</p>
+<h2 id="NSOperationQueue"><a href="#NSOperationQueue" class="headerlink" title="NSOperationQueue"></a>NSOperationQueue</h2><p>NSOperationQueue是对GCD的Objective-C封装，相对于GCD具有更多先进的特性，如可以添加NSOperation依赖，取消NSOperation等。</p>
+<p>NSOperationQueue是并发队列，且不遵循先进先出FIFO排序原则。</p>
+<h1 id="总结与感悟"><a href="#总结与感悟" class="headerlink" title="总结与感悟"></a>总结与感悟</h1><p>上文基本就是我对并发的认识，有几个点我想在这里再强调下，<br>1）串并行、同异步与线程无关，单线程、多线程都可以实现串并行和同异步。<br>2）串行和同步相同，异步和并行相同，他们只是看待同一件事物的角度不同。<br>3）GCD和NSOperationQueue的使用核心是任务（task）和任务队列（task queue）。<br>4）全局调度队列(global dispatch queue)是全局共用的，系统有时也会向这些调度队列添加系统任务。<br>5) App的主调度队列是串行单线程队列。</p>
+<p>通过本文的浅析，希望达到了理清概念的最初目的，当然这些只是并发编程的第一步，并发线程还有竟态资源、死锁等诸多大坑，要想真正掌握，我们继续努力。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/swift/" rel="tag">swift</a>, <a class="has-link-grey -link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat_pay.jpg" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2016/04/22/closureCapture/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">闭包捕捉(closure capture)浅析</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2016/03/29/sortAlgorithm/">
+                <span class="level-item">排序算法之Swift实践</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+                
+
+
+
+
+<div
+    class="column is-3-tablet is-3-desktop is-3-widescreen  has-order-3 column-right ">
+    
+    <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://weibo.com/shellhue" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">我的微博</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">weibo.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://www.zhihu.com/people/huang-ze-yu-51-15" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">我的专栏</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">www.zhihu.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+    
+    <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2017/07/21/asyndisplaykit/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-07-21T06:35:29.000Z">2017-07-21</time></div>
+                    <a href="/2017/07/21/asyndisplaykit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">AsyncDisplayKit近一年的使用体会及疑难点</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/04/08/sharecode/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/gitrepository.png" alt="iOS两个客户端代码复用小技巧">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-04-08T12:46:45.000Z">2017-04-08</time></div>
+                    <a href="/2017/04/08/sharecode/" class="title has-link-black-ter is-size-6 has-text-weight-normal">iOS两个客户端代码复用小技巧</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/04/01/alwaystrying/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/readingbook.jpg" alt="生命的惯性">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-31T16:35:29.000Z">2017-04-01</time></div>
+                    <a href="/2017/04/01/alwaystrying/" class="title has-link-black-ter is-size-6 has-text-weight-normal">生命的惯性</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/03/22/gitcommit/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/gitcommit.png" alt="commit和branch理解深入">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-22T12:47:10.000Z">2017-03-22</time></div>
+                    <a href="/2017/03/22/gitcommit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">commit和branch理解深入</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/03/18/structuralpattern/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
+                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+    
+    <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Objective-C/">
+                        <span class="tag">Objective-C</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Swift/">
+                        <span class="tag">Swift</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/closure/">
+                        <span class="tag">closure</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commit/">
+                        <span class="tag">commit</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/design-pattern/">
+                        <span class="tag">design pattern</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/git/">
+                        <span class="tag">git</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/iOS/">
+                        <span class="tag">iOS</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/swift/">
+                        <span class="tag">swift</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
+                        <span class="tag">人文</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+                        <span class="tag">小技巧</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
+                        <span class="tag">并发</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+                        <span class="tag">数据结构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/../images/logo.png" alt="iOS并发（concurrency）概念浅析" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2020 轻墨&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+<script>
+var IcarusThemeSettings = {
+    site: {
+        url: 'http://yoursite.com',
+        external_link: {"enable":true,"exclude":[]}
+    },
+    article: {
+        highlight: {
+            clipboard: true,
+            fold: 'unfolded'
+        }
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+
+
+
+
+
+<script src="/js/animation.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+<script src="/js/gallery.js" defer></script>
+
+
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+    
+</body>
+
+</html>

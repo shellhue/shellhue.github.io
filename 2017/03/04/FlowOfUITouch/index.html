@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html  lang="zh">
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8" />
+
+<meta name="generator" content="Hexo 4.2.0" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<title>iOS触摸事件的流动 - 轻墨</title>
+
+
+    <meta name="description" content="当指肚轻触屏幕，整个系统像沉睡的生灵突然被惊醒，然后经历过腥风血雨的一段奇幻旅行，最终又归于沉寂。 整个iOS触摸事件从产生到寂灭大致如下图：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS触摸事件的流动">
+<meta property="og:url" content="http://yoursite.com/2017/03/04/FlowOfUITouch/index.html">
+<meta property="og:site_name" content="轻墨">
+<meta property="og:description" content="当指肚轻触屏幕，整个系统像沉睡的生灵突然被惊醒，然后经历过腥风血雨的一段奇幻旅行，最终又归于沉寂。 整个iOS触摸事件从产生到寂灭大致如下图：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/touchscreen.jpg">
+<meta property="article:published_time" content="2017-03-04T07:49:21.000Z">
+<meta property="article:modified_time" content="2017-03-17T15:42:45.000Z">
+<meta property="article:author" content="轻墨">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/touchscreen.jpg">
+
+
+
+
+
+
+
+<link rel="icon" href="/../images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/../images/logo.png" alt="iOS触摸事件的流动" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/.">首页</a>
+                
+                <a class="navbar-item"
+                href="/archives">归档</a>
+                
+                <a class="navbar-item"
+                href="/tags">标签</a>
+                
+                <a class="navbar-item"
+                href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    <a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/shellhue">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main">
+<div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/touchscreen.jpg" alt="iOS触摸事件的流动">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-03-04T07:49:21.000Z">2017-03-04</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    10 分钟 读完 (大约 1495 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                iOS触摸事件的流动
+            
+        </h1>
+        <div class="content">
+            <p>当指肚轻触屏幕，整个系统像沉睡的生灵突然被惊醒，然后经历过腥风血雨的一段奇幻旅行，最终又归于沉寂。</p>
+<p>整个iOS触摸事件从产生到寂灭大致如下图：</p>
+<p><img src="/images/uitouchflow.png" alt=""></p>
+<a id="more"></a>
+
+
+<h2 id="起始阶段"><a href="#起始阶段" class="headerlink" title="起始阶段"></a>起始阶段</h2><p>—-&gt; cpu处于睡眠状态，等待事件发生<br>—-&gt; 手指触摸屏幕</p>
+<h2 id="系统响应阶段"><a href="#系统响应阶段" class="headerlink" title="系统响应阶段"></a>系统响应阶段</h2><p>—-&gt; 屏幕硬件感应到输入，并将感应到的事件传递给输入输出驱动IOKit<br>—-&gt; IOKit.framework封装整个触摸事件为IOHIDEvent对象<br>—-&gt; IOKit.framework通过IPC将事件转发给SpringBoard.app</p>
+<p>以上是系统层的响应。系统感应到外界的输入，并将相应的输入封装成比较概括的<a href="http://iphonedevwiki.net/index.php/IOHIDFamily">IOHIDEvent</a>对象，然后UIKit通过IOHIDEvent的类型，判断出相应事件应该由<a href="http://iphonedevwiki.net/index.php/SpringBoard.app">SpringBoard  .app</a>处理，直接通过mach port(IPC进程间通信)转发给SpringBoard.app。</p>
+<p>SpringBoard.app就是iOS的系统桌面，当触摸事件发生时，也只有负责管理桌面的SpringBoard.app才知道如何正确的响应。因为触摸发生时，有可能用户正在桌面翻页找App，也有可能正处于在微信中刷朋友圈。</p>
+<h2 id="桌面响应阶段"><a href="#桌面响应阶段" class="headerlink" title="桌面响应阶段"></a>桌面响应阶段</h2><p>—-&gt; SpringBoard.app主线程Runloop收到<a href="https://developer.apple.com/reference/iokit">IOKit.framework</a>转发来的消息苏醒，并触发对应Mach Port的Source1回调<code>__IOHIDEventSystemClientQueueCallback()</code>。</p>
+<p>—-&gt; 如果SpringBoard.app监测到有App在前台（记为xxxx.app），SpringBoard.app通过mach port(IPC进程间通信)转发给xxxx.app，如果SpringBoard.app监测到监测无前台App，则SpringBoard.app进入App内部响应阶段的第二段，记触发Source0回调。</p>
+<h2 id="App内部响应阶段"><a href="#App内部响应阶段" class="headerlink" title="App内部响应阶段"></a>App内部响应阶段</h2><p>—-&gt; 前台App主线程Runloop收到SpringBoard.app转发来的消息苏醒，并触发对应Mach Port的Source1回调<code>__IOHIDEventSystemClientQueueCallback()</code>。<br>—-&gt; Source1回调内部触发Source0回调<code>__UIApplicationHandleEventQueue()</code><br>—-&gt; Soucre0回调内部，封装<code>IOHIDEvent</code>为<code>UIEvent</code><br>—-&gt; Soucre0回调内部调用<code>UIApplication</code>的<code>sendEvent:</code>方法，将<code>UIEvent</code>传给<code>UIWindow</code><br>—-&gt; 平时开发熟悉的触摸事件响应链从这开始了<br>—-&gt; 通过递归调用UIView层级的<code>hitTest(_:with:)</code>，结合<code>point(inside:with:)</code>找到<code>UIEvent</code>中每一个<code>UITouch</code>所属的<code>UIView</code>（其实是想找到离触摸事件点最近的那个<code>UIView</code>）。这个过程是从<code>UIView</code>层级的最顶层往最底层递归查询，但这不是<code>UIResponder</code>响应链，事件响应是在<code>UIEvent</code>中每一个<code>UITouch</code>所属的<code>UIView</code>都确定之后方才开始。</p>
+<p>但需要注意，以下三种情况<code>UIView</code>的<code>hitTest(_:with:)</code>不会被调用，也导致其子<code>UIView</code>的<code>hitTest(_:with:)</code>不会被调用，而之后响应事件是下向上传递的，这直接导致以下三种情况的<code>UIView</code>及其子<code>UIView</code>不接收任何触摸事件：</p>
+<ol>
+<li>userInteractionEnabled = NO</li>
+<li>hidden = YES</li>
+<li>alpha = 0.0~0.01之间</li>
+</ol>
+<p>提示: UIImageView的userInteractionEnabled默认为NO,因此UIImageView以及它的子控件默认是不接收触摸事件的。</p>
+<p>当把断点打在某个UIView<code>hitTest(_:with:)</code>中时，对应的调用堆栈如下：<br><img src="/images/calltraceoftouching.png" alt=""><br>—-&gt; 根据围绕<code>UITouch</code>所属的<code>UIView</code>及其祖先<code>UIView</code>的gesture recognizers，来确定一个UITouch的gestureRecognizers</p>
+<p>—-&gt; UITouch所属的UIView和gestureRecognizers收到此UITouch和相应的UIEvent，并按照UITouch所处的状态调用四大UITouch方法<code>touchesBegan(_:with:) touchesMoved(_:with:) touchesEnded(_:with:) touchesCancelled(_:with:)</code>中的一个。（事件响应开始）</p>
+<p>—-&gt; 对于UIView收到的UITouches事件（四大UITouch事件都是如此），则会按照UIResponder响应链一直往上传递，直到某个UIResponder因为主动响应触摸事件，切断了响应链（即不调用下一个UIResponder的响应方法），如果一直没有UIResponder做响应处理，则这些UITouches到达最后的响应者即UIApplication后，就被吃掉了，消失了。</p>
+<p>—-&gt; 如果在事件响应过程中，有UIGestureRecognizer成功识别，则此UIGestureRecognizer将独自占有所需要的UITouches，这些UITouches所属的UIView及其他的UIGestureRecognizer的<code>touchesCancelled(_:with:)</code>方法将调用（如果在手势的代理中设置可以同时识别两个手势，则允许同时识别的手势均可以收到所需要的UITouches事件）。但与识别成功的UIGestureRecognizer无关的UITouches则会继续按照上述传递逻辑传递。也即允许两个手势同时识别，只要所占有的UITouches不相同。</p>
+<p>—-&gt; 如果UIGestureRecognizer识别成功，则调用相应的action，处理对应的逻辑。如果某个UIResponder主动响应了触摸事件，则根据其本身的响应逻辑处理对应的业务，UIControl都是主动响应并切断UITouch的向上传递的。</p>
+<p>—-&gt; UITouches事件流动完毕，整个系统重新进入睡眠等待下一个事件</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从手指触碰到屏幕，UITouch大致经历三个阶段，<code>系统处理阶段----&gt;SpringBoard.app处理阶段----&gt;前台App处理阶段</code>，事实上日常开发只需知晓最后一个阶段即可，前两个阶段参考资料也不多，更多的还涉及系统底层，这里仅做简单介绍。</p>
+<h2 id="参考文献："><a href="#参考文献：" class="headerlink" title="参考文献：##"></a>参考文献：##</h2><ol>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&mid=400417748&idx=1&sn=0c5f6747dd192c5a0eea32bb4650c160&3rd=MzA3MDU4NTYzMw==&scene=6#rd">《iOS 事件处理机制与图像渲染过程》</a></li>
+<li><a href="https://developer.apple.com/library/content/documentation/EventHandling/Conceptual/EventHandlingiPhoneOS/Introduction/Introduction.html">Event Handling Guide for iOS</a></li>
+<li><a href="http://iphonedevwiki.net/index.php/IOHIDFamily">IOHIDFamily</a></li>
+<li><a href="http://iphonedevwiki.net/index.php/SpringBoard.app">SpringBoard</a></li>
+<li><a href="http://blog.ibireme.com/2015/05/18/runloop/">深入理解RunLoop</a></li>
+<li><a href="http://www.amazon.com/Programming-iOS-Views-Controllers-Frameworks/dp/1491936851">Programming iOS 9</a></li>
+<li><a href="http://iphonedevwiki.net/index.php/GSEvent">GSEvent</a></li>
+<li><a href="http://www.jianshu.com/p/82024d85c529">事件传递</a></li>
+<li><a href="http://www.jianshu.com/p/98ed2eaa40ac">iOS事件点击之发生了什么？</a></li>
+<li><a href="https://github.com/kennytm/iphone-private-frameworks/tree/master/IOKit">IOKit.framework</a></li>
+</ol>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Swift/" rel="tag">Swift</a>, <a class="has-link-grey -link" href="/tags/iOS/" rel="tag">iOS</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat_pay.jpg" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2017/03/11/creationalDesignPattern/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">《创建型设计模式》之iOS系统框架实践</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2017/02/07/fakedata/">
+                <span class="level-item">如何在iOS开发中更好的做假数据？</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+                
+
+
+
+
+<div
+    class="column is-3-tablet is-3-desktop is-3-widescreen  has-order-3 column-right ">
+    
+    <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://weibo.com/shellhue" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">我的微博</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">weibo.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://www.zhihu.com/people/huang-ze-yu-51-15" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">我的专栏</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">www.zhihu.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+    
+    <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2017/07/21/asyndisplaykit/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-07-21T06:35:29.000Z">2017-07-21</time></div>
+                    <a href="/2017/07/21/asyndisplaykit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">AsyncDisplayKit近一年的使用体会及疑难点</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/04/08/sharecode/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/gitrepository.png" alt="iOS两个客户端代码复用小技巧">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-04-08T12:46:45.000Z">2017-04-08</time></div>
+                    <a href="/2017/04/08/sharecode/" class="title has-link-black-ter is-size-6 has-text-weight-normal">iOS两个客户端代码复用小技巧</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/04/01/alwaystrying/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/readingbook.jpg" alt="生命的惯性">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-31T16:35:29.000Z">2017-04-01</time></div>
+                    <a href="/2017/04/01/alwaystrying/" class="title has-link-black-ter is-size-6 has-text-weight-normal">生命的惯性</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/03/22/gitcommit/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/gitcommit.png" alt="commit和branch理解深入">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-22T12:47:10.000Z">2017-03-22</time></div>
+                    <a href="/2017/03/22/gitcommit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">commit和branch理解深入</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/03/18/structuralpattern/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
+                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+    
+    <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Objective-C/">
+                        <span class="tag">Objective-C</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Swift/">
+                        <span class="tag">Swift</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/closure/">
+                        <span class="tag">closure</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commit/">
+                        <span class="tag">commit</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/design-pattern/">
+                        <span class="tag">design pattern</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/git/">
+                        <span class="tag">git</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/iOS/">
+                        <span class="tag">iOS</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/swift/">
+                        <span class="tag">swift</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
+                        <span class="tag">人文</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+                        <span class="tag">小技巧</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
+                        <span class="tag">并发</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+                        <span class="tag">数据结构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/../images/logo.png" alt="iOS触摸事件的流动" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2020 轻墨&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+<script>
+var IcarusThemeSettings = {
+    site: {
+        url: 'http://yoursite.com',
+        external_link: {"enable":true,"exclude":[]}
+    },
+    article: {
+        highlight: {
+            clipboard: true,
+            fold: 'unfolded'
+        }
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+
+
+
+
+
+<script src="/js/animation.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+<script src="/js/gallery.js" defer></script>
+
+
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+    
+</body>
+
+</html>

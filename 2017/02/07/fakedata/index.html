@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html  lang="zh">
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8" />
+
+<meta name="generator" content="Hexo 4.2.0" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<title>如何在iOS开发中更好的做假数据？ - 轻墨</title>
+
+
+    <meta name="description" content="当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。 示例项目为方便下文的说明，本文主要以贝聊家长版app发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在iOS开发中更好的做假数据？">
+<meta property="og:url" content="http://yoursite.com/2017/02/07/fakedata/index.html">
+<meta property="og:site_name" content="轻墨">
+<meta property="og:description" content="当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。 示例项目为方便下文的说明，本文主要以贝聊家长版app发">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/fakedatathumbnail.jpg">
+<meta property="article:published_time" content="2017-02-07T13:40:21.000Z">
+<meta property="article:modified_time" content="2017-03-17T15:42:45.000Z">
+<meta property="article:author" content="轻墨">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Swift">
+<meta property="article:tag" content="Objective-C">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/fakedatathumbnail.jpg">
+
+
+
+
+
+
+
+<link rel="icon" href="/../images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/../images/logo.png" alt="如何在iOS开发中更好的做假数据？" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/.">首页</a>
+                
+                <a class="navbar-item"
+                href="/archives">归档</a>
+                
+                <a class="navbar-item"
+                href="/tags">标签</a>
+                
+                <a class="navbar-item"
+                href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    <a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/shellhue">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main">
+<div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/fakedatathumbnail.jpg" alt="如何在iOS开发中更好的做假数据？">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-02-07T13:40:21.000Z">2017-02-07</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    24 分钟 读完 (大约 3554 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                如何在iOS开发中更好的做假数据？
+            
+        </h1>
+        <div class="content">
+            <p>当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。</p>
+<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：</p>
+<a id="more"></a>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-keyword">import</span> SnapKit<br><span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">ExploreTableViewCell</span>: <span class="hljs-title">UITableViewCell</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> thumbnailImageView: <span class="hljs-type">UIImageView</span><br>  <span class="hljs-keyword">let</span> titleLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-keyword">let</span> avatarImageView: <span class="hljs-type">UIImageView</span><br>  <span class="hljs-keyword">let</span> authorNameLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-keyword">let</span> viewCountLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-keyword">let</span> commentCountLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-comment">//...其他属性</span><br><br>  <span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;<br>    <span class="hljs-comment">//创建view</span><br>    thumbnailImageView = <span class="hljs-type">UIImageView</span>()<br>    titleLabel = <span class="hljs-type">UILabel</span>()<br>    avatarImageView = <span class="hljs-type">UIImageView</span>()<br>    authorNameLabel = <span class="hljs-type">UILabel</span>()<br>    viewCountLabel = <span class="hljs-type">UILabel</span>()<br>    commentCountLabel = <span class="hljs-type">UILabel</span>()<br><br>    <span class="hljs-comment">//...其他view的创建</span><br><br>    <span class="hljs-keyword">super</span>.<span class="hljs-keyword">init</span>(style: style, reuseIdentifier: reuseIdentifier)<br>    <span class="hljs-comment">//设置view</span><br>    titleLabel.numberOfLines = <span class="hljs-number">2</span><br>    titleLabel.textColor = <span class="hljs-type">UIColor</span>.black<br>    titleLabel.snp.makeConstraints &#123; (make) -&gt; <span class="hljs-type">Void</span> <span class="hljs-keyword">in</span><br>        make.<span class="hljs-keyword">left</span>.equalTo(thumbnailImageView.snp.<span class="hljs-keyword">right</span>).offset(<span class="hljs-number">15</span>)<br>        make.<span class="hljs-keyword">right</span>.equalTo(contentView.snp.<span class="hljs-keyword">right</span>)<br>        make.top.equalTo(contentView.snp.top)<br>    &#125;<br>    <span class="hljs-comment">//...其他view的设置</span><br>  &#125;<br><br>  <span class="hljs-comment">//...其他业务代码</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="源码中写死"><a href="#源码中写死" class="headerlink" title="源码中写死"></a>源码中写死</h2><p>源码中写死数据是最便捷的假数据做法，项目很赶时，为最快速的看到UI效果，一般都会采取这种假数据方式。比如在上述热门帖子列表示例项目中，为查看整个<code>ExploreTableViewCell</code>的布局效果，在<code>titleLabel</code>等<code>subview</code>的设置位置，直接写死假数据。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//...其他代码</span><br><span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;<br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>  <span class="hljs-comment">//写死的假数据代码</span><br>  titleLabel.text = <span class="hljs-string">"这是一个标题这是一个标题这是一个标题这是一个标题这"</span><br>  thumbnailImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>  avatarImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>  authorNameLabel.text = <span class="hljs-string">"作者名"</span><br>  viewCountLabel.text = <span class="hljs-string">"1000"</span><br>  commentCountLabel.text = <span class="hljs-string">"1000"</span><br><br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>&#125;<br><span class="hljs-comment">//...其他代码</span><br></code></pre></td></tr></table></figure>
+<p>源码中写死假数据虽然方便，但稍有不慎就容易直接上线上环境（因为测试在测试时一般都会有数据，假数据被遮盖了），演变成一个有可能非常严重也有可能很轻的bug（贝聊就切实出现过这样的bug，而且还是个影响广泛的大bug），为安全起见，所有写死的假数据都应该包在条件编译宏内。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//...其他代码</span><br><span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;<br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>  <span class="hljs-comment">//写死的假数据代码，包裹在条件编译宏内</span><br>  #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span><br>    titleLabel.text = <span class="hljs-string">"这是一个标题这是一个标题这是一个标题这是一个标题这"</span><br>    thumbnailImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>    avatarImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>    authorNameLabel.text = <span class="hljs-string">"作者名"</span><br>    viewCountLabel.text = <span class="hljs-string">"1000"</span><br>    commentCountLabel.text = <span class="hljs-string">"1000"</span><br>  #endif<br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>&#125;<br><span class="hljs-comment">//...其他代码</span><br></code></pre></td></tr></table></figure>
+<p>包在条件编译宏内，就可以保证不污染正式环境的代码，从而保证安全性。</p>
+<h2 id="利用单元测试的网络请求stub做假数据"><a href="#利用单元测试的网络请求stub做假数据" class="headerlink" title="利用单元测试的网络请求stub做假数据"></a>利用单元测试的网络请求stub做假数据</h2><p>在源码中写死假数据，有以下三个缺点，</p>
+<ul>
+<li>污染源代码<br>假数据写在源代码中，即使用宏包裹起来，只是保证了一定的安全性，但依然污染了源代码，如果上线前忘了把假数据代码移除，它一直会残留在源代码中，而且还会一直影响<code>DEBUG</code>环境的调试。</li>
+<li>假数据散落四处，无法集中管理<br>本文示例代码的假数据虽然写在一块，但在实际开发中，并不是所有的UI代码都在一个文件中。即使在一个文件内，往往各个属性的初始化和设置也不在一个方法内。代码一多，基本很难管理。</li>
+<li>扭曲了数据的正确流通<br>正确的数据产生方式，应该是发一个网络请求，然后把请求回来的数据转成<code>model</code>，最后通过<code>model</code>给各个UI组件填充数据。而在源代码中写死假数据，直接打乱了数据的正确流通，这会使得整个开发的逻辑是颠倒的，不但使开发更容易出bug，而且逻辑流的切换带来的开发效率和开发感受都很差。</li>
+</ul>
+<p>较好的假数据方式，应该尽可能的不污染源代码，不扰乱正常的数据流通，而且能集中管理。在研究单元测试时，我无意中发现stub某个页面请求数据的网络请求即可达到这种完美的假数据效果。</p>
+<p>首先按正常的流程开发整个功能，（在开发中，我总是倾下于先创建Model，而不是先写UI）</p>
+<ol>
+<li>创建Model</li>
+<li>创建ViewController</li>
+<li>创建View等UI元素</li>
+<li>在ViewController中完成网络请求的发起，并完成从网络数据到Model的转换</li>
+<li>应用Model填充UI</li>
+</ol>
+<p>整个功能开发按照有真实网络请求进行，但事实上并没有网络请求，因为后台并未搭好，没关系，先按照后台给出的接口和数据格式定义，创建一个本地JSON文件。对于本文的示例（假定只有列表数据）来说，文件名暂为<code>hotTopics.json</code>，内容大致如下（贝聊发现首页实际上有很多其他元素，网络请求返回的JSON也比这个复杂的多）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&#123;<br>  hotTopics: [<br>    &#123;<br>      &quot;title&quot;: &quot;这是一个标题这是一个标题这是一个标题&quot;,<br>      &quot;thumbnail&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdlafjlfp34523.jpg&quot;,<br>      &quot;author&quot;: &quot;小黄老师&quot;,<br>      &quot;authorAvatar&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdlafjlfp34523.jpg&quot;,<br>      &quot;commentCount&quot;: 1000,<br>      &quot;viewCount&quot;: 3000<br>    &#125;,<br>    &#123;<br>      &quot;title&quot;: &quot;这是另外一个标题这是另外一个标题这是另外一个标题&quot;,<br>      &quot;thumbnail&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdla32131fjlfp34523.jpg&quot;,<br>      &quot;author&quot;: &quot;小李老师&quot;,<br>      &quot;authorAvatar&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdl232afjlfp34523.jpg&quot;,<br>      &quot;commentCount&quot;: 1030,<br>      &quot;viewCount&quot;: 3400<br>    &#125;<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>然后在<code>ViewController</code>中<code>stub</code>本<code>ViewController</code>中所有的网络请求，我在开发中用的是<a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>，大致的代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExploreViewController</span>: <span class="hljs-title">UITableViewController</span> </span>&#123;<br>  <span class="hljs-comment">//...其他代码</span><br>  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">viewDidLoad</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">super</span>.viewDidLoad()<br>    <span class="hljs-comment">//...其他代码</span><br>    #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span><br>        stubRequests()<br>    #endif<br>    <span class="hljs-comment">//...其他代码</span><br>  &#125;<br>  <span class="hljs-comment">//...其他代码</span><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">stubRequests</span><span class="hljs-params">()</span></span> &#123;<br>    stub(isPath(<span class="hljs-string">"/explore/hotTopics"</span>)) &#123; <span class="hljs-number">_</span> <span class="hljs-keyword">in</span><br>      <span class="hljs-keyword">let</span> stubPath = <span class="hljs-type">OHPathForFile</span>(<span class="hljs-string">"hotTopics.json"</span>, type(of: <span class="hljs-keyword">self</span>))<br>      <span class="hljs-keyword">return</span> fixture(filePath: stubPath!, headers: [<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>])<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>注意所创建的JSON文件一定要加到项目目录中。添加完上述代码后，path为<code>/explore/hotTopics</code>的网络请求将被stub，返回的数据将是所指定JSON文件中的数据，这样就跟真实的网络请求没有任何的区别了。而且利用<a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>还可以模拟网络请求失败、网络请求超时以及<code>throttle</code>等各种网络请求状态，从而更全面的调试UI和整个功能。</p>
+<p>利用stub做假数据可以真实的做到基本不污染代码、集中管理和完全真实的数据流通流程，与在源码中写死这种方式相比，近乎完美。然而当你真正用过一段时间后，你会发现，这种方式还是有一个致命的缺点和一个不那么重要的缺点。</p>
+<ul>
+<li>不适合做UI调试<br>因为每改动一次数据，都需要重新编译，而iOS编译是很慢的，尤其是Swift。而要想做UI调试，频繁的改动数据，查看各种边界条件下的UI是必然的。</li>
+<li>还是污染了代码<br>虽然相较上一种方法，污染非常小，但或多或少还是有污染的，有强迫症的人是受不了的，而且有时测试说是个bug（测试包一般是BETA环境），你build一下发现数据是假数据，不是网络请求的数据，还需要找到stub网络请求的位置，然后把代码注释了，也是极其的烦人的。</li>
+</ul>
+<p>如果能做到每改动一下数据，然后刷新一下就可以看到了，像网页一样，而且真的一点都不污染代码，那就是完美的解决方案。</p>
+<h2 id="动态注入"><a href="#动态注入" class="headerlink" title="动态注入"></a>动态注入</h2><p>如果只是想做到，每改动一下数据，然后刷新以下就可以看到了，像网页一样，Xcode的动态注入是可以的，现在比较流行的是 <a href="https://github.com/johnno1962/injectionforxcode">injectionforxcode</a>和<a href="https://github.com/DyCI/dyci-main">dyci-main</a>两个库。利用单元测试的网络请求stub做假数据，然后结合动态注入，理论上应该可以做到实时刷新，但事实上<a href="https://github.com/johnno1962/injectionforxcode">injectionforxcode</a>和<a href="https://github.com/DyCI/dyci-main">dyci-main</a>的体验都是很糟糕的，时灵时不灵，我用过两次后，基本就不想碰了，我宁愿编译慢一点，当然我从来没有用动态注入去做假数据的实时刷新，但我觉得应该是个方案。</p>
+<p>但这个方案即使可行，也还是会污染代码，并不算特别彻底的方案。真正彻底的方案，与用stub拦截网络请求的思路相同，只是要将网络请求的拦截放到整个APP外，有两个方案可行。</p>
+<h2 id="本地自己搭个服务器"><a href="#本地自己搭个服务器" class="headerlink" title="本地自己搭个服务器"></a>本地自己搭个服务器</h2><p>第一种就是本地自己搭个服务器，然后把开发时需要拦截的网络请求地址改为自己搭建的服务器地址，然后返回自己自定义的JSON数据。但这种方式也有三个缺点：</p>
+<ul>
+<li>有一定门槛<br>虽然搭建服务器是很简单的事，并不是所有人都会，也是需要一定的学习成本的。</li>
+<li>还是要修改源码中网络请求的地址<br>这虽然已经把源码污染降到最低了，但毕竟还是有。</li>
+<li>要想模拟不同的网络状态，还需去修改服务器的代码，不方便。<br>综合起来这种方案性价比并不高，但确实有一定的趣味性，毕竟自己折腾东西嘛。</li>
+</ul>
+<h2 id="网络代理"><a href="#网络代理" class="headerlink" title="网络代理"></a>网络代理</h2><p>第二种就是利用现有的网络代理软件，直接拦截对应的网络请求，然后返回本地写好的JSON数据。我最终采用的这种方案（因为我嫌配置服务器麻烦）。将APP中所有的网络请求都代理给网络代理，然后指定特定的网络请求返回本地JSON数据。这种方案的好处不言而喻，</p>
+<ul>
+<li>真正的不污染源码<br>源码中任何代码都不用动，真正做到了干净绿色无污染。</li>
+<li>拦截起来很方便<br>许多网络代理软件，都自带拦截甚至改写网络请求的功能，所以启动拦截功能很方便。</li>
+<li>方便调试<br>网络代理一般都有改变一个网络请求状态的功能，可以轻松实现返回网络错误、网络超时和延迟网络请求等不同的网络请求状态的功能，非常方便。</li>
+</ul>
+<p>我常用的网络代理就是<a href="https://www.charlesproxy.com/">Charles</a>，相信大家都有耳闻。<a href="https://www.charlesproxy.com/">Charles</a>有个<code>maplocal</code>的功能（在工具菜单下），如图:</p>
+<p><img src="/images/charlesmaplocal.png" alt=""></p>
+<p>mapLocal的设置也很简单，在Location一栏填上所要拦截的网络请求的host、path或者完整的URL，然后在LocalPath一栏选择对应的本地JSON文件即可，记得勾选启动。</p>
+<p><img src="/images/maplocal.png" alt=""></p>
+<p>这样简单的设置后，所指定的网络请求都会返回本地对应的JSON文件数据。然后你将发现这种假数据之完美，简直让人窒息。</p>
+<p>编译后，如果想改变一个数据，看看对应的UI，直接去改变本地JSON文件，然后下来刷新一下，你会发现显示的数据就是刚刚改动的数据，简直要感动哭了。</p>
+<p>但事实上这种方式还是有一个小小的缺点，即Charles与Shadowsocks不能同时开着，因为Charles不支持父代理。搞编程开发，为方便查阅资料，翻墙软件会一只开着，但这样Charles就不能开着，想用的话，又要先退出Shadowsocks，再打开Charles，这让我很头疼。最后只能在真正写完所有的逻辑和UI后，关闭Shadowsocks，打开Charles，集中调试。</p>
+<p>=============2017-03-04更新开始===============</p>
+<p>文章发出后，不少读者反馈，</p>
+<ol>
+<li>Charles与Shadowsocks可以共存<br>具体怎么共存，我还有待研究，后续文章再做补充</li>
+<li>假数据的数据应该能随机生成<br>具体由json server、mock.js和Charles三者结合完成，有意思，值得研究，待后续文章详细补充。</li>
+</ol>
+<p>=============2017-03-04更新结束===============</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一路试下来，其实只有第一种源码中写死和最后一种网络代理两种假数据方式最常用，虽然第一种缺点最多，但方便快捷，最后一种虽无任何缺点，但启动还是有点麻烦。</p>
+<p>写了这么多，还是希望对大家有所启发。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Objective-C/" rel="tag">Objective-C</a>, <a class="has-link-grey -link" href="/tags/Swift/" rel="tag">Swift</a>, <a class="has-link-grey -link" href="/tags/iOS/" rel="tag">iOS</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat_pay.jpg" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2017/03/04/FlowOfUITouch/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">iOS触摸事件的流动</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2017/01/25/thisYearAndNextYear/">
+                <span class="level-item">这一年与下一年-2016年度总结正式版</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+                
+
+
+
+
+<div
+    class="column is-3-tablet is-3-desktop is-3-widescreen  has-order-3 column-right ">
+    
+    <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://weibo.com/shellhue" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">我的微博</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">weibo.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://www.zhihu.com/people/huang-ze-yu-51-15" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">我的专栏</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">www.zhihu.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+    
+    <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2017/07/21/asyndisplaykit/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-07-21T06:35:29.000Z">2017-07-21</time></div>
+                    <a href="/2017/07/21/asyndisplaykit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">AsyncDisplayKit近一年的使用体会及疑难点</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/04/08/sharecode/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/gitrepository.png" alt="iOS两个客户端代码复用小技巧">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-04-08T12:46:45.000Z">2017-04-08</time></div>
+                    <a href="/2017/04/08/sharecode/" class="title has-link-black-ter is-size-6 has-text-weight-normal">iOS两个客户端代码复用小技巧</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/04/01/alwaystrying/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/readingbook.jpg" alt="生命的惯性">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-31T16:35:29.000Z">2017-04-01</time></div>
+                    <a href="/2017/04/01/alwaystrying/" class="title has-link-black-ter is-size-6 has-text-weight-normal">生命的惯性</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/03/22/gitcommit/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/gitcommit.png" alt="commit和branch理解深入">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-22T12:47:10.000Z">2017-03-22</time></div>
+                    <a href="/2017/03/22/gitcommit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">commit和branch理解深入</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2017/03/18/structuralpattern/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
+                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+    
+    <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Objective-C/">
+                        <span class="tag">Objective-C</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Swift/">
+                        <span class="tag">Swift</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/closure/">
+                        <span class="tag">closure</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commit/">
+                        <span class="tag">commit</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/design-pattern/">
+                        <span class="tag">design pattern</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/git/">
+                        <span class="tag">git</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/iOS/">
+                        <span class="tag">iOS</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/swift/">
+                        <span class="tag">swift</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
+                        <span class="tag">人文</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+                        <span class="tag">小技巧</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
+                        <span class="tag">并发</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+                        <span class="tag">数据结构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/../images/logo.png" alt="如何在iOS开发中更好的做假数据？" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2020 轻墨&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+<script>
+var IcarusThemeSettings = {
+    site: {
+        url: 'http://yoursite.com',
+        external_link: {"enable":true,"exclude":[]}
+    },
+    article: {
+        highlight: {
+            clipboard: true,
+            fold: 'unfolded'
+        }
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+
+
+
+
+
+<script src="/js/animation.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+<script src="/js/gallery.js" defer></script>
+
+
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+    
+</body>
+
+</html>
