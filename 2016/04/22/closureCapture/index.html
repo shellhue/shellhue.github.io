@@ -20,10 +20,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/og_image.png">
 <meta property="article:published_time" content="2016-04-22T12:47:10.000Z">
-<meta property="article:modified_time" content="2020-02-09T09:12:38.163Z">
+<meta property="article:modified_time" content="2020-02-10T15:31:32.756Z">
 <meta property="article:author" content="轻墨">
-<meta property="article:tag" content="swift">
-<meta property="article:tag" content="closure">
+<meta property="article:tag" content="iOS">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/og_image.png">
 
@@ -39,7 +38,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -160,23 +159,229 @@
 <p>本文中所有代码均在playground中运行，若欲在实际项目中测试，需做部分修改，但基本逻辑和结论不变</p>
 <p>——————— 本文部分结论和例子根据部分读者意见做了修正更新，感谢他们 ———————</p>
 <h2 id="捕捉的含义"><a href="#捕捉的含义" class="headerlink" title="捕捉的含义"></a>捕捉的含义</h2><h3 id="闭包捕捉等同于copy"><a href="#闭包捕捉等同于copy" class="headerlink" title="闭包捕捉等同于copy"></a>闭包捕捉等同于copy</h3><p>闭包捕捉某个变量就意味着copy一份这个变量，值类型的变量直接复制值，引用类型的变量复制引用。复制后的变量名同被捕捉的变量，复制后的变量仍为变量，常量仍为常量。<br><a id="more"></a><br>看例子</p>
-<h3 id="值类型捕捉"><a href="#值类型捕捉" class="headerlink" title="值类型捕捉"></a>值类型捕捉</h3><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameClosure</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;<br>        <span class="hljs-keyword">return</span> &#123;<br>            <span class="hljs-built_in">print</span>(<span class="hljs-keyword">self</span>.name)<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br><span class="hljs-keyword">let</span> cl = pet.printNameClosure() <span class="hljs-comment">//1</span><br>pet.name = <span class="hljs-string">"强强"</span><br>cl() <span class="hljs-comment">//2</span><br></code></pre></td></tr></table></figure>
-<p>结构体Pet的实例方法<code>printNameClosure()</code>返回一个捕捉了<code>self</code>实例本身的闭包，Pet为值类型，因此//1行代码执行完成后，闭包<code>cl</code>复制了一份存储在变量<code>pet</code>中名为<code>旺旺</code>的Pet实例，那么当存储在变量<code>pet</code>的Pet实例改名为<code>强强</code>时，闭包<code>cl</code>所捕捉的Pet实例不变，名字仍为<code>旺旺</code>，因此输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">旺旺<br></code></pre></td></tr></table></figure></p>
-<p>我想您应该会有疑问，为什么上述示例代码不写的更简洁些：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">...<span class="hljs-comment">//此行以前代码不变</span><br><span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br><span class="hljs-keyword">let</span> cl = &#123;<br>    <span class="hljs-built_in">print</span>(pet.name)<br>&#125;<br>pet.name = <span class="hljs-string">"强强"</span><br>cl()<br></code></pre></td></tr></table></figure><br>事实上，上述示例代码中的闭包<code>cl</code>并未捕捉任何变量，关于闭包捕捉发生的时机下文中会有详细介绍。</p>
-<h3 id="引用类型捕捉"><a href="#引用类型捕捉" class="headerlink" title="引用类型捕捉"></a>引用类型捕捉</h3><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameClosure</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;<br>        <span class="hljs-keyword">return</span> &#123;<br>            <span class="hljs-built_in">print</span>(<span class="hljs-keyword">self</span>.name)<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br><span class="hljs-keyword">let</span> cl = pet.printNameClosure() <span class="hljs-comment">//1</span><br>pet.name = <span class="hljs-string">"强强"</span><br>cl() <span class="hljs-comment">//2</span><br></code></pre></td></tr></table></figure>
-<p>这次Pet类型为类，是引用类型，因此//1行代码执行完成后，闭包<code>cl</code>复制了一份变量<code>pet</code>所指向的名为<code>旺旺</code>的Pet实例引用，此时变量<code>pet</code>与闭包<code>cl</code>捕捉的<code>pet</code>指向同一Pet实例，那么当变量<code>pet</code>所指向的Pet实例改名为<code>强强</code>时，闭包<code>cl</code>所捕捉的Pet实例名字也改为<code>强强</code>，因此输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">强强<br></code></pre></td></tr></table></figure></p>
+<h3 id="值类型捕捉"><a href="#值类型捕捉" class="headerlink" title="值类型捕捉"></a>值类型捕捉</h3><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameClosure</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;
+        <span class="hljs-keyword">return</span> &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-keyword">self</span>.name)
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+<span class="hljs-keyword">let</span> cl = pet.printNameClosure() <span class="hljs-comment">//1</span>
+pet.name = <span class="hljs-string">"强强"</span>
+cl() <span class="hljs-comment">//2</span></code></pre>
+<p>结构体Pet的实例方法<code>printNameClosure()</code>返回一个捕捉了<code>self</code>实例本身的闭包，Pet为值类型，因此//1行代码执行完成后，闭包<code>cl</code>复制了一份存储在变量<code>pet</code>中名为<code>旺旺</code>的Pet实例，那么当存储在变量<code>pet</code>的Pet实例改名为<code>强强</code>时，闭包<code>cl</code>所捕捉的Pet实例不变，名字仍为<code>旺旺</code>，因此输出结果为：<br><pre><code class="hljs swift">旺旺</code></pre></p>
+<p>我想您应该会有疑问，为什么上述示例代码不写的更简洁些：<br><pre><code class="hljs swift">...<span class="hljs-comment">//此行以前代码不变</span>
+<span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+<span class="hljs-keyword">let</span> cl = &#123;
+    <span class="hljs-built_in">print</span>(pet.name)
+&#125;
+pet.name = <span class="hljs-string">"强强"</span>
+cl()</code></pre><br>事实上，上述示例代码中的闭包<code>cl</code>并未捕捉任何变量，关于闭包捕捉发生的时机下文中会有详细介绍。</p>
+<h3 id="引用类型捕捉"><a href="#引用类型捕捉" class="headerlink" title="引用类型捕捉"></a>引用类型捕捉</h3><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameClosure</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;
+        <span class="hljs-keyword">return</span> &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-keyword">self</span>.name)
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+<span class="hljs-keyword">let</span> cl = pet.printNameClosure() <span class="hljs-comment">//1</span>
+pet.name = <span class="hljs-string">"强强"</span>
+cl() <span class="hljs-comment">//2</span></code></pre>
+<p>这次Pet类型为类，是引用类型，因此//1行代码执行完成后，闭包<code>cl</code>复制了一份变量<code>pet</code>所指向的名为<code>旺旺</code>的Pet实例引用，此时变量<code>pet</code>与闭包<code>cl</code>捕捉的<code>pet</code>指向同一Pet实例，那么当变量<code>pet</code>所指向的Pet实例改名为<code>强强</code>时，闭包<code>cl</code>所捕捉的Pet实例名字也改为<code>强强</code>，因此输出结果为：<br><pre><code class="hljs swift">强强</code></pre></p>
 <h2 id="引用类型变量被捕捉后的特性"><a href="#引用类型变量被捕捉后的特性" class="headerlink" title="引用类型变量被捕捉后的特性"></a>引用类型变量被捕捉后的特性</h2><p>引用类型变量被捕捉意味着变量所指向的类的引用被复制，也即引用计数会加一，因此为强持有。</p>
-<p>因为引用类型变量捕捉的强持有特性，有时候会产生引用环，导致内存泄漏，解决办法官网文档已有，这里不再赘述。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameClosure</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;<br>        <span class="hljs-keyword">return</span> &#123;<br>            <span class="hljs-built_in">print</span>(<span class="hljs-keyword">self</span>.name)<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet?</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br><span class="hljs-keyword">let</span> cl = pet?.printNameClosure() <br>pet = <span class="hljs-literal">nil</span> <span class="hljs-comment">//1</span><br>cl!()<br></code></pre></td></tr></table></figure><br>闭包<code>cl</code>捕捉了变量<code>pet</code>所指向的Pet实例，而引用类型闭包捕捉为强持有，因此变量<code>pet</code>所指向的Pet实例的引用计数为2，那么当在//1行设置变量<code>pet</code>为<code>nil</code>时，<code>pet</code>所指向的Pet实例的引用计数减为1，并不销毁，因此输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">旺旺<br></code></pre></td></tr></table></figure></p>
+<p>因为引用类型变量捕捉的强持有特性，有时候会产生引用环，导致内存泄漏，解决办法官网文档已有，这里不再赘述。<br><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameClosure</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;
+        <span class="hljs-keyword">return</span> &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-keyword">self</span>.name)
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet?</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+<span class="hljs-keyword">let</span> cl = pet?.printNameClosure() 
+pet = <span class="hljs-literal">nil</span> <span class="hljs-comment">//1</span>
+cl!()</code></pre><br>闭包<code>cl</code>捕捉了变量<code>pet</code>所指向的Pet实例，而引用类型闭包捕捉为强持有，因此变量<code>pet</code>所指向的Pet实例的引用计数为2，那么当在//1行设置变量<code>pet</code>为<code>nil</code>时，<code>pet</code>所指向的Pet实例的引用计数减为1，并不销毁，因此输出结果为：<br><pre><code class="hljs swift">旺旺</code></pre></p>
 <h2 id="闭包捕捉发生的时机"><a href="#闭包捕捉发生的时机" class="headerlink" title="闭包捕捉发生的时机"></a>闭包捕捉发生的时机</h2><h3 id="当闭包所使用外部变量的作用域未结束时，闭包只是简单使用外部变量，并不捕捉。"><a href="#当闭包所使用外部变量的作用域未结束时，闭包只是简单使用外部变量，并不捕捉。" class="headerlink" title="当闭包所使用外部变量的作用域未结束时，闭包只是简单使用外部变量，并不捕捉。"></a>当闭包所使用外部变量的作用域未结束时，闭包只是简单使用外部变量，并不捕捉。</h3><p>看例子：</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-keyword">deinit</span> &#123;<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"\(name)升天了！"</span>)<br>    &#125;<br>&#125;<br><span class="hljs-comment">//someFunc函数内部是一个局部上下文</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">someFunc</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-comment">//局部上下文1</span><br>    <span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet?</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameBlock</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;<br>        <span class="hljs-comment">//局部上下文2</span><br>        <span class="hljs-keyword">return</span> &#123;<br>            <span class="hljs-built_in">print</span>(pet?.name)<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">let</span> cl = printNameBlock()<span class="hljs-comment">//1</span><br>    cl() <span class="hljs-comment">//2</span><br>    pet = <span class="hljs-literal">nil</span> <span class="hljs-comment">//3</span><br>    cl()<br>&#125;<br><br>someFunc() <span class="hljs-comment">//4</span><br></code></pre></td></tr></table></figure>
-<p>函数<code>someFunc()</code>的内部函数<code>printNameBlock()</code>返回一个闭包，被返回的闭包定义在<code>局部上下文2</code>中，并使用了<code>局部上下文1</code>中的变量<code>pet</code>。虽然//1行变量<code>cl</code>存储了内部函数<code>printNameBlock()</code>返回的闭包，但这个闭包从初始化到销毁整个生命周期中，并未脱离其使用的外部变量<code>pet</code>的作用域即<code>局部上下文1</code>，那么闭包<code>cl</code>并不捕捉外部变量<code>pet</code>。因此当//3行设置<code>pet</code>为<code>nil</code>时，变量<code>pet</code>所指向的Pet实例变量被销毁，最终的输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-type">Optional</span>(<span class="hljs-string">"旺旺"</span>)<br>旺旺升天了！<br><span class="hljs-literal">nil</span><br></code></pre></td></tr></table></figure></p>
+<pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-keyword">deinit</span> &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"\(name)升天了！"</span>)
+    &#125;
+&#125;
+<span class="hljs-comment">//someFunc函数内部是一个局部上下文</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">someFunc</span><span class="hljs-params">()</span></span> &#123;
+    <span class="hljs-comment">//局部上下文1</span>
+    <span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet?</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameBlock</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;
+        <span class="hljs-comment">//局部上下文2</span>
+        <span class="hljs-keyword">return</span> &#123;
+            <span class="hljs-built_in">print</span>(pet?.name)
+        &#125;
+    &#125;
+
+    <span class="hljs-keyword">let</span> cl = printNameBlock()<span class="hljs-comment">//1</span>
+    cl() <span class="hljs-comment">//2</span>
+    pet = <span class="hljs-literal">nil</span> <span class="hljs-comment">//3</span>
+    cl()
+&#125;
+
+someFunc() <span class="hljs-comment">//4</span></code></pre>
+<p>函数<code>someFunc()</code>的内部函数<code>printNameBlock()</code>返回一个闭包，被返回的闭包定义在<code>局部上下文2</code>中，并使用了<code>局部上下文1</code>中的变量<code>pet</code>。虽然//1行变量<code>cl</code>存储了内部函数<code>printNameBlock()</code>返回的闭包，但这个闭包从初始化到销毁整个生命周期中，并未脱离其使用的外部变量<code>pet</code>的作用域即<code>局部上下文1</code>，那么闭包<code>cl</code>并不捕捉外部变量<code>pet</code>。因此当//3行设置<code>pet</code>为<code>nil</code>时，变量<code>pet</code>所指向的Pet实例变量被销毁，最终的输出结果为：<br><pre><code class="hljs swift"><span class="hljs-type">Optional</span>(<span class="hljs-string">"旺旺"</span>)
+旺旺升天了！
+<span class="hljs-literal">nil</span></code></pre></p>
 <h3 id="如果闭包所使用的外部变量的作用域结束，而闭包或因被返回，或作为参数传递给其他函数而仍然存在时，闭包自动捕捉其使用的外部变量。"><a href="#如果闭包所使用的外部变量的作用域结束，而闭包或因被返回，或作为参数传递给其他函数而仍然存在时，闭包自动捕捉其使用的外部变量。" class="headerlink" title="如果闭包所使用的外部变量的作用域结束，而闭包或因被返回，或作为参数传递给其他函数而仍然存在时，闭包自动捕捉其使用的外部变量。"></a>如果闭包所使用的外部变量的作用域结束，而闭包或因被返回，或作为参数传递给其他函数而仍然存在时，闭包自动捕捉其使用的外部变量。</h3><p>看闭包被返回的例子</p>
-<h4 id="闭包被返回"><a href="#闭包被返回" class="headerlink" title="闭包被返回"></a>闭包被返回</h4><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-keyword">deinit</span> &#123;<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">"\(name)升天了！"</span>)<br>    &#125;<br>&#125;<br><span class="hljs-comment">//someFunc函数内部是一个局部上下文</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">someFunc</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-comment">//局部上下文1</span><br>    <span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet?</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameBlock</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;<br>        <span class="hljs-comment">//局部上下文2</span><br>        <span class="hljs-keyword">let</span> pet2 = pet<br>        <span class="hljs-keyword">return</span> &#123;<br>            <span class="hljs-built_in">print</span>(pet2?.name)<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">let</span> cl = printNameBlock()<span class="hljs-comment">//1</span><br>    cl() <span class="hljs-comment">//2</span><br>    pet = <span class="hljs-literal">nil</span> <span class="hljs-comment">//3</span><br>    cl()<br>&#125;<br><br>someFunc() <span class="hljs-comment">//4</span><br></code></pre></td></tr></table></figure>
-<p>上述示例与1）中示例相比，仅在内部函数<code>printNameBlock()</code>的<code>局部上下文2</code>中新增加了一个变量<code>pet2</code>，指向<code>局部上下文1</code>中变量<code>pet</code>所指向的名为<code>旺旺</code>的Pet实例，内部函数<code>printNameBlock()</code>返回的闭包使用了变量<code>pet2</code>，当这个闭包被返回时，其使用的外部变量<code>pet2</code>的作用域即<code>局部上下文2</code>也同时结束，因此变量<code>pet2</code>被捕捉。那么//1行执行结束后，闭包<code>cl</code>捕捉了变量<code>pet2</code>，则变量<code>pet</code>所指向的名为<code>旺旺</code>的Pet实例的引用为2，当在//3行设置<code>pet</code>为<code>nil</code>时，其指向的名为<code>旺旺</code>的Pet实例的引用只是降为1而已，并不销毁，因此最后的输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-type">Optional</span>(<span class="hljs-string">"旺旺"</span>)<br><span class="hljs-type">Optional</span>(<span class="hljs-string">"旺旺"</span>)<br>旺旺升天了<br></code></pre></td></tr></table></figure><br>之所以仍然输出<code>旺旺升天了</code>，是因为//4行<code>someFunc()</code>调用结束后，闭包<code>cl</code>被销毁，其捕捉的变量随即也都被销毁。</p>
-<h4 id="闭包被传递"><a href="#闭包被传递" class="headerlink" title="闭包被传递"></a>闭包被传递</h4><p>在异步请求时，任务常常被包装为闭包，作为参数提交给GCD或NSOperationQueue执行。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-comment">//局部上下文1</span><br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-keyword">mutating</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">changeNameTo</span><span class="hljs-params">(name: String)</span></span> &#123;<br>        <span class="hljs-comment">//局部上下文2</span><br>        <span class="hljs-comment">//异步</span><br>        <span class="hljs-keyword">let</span> dispatchQueue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)<br>        dispatch_async(dispatchQueue) &#123;<br>            <span class="hljs-comment">//局部上下文3</span><br>            <span class="hljs-keyword">self</span>.name = name<br>            sleep(<span class="hljs-number">1</span>) <span class="hljs-comment">//1</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">var</span> pet = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br>pet.changeNameTo(<span class="hljs-string">"强强"</span>)<br>sleep(<span class="hljs-number">3</span>) <span class="hljs-comment">//2</span><br><span class="hljs-built_in">print</span>(pet.name) <span class="hljs-comment">//3</span><br></code></pre></td></tr></table></figure><br>上例中的Pet是一个struct，是个值类型，其实例方法<code>changNameTo(_:)</code>使用异步修改了自己的名字，异步的任务闭包使用了<code>局部上下文1</code>中的<code>self</code>即实例本身，但是否捕捉<code>self</code>，还取决于异步任务执行结束时，<code>局部上下文1</code>是否结束。在上述示例中，//1行使得闭包任务睡眠1s，因此保证了闭包任务执行结束时，<code>局部上下文2</code>已经结束，也即<code>局部上下文1</code>已经结束，因此闭包任务捕捉了<code>self</code>实例本身，//2行睡眠了3秒，保证了//3行输出Pet实例名字时，异步任务已经执行完成，但由于传入异步任务的闭包捕捉了<code>self</code><br>，因此并不能达到修改Pet名字的目的，输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">旺旺<br></code></pre></td></tr></table></figure><br>稍微修改下，让<code>局部上下文2</code>睡眠1s。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-comment">//局部上下文1</span><br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-keyword">mutating</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">changeNameTo</span><span class="hljs-params">(name: String)</span></span> &#123;<br>        <span class="hljs-comment">//局部上下文2</span><br>        <span class="hljs-comment">//异步</span><br>        <span class="hljs-keyword">let</span> dispatchQueue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)<br>        dispatch_async(dispatchQueue) &#123;<br>            <span class="hljs-comment">//局部上下文3</span><br>            <span class="hljs-keyword">self</span>.name = name<br>        &#125;<br>        sleep(<span class="hljs-number">1</span>) <span class="hljs-comment">//1</span><br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">var</span> pet = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br>pet.changeNameTo(<span class="hljs-string">"强强"</span>)<br>sleep(<span class="hljs-number">3</span>) <span class="hljs-comment">//2</span><br><span class="hljs-built_in">print</span>(pet.name) <span class="hljs-comment">//3</span><br></code></pre></td></tr></table></figure><br>由于//1行代码让<code>局部上下文2</code>睡眠1s，因此导致异步任务执行结束时，<code>self</code>所在的<code>局部上下文1</code>仍在，那么异步任务闭包并不捕捉<code>self</code>，因此可以达到修改Pet名字的目的，那么输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">强强<br></code></pre></td></tr></table></figure></p>
-<p>如果将上述两个例子都改为同步，那么，根据同步的性质，同步任务闭包一定不捕捉<code>self</code>:<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;<br>    <span class="hljs-comment">//局部上下文1</span><br>    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span><br>    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;<br>        <span class="hljs-keyword">self</span>.name = name<br>    &#125;<br><br>    <span class="hljs-keyword">mutating</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">changeNameTo</span><span class="hljs-params">(name: String)</span></span> &#123;<br>        <span class="hljs-comment">//局部上下文2</span><br>        <span class="hljs-comment">//同步</span><br>        <span class="hljs-keyword">let</span> dispatchQueue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)<br>        dispatch_sync(dispatchQueue) &#123;<br>            <span class="hljs-comment">//局部上下文3</span><br>            <span class="hljs-keyword">self</span>.name = name<br>             sleep(<span class="hljs-number">1</span>) <span class="hljs-comment">//1</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">var</span> pet = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) <br>pet.changeNameTo(<span class="hljs-string">"强强"</span>)<br>sleep(<span class="hljs-number">3</span>) <span class="hljs-comment">//2</span><br><span class="hljs-built_in">print</span>(pet.name) <span class="hljs-comment">//3</span><br></code></pre></td></tr></table></figure><br>由于是同步任务，意味着<code>局部上下文2</code>一直会等到<code>局部上下文3</code>返回才返回，也即在<code>局部上下文3</code>执行时，<code>局部上下文2</code>一直未结束，因此同步任务闭包并不捕捉<code>self</code>，则结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">强强<br></code></pre></td></tr></table></figure><br>需要注意的是，Swift中对值类型的使用达到了空前的程度，因此我们常用struct定义model，如果在model我们还异步请求数据，那么根据闭包的捕捉特性，可能请求了两年也不会有结果。如果改为引用类型，则没有这种隐患，因此如果模型需使用异步请求数据，定义时选择引用类型更合适。</p>
+<h4 id="闭包被返回"><a href="#闭包被返回" class="headerlink" title="闭包被返回"></a>闭包被返回</h4><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-keyword">deinit</span> &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"\(name)升天了！"</span>)
+    &#125;
+&#125;
+<span class="hljs-comment">//someFunc函数内部是一个局部上下文</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">someFunc</span><span class="hljs-params">()</span></span> &#123;
+    <span class="hljs-comment">//局部上下文1</span>
+    <span class="hljs-keyword">var</span> pet: <span class="hljs-type">Pet?</span> = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">printNameBlock</span><span class="hljs-params">()</span></span> -&gt; () -&gt; <span class="hljs-type">Void</span> &#123;
+        <span class="hljs-comment">//局部上下文2</span>
+        <span class="hljs-keyword">let</span> pet2 = pet
+        <span class="hljs-keyword">return</span> &#123;
+            <span class="hljs-built_in">print</span>(pet2?.name)
+        &#125;
+    &#125;
+
+    <span class="hljs-keyword">let</span> cl = printNameBlock()<span class="hljs-comment">//1</span>
+    cl() <span class="hljs-comment">//2</span>
+    pet = <span class="hljs-literal">nil</span> <span class="hljs-comment">//3</span>
+    cl()
+&#125;
+
+someFunc() <span class="hljs-comment">//4</span></code></pre>
+<p>上述示例与1）中示例相比，仅在内部函数<code>printNameBlock()</code>的<code>局部上下文2</code>中新增加了一个变量<code>pet2</code>，指向<code>局部上下文1</code>中变量<code>pet</code>所指向的名为<code>旺旺</code>的Pet实例，内部函数<code>printNameBlock()</code>返回的闭包使用了变量<code>pet2</code>，当这个闭包被返回时，其使用的外部变量<code>pet2</code>的作用域即<code>局部上下文2</code>也同时结束，因此变量<code>pet2</code>被捕捉。那么//1行执行结束后，闭包<code>cl</code>捕捉了变量<code>pet2</code>，则变量<code>pet</code>所指向的名为<code>旺旺</code>的Pet实例的引用为2，当在//3行设置<code>pet</code>为<code>nil</code>时，其指向的名为<code>旺旺</code>的Pet实例的引用只是降为1而已，并不销毁，因此最后的输出结果为：<br><pre><code class="hljs swift"><span class="hljs-type">Optional</span>(<span class="hljs-string">"旺旺"</span>)
+<span class="hljs-type">Optional</span>(<span class="hljs-string">"旺旺"</span>)
+旺旺升天了</code></pre><br>之所以仍然输出<code>旺旺升天了</code>，是因为//4行<code>someFunc()</code>调用结束后，闭包<code>cl</code>被销毁，其捕捉的变量随即也都被销毁。</p>
+<h4 id="闭包被传递"><a href="#闭包被传递" class="headerlink" title="闭包被传递"></a>闭包被传递</h4><p>在异步请求时，任务常常被包装为闭包，作为参数提交给GCD或NSOperationQueue执行。<br><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-comment">//局部上下文1</span>
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-keyword">mutating</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">changeNameTo</span><span class="hljs-params">(name: String)</span></span> &#123;
+        <span class="hljs-comment">//局部上下文2</span>
+        <span class="hljs-comment">//异步</span>
+        <span class="hljs-keyword">let</span> dispatchQueue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)
+        dispatch_async(dispatchQueue) &#123;
+            <span class="hljs-comment">//局部上下文3</span>
+            <span class="hljs-keyword">self</span>.name = name
+            sleep(<span class="hljs-number">1</span>) <span class="hljs-comment">//1</span>
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-keyword">var</span> pet = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+pet.changeNameTo(<span class="hljs-string">"强强"</span>)
+sleep(<span class="hljs-number">3</span>) <span class="hljs-comment">//2</span>
+<span class="hljs-built_in">print</span>(pet.name) <span class="hljs-comment">//3</span></code></pre><br>上例中的Pet是一个struct，是个值类型，其实例方法<code>changNameTo(_:)</code>使用异步修改了自己的名字，异步的任务闭包使用了<code>局部上下文1</code>中的<code>self</code>即实例本身，但是否捕捉<code>self</code>，还取决于异步任务执行结束时，<code>局部上下文1</code>是否结束。在上述示例中，//1行使得闭包任务睡眠1s，因此保证了闭包任务执行结束时，<code>局部上下文2</code>已经结束，也即<code>局部上下文1</code>已经结束，因此闭包任务捕捉了<code>self</code>实例本身，//2行睡眠了3秒，保证了//3行输出Pet实例名字时，异步任务已经执行完成，但由于传入异步任务的闭包捕捉了<code>self</code><br>，因此并不能达到修改Pet名字的目的，输出结果为：<br><pre><code class="hljs swift">旺旺</code></pre><br>稍微修改下，让<code>局部上下文2</code>睡眠1s。<br><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-comment">//局部上下文1</span>
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-keyword">mutating</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">changeNameTo</span><span class="hljs-params">(name: String)</span></span> &#123;
+        <span class="hljs-comment">//局部上下文2</span>
+        <span class="hljs-comment">//异步</span>
+        <span class="hljs-keyword">let</span> dispatchQueue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)
+        dispatch_async(dispatchQueue) &#123;
+            <span class="hljs-comment">//局部上下文3</span>
+            <span class="hljs-keyword">self</span>.name = name
+        &#125;
+        sleep(<span class="hljs-number">1</span>) <span class="hljs-comment">//1</span>
+    &#125;
+&#125;
+
+<span class="hljs-keyword">var</span> pet = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+pet.changeNameTo(<span class="hljs-string">"强强"</span>)
+sleep(<span class="hljs-number">3</span>) <span class="hljs-comment">//2</span>
+<span class="hljs-built_in">print</span>(pet.name) <span class="hljs-comment">//3</span></code></pre><br>由于//1行代码让<code>局部上下文2</code>睡眠1s，因此导致异步任务执行结束时，<code>self</code>所在的<code>局部上下文1</code>仍在，那么异步任务闭包并不捕捉<code>self</code>，因此可以达到修改Pet名字的目的，那么输出结果为：<br><pre><code class="hljs swift">强强</code></pre></p>
+<p>如果将上述两个例子都改为同步，那么，根据同步的性质，同步任务闭包一定不捕捉<code>self</code>:<br><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Pet</span> </span>&#123;
+    <span class="hljs-comment">//局部上下文1</span>
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">init</span>(name: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.name = name
+    &#125;
+
+    <span class="hljs-keyword">mutating</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">changeNameTo</span><span class="hljs-params">(name: String)</span></span> &#123;
+        <span class="hljs-comment">//局部上下文2</span>
+        <span class="hljs-comment">//同步</span>
+        <span class="hljs-keyword">let</span> dispatchQueue = dispatch_get_global_queue(<span class="hljs-type">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="hljs-number">0</span>)
+        dispatch_sync(dispatchQueue) &#123;
+            <span class="hljs-comment">//局部上下文3</span>
+            <span class="hljs-keyword">self</span>.name = name
+             sleep(<span class="hljs-number">1</span>) <span class="hljs-comment">//1</span>
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-keyword">var</span> pet = <span class="hljs-type">Pet</span>(name: <span class="hljs-string">"旺旺"</span>) 
+pet.changeNameTo(<span class="hljs-string">"强强"</span>)
+sleep(<span class="hljs-number">3</span>) <span class="hljs-comment">//2</span>
+<span class="hljs-built_in">print</span>(pet.name) <span class="hljs-comment">//3</span></code></pre><br>由于是同步任务，意味着<code>局部上下文2</code>一直会等到<code>局部上下文3</code>返回才返回，也即在<code>局部上下文3</code>执行时，<code>局部上下文2</code>一直未结束，因此同步任务闭包并不捕捉<code>self</code>，则结果为：<br><pre><code class="hljs swift">强强</code></pre><br>需要注意的是，Swift中对值类型的使用达到了空前的程度，因此我们常用struct定义model，如果在model我们还异步请求数据，那么根据闭包的捕捉特性，可能请求了两年也不会有结果。如果改为引用类型，则没有这种隐患，因此如果模型需使用异步请求数据，定义时选择引用类型更合适。</p>
 <h4 id="闭包中如果定义了捕捉列表，闭包在定义时立即capture捕捉列表中所有变量，并将捕捉的变量一律改为常量，供自己实用。"><a href="#闭包中如果定义了捕捉列表，闭包在定义时立即capture捕捉列表中所有变量，并将捕捉的变量一律改为常量，供自己实用。" class="headerlink" title="闭包中如果定义了捕捉列表，闭包在定义时立即capture捕捉列表中所有变量，并将捕捉的变量一律改为常量，供自己实用。"></a>闭包中如果定义了捕捉列表，闭包在定义时立即capture捕捉列表中所有变量，并将捕捉的变量一律改为常量，供自己实用。</h4><p>闭包捕捉一般发生在所使用的外部常量所在上下文结束时，但如果闭包定义了捕捉列表，闭包在初始化时立即捕捉捕捉列表中的变量，并将捕捉的变量一律改为常量，这也是捕捉列表应有的意义。</p>
-<p>对比两个示例，一个添加了捕捉列表，一个没有。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">var</span> i = <span class="hljs-number">18</span><br><span class="hljs-keyword">let</span> cl = &#123; <span class="hljs-comment">//并未添加捕捉列表</span><br>    <span class="hljs-built_in">print</span>(i)<br>&#125;<br><br>i = <span class="hljs-number">100</span><br>cl()<br></code></pre></td></tr></table></figure><br>闭包<code>cl</code>所使用的外部变量<code>i</code>的局部作用域一直未结束，因此闭包<code>cl</code>只是简单的使用变量<code>i</code>，并不捕捉，无论<code>i</code>如何变，<code>cl</code>调用时都会使用自己被调用时刻<code>i</code>的最新值，因此输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-number">100</span><br></code></pre></td></tr></table></figure><br>如果添加捕捉列表：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">var</span> i = <span class="hljs-number">18</span><br><span class="hljs-keyword">let</span> cl = &#123; [i] <span class="hljs-keyword">in</span> <span class="hljs-comment">//添加了捕捉列表</span><br>    <span class="hljs-built_in">print</span>(i)<br>&#125;<br><br>i = <span class="hljs-number">100</span><br>cl()<br></code></pre></td></tr></table></figure><br>闭包<code>cl</code>所使用的外部变量<code>i</code>的局部作用域虽未结束，但由于闭包<code>cl</code>定义了捕捉列表，因此闭包<code>cl</code>在其定义完成时，即捕捉了变量<code>i</code>，copy了一份<code>i</code>，由于<code>i</code>是值类型，copy后与变量<code>i</code>不再有任何关系，因此输出结果：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-number">18</span><br></code></pre></td></tr></table></figure><br>当然由于捕捉列表中捕捉的变量均被改为常量，在闭包内无法修改捕捉变量的值：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">var</span> i = <span class="hljs-number">18</span><br><span class="hljs-keyword">let</span> cl = &#123; [i] <span class="hljs-keyword">in</span> <span class="hljs-comment">//添加了捕捉列表</span><br>    i = <span class="hljs-number">56</span> <span class="hljs-comment">//此行报错</span><br>    <span class="hljs-built_in">print</span>(i)<br>&#125;<br><br>i = <span class="hljs-number">100</span><br>cl()<br></code></pre></td></tr></table></figure><br>上述示例在闭包内部修改了捕捉变量<code>i</code>的值，但由于捕捉列表中的变量在捕捉后均被改为常量，因此会报错。</p>
+<p>对比两个示例，一个添加了捕捉列表，一个没有。<br><pre><code class="hljs swift"><span class="hljs-keyword">var</span> i = <span class="hljs-number">18</span>
+<span class="hljs-keyword">let</span> cl = &#123; <span class="hljs-comment">//并未添加捕捉列表</span>
+    <span class="hljs-built_in">print</span>(i)
+&#125;
+
+i = <span class="hljs-number">100</span>
+cl()</code></pre><br>闭包<code>cl</code>所使用的外部变量<code>i</code>的局部作用域一直未结束，因此闭包<code>cl</code>只是简单的使用变量<code>i</code>，并不捕捉，无论<code>i</code>如何变，<code>cl</code>调用时都会使用自己被调用时刻<code>i</code>的最新值，因此输出结果为：<br><pre><code class="hljs swift"><span class="hljs-number">100</span></code></pre><br>如果添加捕捉列表：<br><pre><code class="hljs swift"><span class="hljs-keyword">var</span> i = <span class="hljs-number">18</span>
+<span class="hljs-keyword">let</span> cl = &#123; [i] <span class="hljs-keyword">in</span> <span class="hljs-comment">//添加了捕捉列表</span>
+    <span class="hljs-built_in">print</span>(i)
+&#125;
+
+i = <span class="hljs-number">100</span>
+cl()</code></pre><br>闭包<code>cl</code>所使用的外部变量<code>i</code>的局部作用域虽未结束，但由于闭包<code>cl</code>定义了捕捉列表，因此闭包<code>cl</code>在其定义完成时，即捕捉了变量<code>i</code>，copy了一份<code>i</code>，由于<code>i</code>是值类型，copy后与变量<code>i</code>不再有任何关系，因此输出结果：<br><pre><code class="hljs swift"><span class="hljs-number">18</span></code></pre><br>当然由于捕捉列表中捕捉的变量均被改为常量，在闭包内无法修改捕捉变量的值：<br><pre><code class="hljs swift"><span class="hljs-keyword">var</span> i = <span class="hljs-number">18</span>
+<span class="hljs-keyword">let</span> cl = &#123; [i] <span class="hljs-keyword">in</span> <span class="hljs-comment">//添加了捕捉列表</span>
+    i = <span class="hljs-number">56</span> <span class="hljs-comment">//此行报错</span>
+    <span class="hljs-built_in">print</span>(i)
+&#125;
+
+i = <span class="hljs-number">100</span>
+cl()</code></pre><br>上述示例在闭包内部修改了捕捉变量<code>i</code>的值，但由于捕捉列表中的变量在捕捉后均被改为常量，因此会报错。</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>经过上述分析，closure capture主要有四个特性，<br>1）闭包capture某个变量等于copy一份这个变量，值类型的变量直接复制值，引用类型的变量直接复制引用值，与函数中参数传递类似，复制后的变量名同被捕捉的变量。</p>
 <p>2）如果闭包所使用的外部变量的作用域未结束，闭包只是简单使用这些外部变量，并不捕捉。<br>3）闭包捕捉发生在闭包所使用的外部变量的作用域结束，而闭包或因被返回，或作为参数传递给其他函数而仍然存在时。<br>第2和第3点讲的都是闭包捕捉的时机，其实可以总结为一句话，闭包捕捉发生在其所使用的外部变量即将销毁的时刻，也即你再不捕捉我就没了。这也意味着，当闭包捕捉多个外部变量，而这些外部变量的作用域不同时，闭包按照各个外部变量作用域结束的先后次序进行变量捕捉，并非一次性捕捉。</p>
 <p>4）闭包中如果定义了捕捉列表，闭包在定义时立即capture捕捉列表中所有变量，并将捕捉的变量一律改为常量，供自己实用。</p>
@@ -189,7 +394,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/closure/" rel="tag">closure</a>, <a class="has-link-grey -link" href="/tags/swift/" rel="tag">swift</a>
+                    <a class="has-link-grey -link" href="/tags/iOS/" rel="tag">iOS</a>
                 </div>
             </div>
         </div>
@@ -298,6 +503,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
@@ -372,25 +596,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -403,29 +608,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -447,49 +631,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -698,7 +854,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

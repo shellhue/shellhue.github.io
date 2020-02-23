@@ -20,10 +20,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/og_image.png">
 <meta property="article:published_time" content="2016-03-27T15:51:51.000Z">
-<meta property="article:modified_time" content="2020-02-09T09:14:27.689Z">
+<meta property="article:modified_time" content="2020-02-10T15:32:28.816Z">
 <meta property="article:author" content="轻墨">
-<meta property="article:tag" content="swift">
-<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="leetcode">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/og_image.png">
 
@@ -39,7 +38,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -161,22 +160,159 @@
 </blockquote>
 <p>HomeBrew作者，天才程序员Max Howell兴致盎然地去Google面试（估计是刚好路过），结果却因不会在白板上翻转二叉树被Google粗鲁地拒绝了，舆论甚是哗然，其中缘由<a href="https://www.zhihu.com/question/31202353">知乎</a>上也讨论的热火朝天。谁料，始作俑者<code>翻转二叉树</code>这道题目，一时也热地不要不要的。作为程序员小白的我，从未翻过二叉树。最近闲来无事，闲暇之余，想及至此，就顺手用Swift翻转了二叉树。</p>
 <p>如果您对二叉树的概念不甚清晰，可以先到维基百科上（不推荐百度百科，因为要养成良好的搜索习惯）再温习温习<a href="https://en.wikipedia.org/wiki/Binary_tree">二叉树</a>相关知识。</p>
-<h1 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h1><p>先定义一个二叉树类<code>Tree</code>，主要定义树的三个必要属性，关键值<code>key</code>，左子树<code>leftTree</code>和右子树<code>rightTree</code>。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//define Tree class</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tree</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> key: <span class="hljs-type">Int</span><br>    <span class="hljs-keyword">var</span> leftTree: <span class="hljs-type">Tree?</span><br>    <span class="hljs-keyword">var</span> rightTree: <span class="hljs-type">Tree?</span><br>    <br>    <span class="hljs-keyword">init</span>(key: <span class="hljs-type">Int</span>) &#123;<br>        <span class="hljs-keyword">self</span>.key = key<br>    &#125;<br>    <br>&#125;<br></code></pre></td></tr></table></figure><br><a id="more"></a></p>
-<h1 id="递归翻转"><a href="#递归翻转" class="headerlink" title="递归翻转"></a>递归翻转</h1><p>用递归的方式翻转二叉树，主要分为两步：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//invert binary tree using recursive</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">invertBinaryTreeWithRecursive</span><span class="hljs-params">(root: Tree)</span></span> &#123;<br>    <span class="hljs-comment">//1</span><br>    <span class="hljs-keyword">let</span> tempT = root.leftTree<br>    root.leftTree = root.rightTree<br>    root.rightTree = tempT<br><br>    <span class="hljs-comment">//2</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> leftT = root.leftTree &#123;<br>        invertBinaryTreeWithRecursive(leftT)<br>    &#125;<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> rightT = root.rightTree &#123;<br>        invertBinaryTreeWithRecursive(rightT)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>第1步：翻转本树的左子树和右子树，需要借助一个零时变量<code>tempT</code>；<br>第2步：判断左右树是否存在，如存在，则递归调用进行翻转。</p>
+<h1 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h1><p>先定义一个二叉树类<code>Tree</code>，主要定义树的三个必要属性，关键值<code>key</code>，左子树<code>leftTree</code>和右子树<code>rightTree</code>。<br><pre><code class="hljs swift"><span class="hljs-comment">//define Tree class</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tree</span> </span>&#123;
+    <span class="hljs-keyword">var</span> key: <span class="hljs-type">Int</span>
+    <span class="hljs-keyword">var</span> leftTree: <span class="hljs-type">Tree?</span>
+    <span class="hljs-keyword">var</span> rightTree: <span class="hljs-type">Tree?</span>
+    
+    <span class="hljs-keyword">init</span>(key: <span class="hljs-type">Int</span>) &#123;
+        <span class="hljs-keyword">self</span>.key = key
+    &#125;
+    
+&#125;</code></pre><br><a id="more"></a></p>
+<h1 id="递归翻转"><a href="#递归翻转" class="headerlink" title="递归翻转"></a>递归翻转</h1><p>用递归的方式翻转二叉树，主要分为两步：<br><pre><code class="hljs swift"><span class="hljs-comment">//invert binary tree using recursive</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">invertBinaryTreeWithRecursive</span><span class="hljs-params">(root: Tree)</span></span> &#123;
+    <span class="hljs-comment">//1</span>
+    <span class="hljs-keyword">let</span> tempT = root.leftTree
+    root.leftTree = root.rightTree
+    root.rightTree = tempT
+
+    <span class="hljs-comment">//2</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> leftT = root.leftTree &#123;
+        invertBinaryTreeWithRecursive(leftT)
+    &#125;
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> rightT = root.rightTree &#123;
+        invertBinaryTreeWithRecursive(rightT)
+    &#125;
+&#125;</code></pre><br>第1步：翻转本树的左子树和右子树，需要借助一个零时变量<code>tempT</code>；<br>第2步：判断左右树是否存在，如存在，则递归调用进行翻转。</p>
 <p>递归翻转二叉树每个节点只访问1次，在每个节点上的耗时是常数，因此总耗时Θ(n)，n是树的节点树。</p>
-<h1 id="非递归翻转"><a href="#非递归翻转" class="headerlink" title="非递归翻转"></a>非递归翻转</h1><p>其实也可以不用递归翻转二叉树，分为3步：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//invert binary tree without using recursive</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">invertBinaryTreeWithoutRecursive</span><span class="hljs-params">(root: Tree)</span></span> &#123;<br>    <span class="hljs-comment">//1</span><br>    <span class="hljs-keyword">var</span> arr = [<span class="hljs-type">Tree</span>]()<br>    arr.append(root)<br>    <span class="hljs-comment">//2</span><br>    <span class="hljs-keyword">while</span> !arr.isEmpty &#123;<br>        <span class="hljs-keyword">let</span> node = arr.removeFirst()<br>        <span class="hljs-keyword">let</span> tempT = node.leftTree<br>        node.leftTree = node.rightTree<br>        node.rightTree = tempT<br>        <br>        <span class="hljs-comment">//3</span><br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> leftT = node.leftTree &#123;<br>            arr.append(leftT)<br>        &#125;<br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> rightT = node.rightTree &#123;<br>            arr.append(rightT)<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>第1步：初始化一个数组，用来存储尚未翻转的树，第一个尚未翻转的树即是根树；<br>第2步：判断是否仍有树未翻转，如果有，从数组中取出第一个树，并将它从数组中删除，然后对这个树翻转左子树和右子树，需要借助一个零时变量<code>tempT</code>；<br>第3步：判断被翻的树左右子树是否存在，如存在，将它依次存储在数组的最后面。</p>
+<h1 id="非递归翻转"><a href="#非递归翻转" class="headerlink" title="非递归翻转"></a>非递归翻转</h1><p>其实也可以不用递归翻转二叉树，分为3步：<br><pre><code class="hljs swift"><span class="hljs-comment">//invert binary tree without using recursive</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">invertBinaryTreeWithoutRecursive</span><span class="hljs-params">(root: Tree)</span></span> &#123;
+    <span class="hljs-comment">//1</span>
+    <span class="hljs-keyword">var</span> arr = [<span class="hljs-type">Tree</span>]()
+    arr.append(root)
+    <span class="hljs-comment">//2</span>
+    <span class="hljs-keyword">while</span> !arr.isEmpty &#123;
+        <span class="hljs-keyword">let</span> node = arr.removeFirst()
+        <span class="hljs-keyword">let</span> tempT = node.leftTree
+        node.leftTree = node.rightTree
+        node.rightTree = tempT
+        
+        <span class="hljs-comment">//3</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> leftT = node.leftTree &#123;
+            arr.append(leftT)
+        &#125;
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> rightT = node.rightTree &#123;
+            arr.append(rightT)
+        &#125;
+    &#125;
+&#125;</code></pre><br>第1步：初始化一个数组，用来存储尚未翻转的树，第一个尚未翻转的树即是根树；<br>第2步：判断是否仍有树未翻转，如果有，从数组中取出第一个树，并将它从数组中删除，然后对这个树翻转左子树和右子树，需要借助一个零时变量<code>tempT</code>；<br>第3步：判断被翻的树左右子树是否存在，如存在，将它依次存储在数组的最后面。</p>
 <p>这种翻转二叉树的方式是从左到右翻完同一层的树节点，再从左到右翻下一层的树节点，直至翻完，其耗时也是Θ(n)。</p>
 <h1 id="遍历二叉树"><a href="#遍历二叉树" class="headerlink" title="遍历二叉树"></a>遍历二叉树</h1><p>为了遍历二叉树，输出有树形状的结果，先定义一个辅助函数，计算树的高度.</p>
-<h2 id="计算树的高度"><a href="#计算树的高度" class="headerlink" title="计算树的高度"></a>计算树的高度</h2><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//calculate the height of a tree using recursive</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">heightOfTree</span><span class="hljs-params">(root: Tree)</span></span> -&gt; <span class="hljs-type">Int</span> &#123;<br>    <span class="hljs-comment">//1</span><br>    <span class="hljs-keyword">var</span> leftTreeHeight = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">var</span> rightTreeHeight = <span class="hljs-number">0</span><br>    <span class="hljs-comment">//2</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> leftT = root.leftTree &#123;<br>        leftTreeHeight = <span class="hljs-number">1</span> + heightOfTree(leftT)<br>    &#125;<br>    <br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> rightT = root.rightTree &#123;<br>        rightTreeHeight = <span class="hljs-number">1</span> + heightOfTree(rightT)<br>    &#125;<br>    <span class="hljs-comment">//3</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">max</span>(leftTreeHeight, rightTreeHeight)<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="计算树的高度"><a href="#计算树的高度" class="headerlink" title="计算树的高度"></a>计算树的高度</h2><pre><code class="hljs swift"><span class="hljs-comment">//calculate the height of a tree using recursive</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">heightOfTree</span><span class="hljs-params">(root: Tree)</span></span> -&gt; <span class="hljs-type">Int</span> &#123;
+    <span class="hljs-comment">//1</span>
+    <span class="hljs-keyword">var</span> leftTreeHeight = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">var</span> rightTreeHeight = <span class="hljs-number">0</span>
+    <span class="hljs-comment">//2</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> leftT = root.leftTree &#123;
+        leftTreeHeight = <span class="hljs-number">1</span> + heightOfTree(leftT)
+    &#125;
+    
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> rightT = root.rightTree &#123;
+        rightTreeHeight = <span class="hljs-number">1</span> + heightOfTree(rightT)
+    &#125;
+    <span class="hljs-comment">//3</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">max</span>(leftTreeHeight, rightTreeHeight)
+&#125;</code></pre>
 <p>计算树的高度也必须用到递归。<br>第1步：初始化两个高度变量，分别代表左右子树高度，缺省值为0，即左右子树均为<code>nil</code>时的值；<br>第2步：判断左右子树是否存在，如存在递归求左右子树的高度；<br>第3步：返回左右子树高度的最大值，这一步是递归终止条件，是整个递归的精髓。</p>
 <p>因为遍历了所有树节点，因此总耗时Θ(n)。</p>
-<h2 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h2><p>为输出的结果具有树的形状，树的遍历输出要费点脑筋，分4步：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//print out binary tree in the shape of tree when the key is less than 10</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">tranverseTree</span><span class="hljs-params">(root: Tree)</span></span> &#123;<br>    <span class="hljs-comment">//1</span><br>    <span class="hljs-keyword">let</span> height = heightOfTree(root)<br>    <span class="hljs-keyword">var</span> trees = [(tree: root, number: <span class="hljs-number">1</span>, height: height, depth: <span class="hljs-number">0</span>, placeHolderTree: <span class="hljs-literal">false</span>)]<br>    <span class="hljs-keyword">let</span> placeHolderTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">0</span>)<br>    <br>    <span class="hljs-comment">//2</span><br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">appendTree</span><span class="hljs-params">(tree: Tree?, node: <span class="hljs-params">(tree: Tree, number: Int, height: Int, depth: Int, placeHolderTree: Bool)</span></span></span>) &#123;<br>        <span class="hljs-keyword">let</span> number: <span class="hljs-type">Int</span><br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> last = trees.last &#123;<br>            number = last.height == node.height - <span class="hljs-number">1</span> ? last.number + <span class="hljs-number">1</span> : <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            number = <span class="hljs-number">1</span><br>        &#125;<br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> t = tree &#123;<br>            trees.append((tree: t,<br>                number: number,<br>                height: node.height - <span class="hljs-number">1</span>,<br>                depth: node.depth + <span class="hljs-number">1</span>,<br>                placeHolderTree: <span class="hljs-literal">false</span>))<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            trees.append((tree: placeHolderTree,<br>                number: number,<br>                height: node.height - <span class="hljs-number">1</span>,<br>                depth: node.depth + <span class="hljs-number">1</span>,<br>                placeHolderTree: <span class="hljs-literal">true</span>))<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-comment">//3</span><br>    <span class="hljs-keyword">while</span> trees[<span class="hljs-number">0</span>].height &gt;= <span class="hljs-number">0</span> &#123;<br>        <span class="hljs-keyword">let</span> node = trees.removeFirst()<br>        <span class="hljs-keyword">let</span> space: <span class="hljs-type">Int</span><br>        <span class="hljs-keyword">if</span> node.number == <span class="hljs-number">1</span> &#123;<br>            space = <span class="hljs-type">Int</span>(pow(<span class="hljs-number">2.0</span>, <span class="hljs-type">Double</span>(node.height)))<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            space = <span class="hljs-type">Int</span>(pow(<span class="hljs-number">2.0</span>, <span class="hljs-type">Double</span>(node.height + <span class="hljs-number">1</span>)))<br>        &#125;<br>        <span class="hljs-keyword">for</span> <span class="hljs-number">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>..&lt;space &#123;<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">" "</span>, terminator: <span class="hljs-string">""</span>)<br>        &#125;<br>        <span class="hljs-keyword">if</span> node.placeHolderTree &#123;<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">" "</span>, terminator: <span class="hljs-string">""</span>)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-built_in">print</span>(node.tree.key, terminator: <span class="hljs-string">""</span>)<br>        &#125;<br>        <span class="hljs-keyword">if</span> node.number == <span class="hljs-type">Int</span>(pow(<span class="hljs-number">2.0</span>, <span class="hljs-type">Double</span>(node.depth))) &#123;<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">""</span>)<br>        &#125;<br>        <br>        <span class="hljs-comment">//4</span><br>        appendTree(node.tree.leftTree, node: node)<br>        appendTree(node.tree.rightTree, node: node)<br><br>    &#125;<br>    <br>&#125;<br></code></pre></td></tr></table></figure><br>整个遍历的思路与<code>invertBinaryTreeWithoutRecursive:</code>完全一致。<br>第1步：初始化一个数组，存储元组类型<code>(tree: Tree, number: Int, height: Int, depth: Int, placeHolderTree: Bool)</code>；这个元组中<code>tree</code>表示一个树节点；<code>number</code>表示这个树节点在其所在层的位置，第一个<code>number</code>为1，第二个<code>number</code>为2，依次类推；<code>height</code>表示这个树节点的高度；<code>depth</code>表示这个树节点的深度；<code>placeHolderTree</code>表示这个树节点是否为占位树。为便于后续遍历，当树为非完全二叉树时，空缺的树节点全部用占位树填补，因此才有<code>placeHolderTree</code>元组元素，以标示占位树；</p>
+<h2 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h2><p>为输出的结果具有树的形状，树的遍历输出要费点脑筋，分4步：<br><pre><code class="hljs swift"><span class="hljs-comment">//print out binary tree in the shape of tree when the key is less than 10</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">tranverseTree</span><span class="hljs-params">(root: Tree)</span></span> &#123;
+    <span class="hljs-comment">//1</span>
+    <span class="hljs-keyword">let</span> height = heightOfTree(root)
+    <span class="hljs-keyword">var</span> trees = [(tree: root, number: <span class="hljs-number">1</span>, height: height, depth: <span class="hljs-number">0</span>, placeHolderTree: <span class="hljs-literal">false</span>)]
+    <span class="hljs-keyword">let</span> placeHolderTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">0</span>)
+    
+    <span class="hljs-comment">//2</span>
+    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">appendTree</span><span class="hljs-params">(tree: Tree?, node: <span class="hljs-params">(tree: Tree, number: Int, height: Int, depth: Int, placeHolderTree: Bool)</span></span></span>) &#123;
+        <span class="hljs-keyword">let</span> number: <span class="hljs-type">Int</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> last = trees.last &#123;
+            number = last.height == node.height - <span class="hljs-number">1</span> ? last.number + <span class="hljs-number">1</span> : <span class="hljs-number">1</span>
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            number = <span class="hljs-number">1</span>
+        &#125;
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> t = tree &#123;
+            trees.append((tree: t,
+                number: number,
+                height: node.height - <span class="hljs-number">1</span>,
+                depth: node.depth + <span class="hljs-number">1</span>,
+                placeHolderTree: <span class="hljs-literal">false</span>))
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            trees.append((tree: placeHolderTree,
+                number: number,
+                height: node.height - <span class="hljs-number">1</span>,
+                depth: node.depth + <span class="hljs-number">1</span>,
+                placeHolderTree: <span class="hljs-literal">true</span>))
+        &#125;
+    &#125;
+    
+    <span class="hljs-comment">//3</span>
+    <span class="hljs-keyword">while</span> trees[<span class="hljs-number">0</span>].height &gt;= <span class="hljs-number">0</span> &#123;
+        <span class="hljs-keyword">let</span> node = trees.removeFirst()
+        <span class="hljs-keyword">let</span> space: <span class="hljs-type">Int</span>
+        <span class="hljs-keyword">if</span> node.number == <span class="hljs-number">1</span> &#123;
+            space = <span class="hljs-type">Int</span>(pow(<span class="hljs-number">2.0</span>, <span class="hljs-type">Double</span>(node.height)))
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            space = <span class="hljs-type">Int</span>(pow(<span class="hljs-number">2.0</span>, <span class="hljs-type">Double</span>(node.height + <span class="hljs-number">1</span>)))
+        &#125;
+        <span class="hljs-keyword">for</span> <span class="hljs-number">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>..&lt;space &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">" "</span>, terminator: <span class="hljs-string">""</span>)
+        &#125;
+        <span class="hljs-keyword">if</span> node.placeHolderTree &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">" "</span>, terminator: <span class="hljs-string">""</span>)
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            <span class="hljs-built_in">print</span>(node.tree.key, terminator: <span class="hljs-string">""</span>)
+        &#125;
+        <span class="hljs-keyword">if</span> node.number == <span class="hljs-type">Int</span>(pow(<span class="hljs-number">2.0</span>, <span class="hljs-type">Double</span>(node.depth))) &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">""</span>)
+        &#125;
+        
+        <span class="hljs-comment">//4</span>
+        appendTree(node.tree.leftTree, node: node)
+        appendTree(node.tree.rightTree, node: node)
+
+    &#125;
+    
+&#125;</code></pre><br>整个遍历的思路与<code>invertBinaryTreeWithoutRecursive:</code>完全一致。<br>第1步：初始化一个数组，存储元组类型<code>(tree: Tree, number: Int, height: Int, depth: Int, placeHolderTree: Bool)</code>；这个元组中<code>tree</code>表示一个树节点；<code>number</code>表示这个树节点在其所在层的位置，第一个<code>number</code>为1，第二个<code>number</code>为2，依次类推；<code>height</code>表示这个树节点的高度；<code>depth</code>表示这个树节点的深度；<code>placeHolderTree</code>表示这个树节点是否为占位树。为便于后续遍历，当树为非完全二叉树时，空缺的树节点全部用占位树填补，因此才有<code>placeHolderTree</code>元组元素，以标示占位树；</p>
 <p>第2步：这是一个<code>utility</code>函数，在第4步时调用；</p>
 <p>第3步：判断树是否到底，当没到底时，从数组中取出并删除第一个节点，然后计算并打印这个节点相应的空格数，然后打印节点<code>key</code>值，如果这个节点是同一层级最后一个节点，打印换行；</p>
 <p>第4步：将这个节点的左右子树连同相应信息存储到数组中，这时调用了第2步中的<code>utility</code>函数<code>appendTree:node:</code>，<code>appendTree:node:</code>中对传入的树节点进行了判断，当为空时，自动填补占位树。</p>
 <p>此函数遍历了所有树节点，因此总耗时Θ(n)。</p>
-<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>生成二叉树，并进行测试：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> tree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">1</span>)<br>tree.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">2</span>)<br>tree.rightTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">3</span>)<br>tree.leftTree?.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">4</span>)<br>tree.leftTree?.leftTree?.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">6</span>)<br>tree.rightTree?.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">7</span>)<br>tree.leftTree?.leftTree?.rightTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">5</span>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"------tree before inverting-------"</span>)<br>tranverseTree(tree)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">"------tree inverted-------"</span>)<br>invertBinaryTreeWithRecursive(tree)<br>tranverseTree(tree)<br></code></pre></td></tr></table></figure></p>
-<p>输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">------tree before inverting-------<br>       <span class="hljs-number">1</span><br>   <span class="hljs-number">2</span>       <span class="hljs-number">3</span><br> <span class="hljs-number">4</span>       <span class="hljs-number">7</span>    <br><span class="hljs-number">6</span> <span class="hljs-number">5</span>            <br>------tree inverted-------<br>       <span class="hljs-number">1</span><br>   <span class="hljs-number">3</span>       <span class="hljs-number">2</span><br>     <span class="hljs-number">7</span>       <span class="hljs-number">4</span><br>            <span class="hljs-number">5</span> <span class="hljs-number">6</span><br></code></pre></td></tr></table></figure></p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>生成二叉树，并进行测试：<br><pre><code class="hljs swift"><span class="hljs-keyword">let</span> tree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">1</span>)
+tree.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">2</span>)
+tree.rightTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">3</span>)
+tree.leftTree?.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">4</span>)
+tree.leftTree?.leftTree?.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">6</span>)
+tree.rightTree?.leftTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">7</span>)
+tree.leftTree?.leftTree?.rightTree = <span class="hljs-type">Tree</span>(key: <span class="hljs-number">5</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"------tree before inverting-------"</span>)
+tranverseTree(tree)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"------tree inverted-------"</span>)
+invertBinaryTreeWithRecursive(tree)
+tranverseTree(tree)</code></pre></p>
+<p>输出结果为：<br><pre><code class="hljs swift">------tree before inverting-------
+       <span class="hljs-number">1</span>
+   <span class="hljs-number">2</span>       <span class="hljs-number">3</span>
+ <span class="hljs-number">4</span>       <span class="hljs-number">7</span>    
+<span class="hljs-number">6</span> <span class="hljs-number">5</span>            
+------tree inverted-------
+       <span class="hljs-number">1</span>
+   <span class="hljs-number">3</span>       <span class="hljs-number">2</span>
+     <span class="hljs-number">7</span>       <span class="hljs-number">4</span>
+            <span class="hljs-number">5</span> <span class="hljs-number">6</span></code></pre></p>
 <h1 id="感悟"><a href="#感悟" class="headerlink" title="感悟"></a>感悟</h1><p>纵观上述二叉树翻转过程，用的知识较难的无非就是递归，而递归作为编程的精髓，学习稍微深入，就难以避免，而Max Howell竟然不会，或许是久疏战阵，髀肉横生吧。也说明互联网知识繁多，常常难以多头兼顾，记住所有知识，我们应保持一颗积极学习的心态。</p>
 
         </div>
@@ -185,7 +321,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/swift/" rel="tag">swift</a>, <a class="has-link-grey -link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a>
+                    <a class="has-link-grey -link" href="/tags/leetcode/" rel="tag">leetcode</a>
                 </div>
             </div>
         </div>
@@ -294,6 +430,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
@@ -368,25 +523,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -399,29 +535,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -443,49 +558,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -694,7 +781,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

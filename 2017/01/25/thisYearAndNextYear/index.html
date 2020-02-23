@@ -20,9 +20,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/2016summary.jpg">
 <meta property="article:published_time" content="2017-01-25T15:35:29.000Z">
-<meta property="article:modified_time" content="2020-02-09T09:15:13.684Z">
+<meta property="article:modified_time" content="2020-02-10T15:33:16.723Z">
 <meta property="article:author" content="轻墨">
-<meta property="article:tag" content="人文">
+<meta property="article:tag" content="感悟">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/2016summary.jpg">
 
@@ -38,7 +38,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -168,7 +168,18 @@
 <p>于是很快，发现改版又启动了，世事变幻真是让人来不及定睛一看，这次我推翻了以前的逻辑架构，开始试验局部单向数据流动的想法，把dataSource更名为stateSource（现在想想正确的叫法应该为stateStore），把stateSource中所有model名都更改为state（现在想想应该所有的model类都应该更名为state），每一个state的状态都有一个对应的修改方法，在修改后利用stateSource持有的vc直接更新UI，而如果某一状态需要更新，直接调用相应状态的更新方法即可。这样，整个数据流动和UI更新就极其的清晰。现在想想这其实就是MVVM的思想，只不过我这里没有UI和数据的自动绑定。但在应用中，发现页面的状态并不多，局部单向数据流的优势发挥的并不明显，所以在后面的业务开发中，我并没有刻意把model名改为state，只是劫取了核心思想。</p>
 <p>所谓按下葫芦又起瓢。在发现再改版中， 紧迫的工期导致接口定义迟滞，接口上线更是在末日之时，为不延误开发，客户端只能先只做UI，然后等后端接口定义完成后创建model、request，完成数据的填充，最后再等待接口上线连调。然后UI调试需要各种边界数据，等到后端给数据，那都要上线了，黄花菜都凉了，于是做假数据避无可避，但如何高效的做假数据呢？这又是一条漫长的修行之路。我一开始是在需要数据的地方直接写死，但如果忘了，假数据就是真数据了，这无形中给自己的头上悬挂了一把利剑，而这在我们组就真实的发生过。于是我又借鉴子豪的写法，在假数据周围包上宏判断，这是安全不少，但一个一个的假数据散落四处，根本无法统一管理，不统一等于没有管理。在研究了一段时间单元测试后，我发现OHHTTPStub很适合做同一的假数据，写一个JSON文件，然后截取网络请求，返回这个本地JSON文件的数据，再生产model，填充UI呈现，近乎完美的流程让我非常满意，于是我开始推荐给同事，但用着用着问题又来了，这些本地JSON文件很容易一疏漏就真的上线了，一方面使安装包更大，一方面如果OHHTTPStub的代码忘了删除，整个线上请求就都被Stub了，这就是事故了。而且随着代码时长的累积，我渐渐发现UI调试时，频繁的改动假数据JSON文件，编译，然后查看效果，很耗时，很累，很烦，如果能修改一下数据，刷新一下效果就在眼前多好。于是我开始研究反向代理，本地搭建server，然后窃取网络请求返回我想要的数据。但这需要我懂web的一些知识，门槛有点高，而且说实话也太复杂了些。就在我危难烦闷之际，Charles的MapLocal出现在我的面前，我看到那一刻惊呼道，这他妈就是我想要的吗？简单，好用，还有throttle。从那时开始，我一直用Charles的MapLocal做各种假数据，对我的UI进行各种边界条件的测试，因此感觉自己对程序又多了一些掌控和熟悉。</p>
 <p>用Charles做假数据的方案确实让我窃窃回味了一段时间，事实上，假数据的有效突破让我另一个心腹大患有了化解的微光。那就是紊乱的开发流程。从开发第一个项目到现在，项目的开发流程都是先写UI，然后再写Model，request连接数据。这中间扭曲的逻辑，让写代码的我感觉到先被一点点的撕裂，然后再一针一针的努力的缝合之前的伤痕。app本质难道不是数据流动产生的一系列奇妙的反应吗？数据流动才是根本，根本如果不存在，何来UI？我想编程世界最开始的开发方式本就是先数据后UI的数据驱动式开发，然而随着项目工期的紧闭，先UI后数据的UI驱动式开发渐成主流。如果前后端能完全脱离，完全独立，数据驱动式开发其实是水到渠成的事，必然的选择。恰好Charles在场，Charles高效自由的假数据使得移动端只依赖于后端的接口定义，而事实上，接口的定义是服从于设计的，我们完全可以对照着设计，自定义接口，只需要有个胶水层，能将我们自定义的接口与服务器端的接口对接起来即可，感谢ibireme，其写的YYModel就具有这样的胶水功能，只要前端和后端定义的接口逻辑上有严格的一一对应的关系，利用YYModel就可以将二者无缝的粘合起来，再结合Charles的假数据机制，数据驱动式开发可以说轻而易举。在随后的好习惯开发中，我迫不及待地尝试了这种开发模式，虽然开发速度因为个人开发经验不足并未快多少，但逻辑上顺畅如行云流水。直到现在，我一直都采用这种更贴近人类思维的开发模式，而且现在后端的接口早早就定义好了，无需再自己定义接口，就更省心了。</p>
-<p>经过激烈的七八九十月后，腥风血雨的日子总算平静了下来，但iOS较高的崩溃率和一波一波的bug，无情否定了曾经的所有努力，特别是在android快速高质的高冷姿态下，一个个bug像是一把一把冷箭，把我们伤的体无完肤。怎么提高自己的代码质量减少开发时的bug？有一次回家的路上我偶然看到一片文章关于怎样提高自己的代码质量，文中有几个观点对我非常大的启发，“代码是写给别人看的”，“写代码是讲究流程的”。原来如此，流程，确实应该有个正确的开发流程。我觉得大家平时开发都略显随意，而机器并不喜欢随意，所以才会有很多意外的bug。结合那篇博客的思想和数据驱动式的开发思想，从拿到需求到最终上线我比较推崇以下开发流程：<br><figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">------&gt;拿到需求<br>------&gt;深入了解需求的细枝末节，跳转，各种边界条件，各种状态（减少bug的关键）<br>------&gt;思考业务的实现细节，与技术负责人探讨架构和技术难点<br>------&gt;实现与后端数据无关的技术难点<br>------&gt;后端完成接口定义后，与后端对接口，了解接口的完备性和合理性<br>------&gt;model、网络请求、view controller搭建数据框架<br>------&gt;用Charles做假到逼真的数据<br>------&gt;写UI（有真实数据做支撑）<br>------&gt;用Charles模拟各种边界数据，充分测试UI<br>------&gt;交付测试<br>------&gt;一对一code review<br>------&gt;按code review结果优化代码结构<br></code></pre></td></tr></table></figure><br>其中第二条的边界条件分析和第九条的充分自测是减少bug的重中之重，前面是思考，后面是验证，而最终的一对一code review则是从别人的角度提高自己的代码质量，是自我提升和项目整体质量的重中之重。从我开始写代码到现在，或多或少基本遵循这个开发流程，写出的代码自己信得过，也获得了团队的肯定，也无形中考验了这个流程。</p>
+<p>经过激烈的七八九十月后，腥风血雨的日子总算平静了下来，但iOS较高的崩溃率和一波一波的bug，无情否定了曾经的所有努力，特别是在android快速高质的高冷姿态下，一个个bug像是一把一把冷箭，把我们伤的体无完肤。怎么提高自己的代码质量减少开发时的bug？有一次回家的路上我偶然看到一片文章关于怎样提高自己的代码质量，文中有几个观点对我非常大的启发，“代码是写给别人看的”，“写代码是讲究流程的”。原来如此，流程，确实应该有个正确的开发流程。我觉得大家平时开发都略显随意，而机器并不喜欢随意，所以才会有很多意外的bug。结合那篇博客的思想和数据驱动式的开发思想，从拿到需求到最终上线我比较推崇以下开发流程：<br><pre><code class="hljs clean">------&gt;拿到需求
+------&gt;深入了解需求的细枝末节，跳转，各种边界条件，各种状态（减少bug的关键）
+------&gt;思考业务的实现细节，与技术负责人探讨架构和技术难点
+------&gt;实现与后端数据无关的技术难点
+------&gt;后端完成接口定义后，与后端对接口，了解接口的完备性和合理性
+------&gt;model、网络请求、view controller搭建数据框架
+------&gt;用Charles做假到逼真的数据
+------&gt;写UI（有真实数据做支撑）
+------&gt;用Charles模拟各种边界数据，充分测试UI
+------&gt;交付测试
+------&gt;一对一<span class="hljs-keyword">code</span> review
+------&gt;按<span class="hljs-keyword">code</span> review结果优化代码结构</code></pre><br>其中第二条的边界条件分析和第九条的充分自测是减少bug的重中之重，前面是思考，后面是验证，而最终的一对一code review则是从别人的角度提高自己的代码质量，是自我提升和项目整体质量的重中之重。从我开始写代码到现在，或多或少基本遵循这个开发流程，写出的代码自己信得过，也获得了团队的肯定，也无形中考验了这个流程。</p>
 <p>上述的局部单向数据流、Charles假数据、数据驱动式开发、开发流程等等是这半年我在编程认识上取得的进步，对别人来讲，可能都是显而易见的知识，但我是从零开始，每前进一步，都凝结了自己的思考和同事的无私帮助，并没有那么容易。自己的进步或多或少能带动整个团队的精神和气氛，我想这应该是我对团队和贝聊最大的进步。</p>
 <p>最尴尬的莫过于整了两个重大的bug，但总体上在贝聊的这半年，我很满意，曾几何时，我还在广东省建筑设计研究院一所工作，不少个日以继夜，无数个通宵达旦，面对还算可观的成绩，扑面而来的却是无聊烦躁和对人生的迷惘，而如今同样的日以继夜，同样的通宵达旦，同样的还算硕果累累，心理感觉感到的是充实和安定。初次转行就能来到贝聊，不得不说感谢，事实上，贝聊是当时唯一一家愿意要我的公司，也是我面试过的公司中，唯一一个我想去的。曲折的过程和如今近乎完美的结局都出乎我的意料，或许是我多年沉淀的运气，或许是对方犀利的眼力，也或许是我不那么突出但还有一点点的才华，也或许仅仅是一个巧合。</p>
 <p>放眼整个这一年，不能说成长，却发生了彻底的变化，2016年我从事业单位变到了私企，从建筑变到了IT，从对程序茫茫然变到了懂那么一点点的小程序员，从随波逐流变到了自己去选择道路。变化铸就了内心的强大，回忆期间坎坎坷坷的苦涩，现在都莞尔一笑。</p>
@@ -204,7 +215,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/%E4%BA%BA%E6%96%87/" rel="tag">人文</a>
+                    <a class="has-link-grey -link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a>
                 </div>
             </div>
         </div>
@@ -313,6 +324,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
@@ -387,25 +417,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -418,29 +429,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -462,49 +452,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -713,7 +675,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

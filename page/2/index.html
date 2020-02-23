@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -127,6 +127,62 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main">
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2016/12/31/youth/" class="image is-7by1">
+            <img class="thumbnail" src="/images/2016summary.jpg" alt="青葱年华-2016年度总结随写版">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-12-31T15:35:29.000Z">2016-12-31</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    10 分钟 读完 (大约 1512 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/12/31/youth/">青葱年华-2016年度总结随写版</a>
+            
+        </h1>
+        <div class="content">
+            <p>仔细端详着年初许下的誓言，孤零零的转行二字高悬，简单的有点简陋，隐藏了背后所有的心酸。</p>
+<p>2015年下半年，我紧闭着双眼，静静凝视着自己的灵魂，发现多年浸润土木，灵魂却渐渐干瘪了，随处可见的疮痍，应该是多少次默默承受苦痛，留下的伤疤，慢慢溃烂。不转行不行了，多次探索寻觅，最终走上了编程这条又臭又烂的不归路。数不清多少个通宵达旦的刻苦修炼，也不知道多少个无休无止的知识学习，2015年初，终于许下来年开始找工作的誓言和宏远。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/12/31/youth/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
     
 <div class="card">
     
@@ -366,7 +422,19 @@
         <div class="content">
             <p>当我们站在历史的今天，往过去回顾，总会发现一些在当下习以为常的观念，惊讶在过去竟然没人意识到，比如生产力决定生产关系，比如自由平等，这就是所谓的进步。我生于上世纪九十年代初，年纪尚轻，这些观念的巨大变革，我大多从书上学来的，如果要找一些真正有切身体会的，我想就是当下有点烂大街的<strong>用户体验</strong>。与过去单纯讲究功能性的时代相比，用户体验绝对是完全颠覆的，它完全变换了产品的核心，给人一种醍醐灌顶的顿悟感，想及此，还是要感谢乔布斯和他的苹果。</p>
 <p>算法与用户体验看似没有关系，其实算法是上佳用户体验的基础，因为没有高效的算法，机子会卡。我至今仍是编程小白，为加深对算法的理解，本文尝试用Swift实现大部分常用的排序算法。</p>
-<h1 id="经典排序算法"><a href="#经典排序算法" class="headerlink" title="经典排序算法"></a>经典排序算法</h1><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//不改变输入数组的状态，返回排序完成的降序数组</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">insertionSort</span><span class="hljs-params">(<span class="hljs-keyword">var</span> arr:[Int])</span></span> -&gt; [<span class="hljs-type">Int</span>] &#123;<br>    <span class="hljs-keyword">for</span> <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt; arr.<span class="hljs-built_in">count</span>; i++ &#123;<br>        <span class="hljs-keyword">let</span> key = arr[i]<br>        <span class="hljs-keyword">var</span> j = i - <span class="hljs-number">1</span><br>        <span class="hljs-keyword">while</span> j &gt;= <span class="hljs-number">0</span>  &amp;&amp; arr[j] &gt; key &#123;<br>            arr[j+<span class="hljs-number">1</span>] = arr[j]<br>            j--<br>        &#125;<br>        arr[j+<span class="hljs-number">1</span>] = key<br>    &#125;<br>    <span class="hljs-keyword">return</span> arr<br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="经典排序算法"><a href="#经典排序算法" class="headerlink" title="经典排序算法"></a>经典排序算法</h1><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><pre><code class="hljs swift"><span class="hljs-comment">//不改变输入数组的状态，返回排序完成的降序数组</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">insertionSort</span><span class="hljs-params">(<span class="hljs-keyword">var</span> arr:[Int])</span></span> -&gt; [<span class="hljs-type">Int</span>] &#123;
+    <span class="hljs-keyword">for</span> <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt; arr.<span class="hljs-built_in">count</span>; i++ &#123;
+        <span class="hljs-keyword">let</span> key = arr[i]
+        <span class="hljs-keyword">var</span> j = i - <span class="hljs-number">1</span>
+        <span class="hljs-keyword">while</span> j &gt;= <span class="hljs-number">0</span>  &amp;&amp; arr[j] &gt; key &#123;
+            arr[j+<span class="hljs-number">1</span>] = arr[j]
+            j--
+        &#125;
+        arr[j+<span class="hljs-number">1</span>] = key
+    &#125;
+    <span class="hljs-keyword">return</span> arr
+&#125;</code></pre>
         </div>
         
         
@@ -420,7 +488,17 @@
 </blockquote>
 <p>HomeBrew作者，天才程序员Max Howell兴致盎然地去Google面试（估计是刚好路过），结果却因不会在白板上翻转二叉树被Google粗鲁地拒绝了，舆论甚是哗然，其中缘由<a href="https://www.zhihu.com/question/31202353">知乎</a>上也讨论的热火朝天。谁料，始作俑者<code>翻转二叉树</code>这道题目，一时也热地不要不要的。作为程序员小白的我，从未翻过二叉树。最近闲来无事，闲暇之余，想及至此，就顺手用Swift翻转了二叉树。</p>
 <p>如果您对二叉树的概念不甚清晰，可以先到维基百科上（不推荐百度百科，因为要养成良好的搜索习惯）再温习温习<a href="https://en.wikipedia.org/wiki/Binary_tree">二叉树</a>相关知识。</p>
-<h1 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h1><p>先定义一个二叉树类<code>Tree</code>，主要定义树的三个必要属性，关键值<code>key</code>，左子树<code>leftTree</code>和右子树<code>rightTree</code>。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//define Tree class</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tree</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> key: <span class="hljs-type">Int</span><br>    <span class="hljs-keyword">var</span> leftTree: <span class="hljs-type">Tree?</span><br>    <span class="hljs-keyword">var</span> rightTree: <span class="hljs-type">Tree?</span><br>    <br>    <span class="hljs-keyword">init</span>(key: <span class="hljs-type">Int</span>) &#123;<br>        <span class="hljs-keyword">self</span>.key = key<br>    &#125;<br>    <br>&#125;<br></code></pre></td></tr></table></figure><br>
+<h1 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h1><p>先定义一个二叉树类<code>Tree</code>，主要定义树的三个必要属性，关键值<code>key</code>，左子树<code>leftTree</code>和右子树<code>rightTree</code>。<br><pre><code class="hljs swift"><span class="hljs-comment">//define Tree class</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tree</span> </span>&#123;
+    <span class="hljs-keyword">var</span> key: <span class="hljs-type">Int</span>
+    <span class="hljs-keyword">var</span> leftTree: <span class="hljs-type">Tree?</span>
+    <span class="hljs-keyword">var</span> rightTree: <span class="hljs-type">Tree?</span>
+    
+    <span class="hljs-keyword">init</span>(key: <span class="hljs-type">Int</span>) &#123;
+        <span class="hljs-keyword">self</span>.key = key
+    &#125;
+    
+&#125;</code></pre><br>
         </div>
         
         
@@ -470,7 +548,17 @@
         </h1>
         <div class="content">
             <p>alias在英语中是别名之意，那<code>typealias</code>，顾名思义，是指类型的别名。Swift的官方文档中对<code>typealias</code>关键词的演示，也是以<code>＝</code>赋值的形式，给一个现有类型取一个恰当的别名，便于在上下文中使用：</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span><br>    <span class="hljs-comment">//some other things</span><br>     …<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">IntStack</span>: <span class="hljs-title">Container</span> </span>&#123;<br>    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span> = <span class="hljs-type">Int</span><br>     <span class="hljs-comment">//some other things</span><br>    …<br>&#125;<br></code></pre></td></tr></table></figure>
+<pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">Container</span> </span>&#123;
+    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span>
+    <span class="hljs-comment">//some other things</span>
+     …
+&#125;
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">IntStack</span>: <span class="hljs-title">Container</span> </span>&#123;
+    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span> = <span class="hljs-type">Int</span>
+     <span class="hljs-comment">//some other things</span>
+    …
+&#125;</code></pre>
         </div>
         
         
@@ -618,6 +706,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
@@ -692,25 +799,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -723,29 +811,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -767,49 +834,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -1018,7 +1057,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

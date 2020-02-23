@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -199,6 +199,120 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2017/04/08/sharecode/" class="image is-7by1">
+            <img class="thumbnail" src="/images/gitrepository.png" alt="iOS两个客户端代码复用小技巧">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-04-08T12:46:45.000Z">2017-04-08</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    14 分钟 读完 (大约 2037 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2017/04/08/sharecode/">iOS两个客户端代码复用小技巧</a>
+            
+        </h1>
+        <div class="content">
+            <p>一般一个App只有一个客户端，因此也只有一份代码仓库，也就无所谓复用不复用。但两个客户端也不是没有，美团、饿了么等就分商家版和买家版，贝聊App也分为老师版和家长版两个客户端。有两个客户端代码复用就在所难免，比如基本的工具类，比如一些共用的业务。本文就以贝聊App为例，分享当有两个客户端时代码复用的小技巧。</p>
+<h2 id="repository仓库划分"><a href="#repository仓库划分" class="headerlink" title="repository仓库划分"></a>repository仓库划分</h2><p>贝聊APP远程仓库划分为三个，一个<code>家长端repository</code>，一个<code>老师端repository</code>，一个两端共用的<code>BLKit repository</code>。</p>
+<p><img src="/images/remoterepository.png" alt=""><br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2017/04/08/sharecode/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2017/03/18/structuralpattern/" class="image is-7by1">
+            <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    25 分钟 读完 (大约 3776 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2017/03/18/structuralpattern/">《结构型设计模式》之iOS系统框架实践</a>
+            
+        </h1>
+        <div class="content">
+            <p>结构型设计模式是从程序的结构上解决模块之间的耦合问题，主要包括适配器模式、桥接模式、组合模式、装饰器模式、外观模式、享元模式和代理模式等7种经典设计模式，在iOS系统框架中组合模式、装饰器模式和享元模式是有经典实现的，而适配器模式、桥接模式、外观模式和代理模式iOS系统框架中的实现并不明显，但在第三方框架或者贝聊（我所在的公司）的App是有用到的，为便于讲解，本文会挑选最恰当的例子。</p>
+<p>本文是设计模式之iOS系统框架实践系列中的第二篇（总共三篇），如果您对《创建型设计模式》感兴趣，建议看看我的前一篇文章<a href="http://shellhue.github.io/2017/03/11/creationalDesignPattern/">《创建型设计模式》之iOS系统框架实践</a>。</p>
+<h2 id="适配器模式（Adapter）"><a href="#适配器模式（Adapter）" class="headerlink" title="适配器模式（Adapter）"></a>适配器模式（Adapter）</h2><p>适配器模式是将一种接口，转换成另外一种接口，一般被适配的类的功能与外界所希望的一致，只是接口与外界所希望的不同，所以需要适配接口。一般需要新旧接口的转换时用到。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2017/03/18/structuralpattern/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2017/03/04/FlowOfUITouch/" class="image is-7by1">
             <img class="thumbnail" src="/images/touchscreen.jpg" alt="iOS触摸事件的流动">
         </a>
@@ -308,6 +422,227 @@
 
 
 
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2016/08/04/podupdate/" class="image is-7by1">
+            <img class="thumbnail" src="/images/cocoapodsupdate.png" alt="如何让pod update快到飞起？">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-08-04T14:41:29.000Z">2016-08-04</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    4 分钟 读完 (大约 571 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/08/04/podupdate/">如何让pod update快到飞起？</a>
+            
+        </h1>
+        <div class="content">
+            <p>想成为一个好的程序员，翻墙是必备技能，查个资料、搜个问题啥的，百度实在是渣（不是黑百度），可以说编程，不翻墙没法活。</p>
+<p>至于如何翻墙，方法很多，有自己买VPN的，有公司自己配的，也有走代理的。个人最喜欢shadowsocks，可惜现在已经找不到正规的下载地址了，但只要用心找找，总还是有好人分享的。如果您用的是mac，实在下载不到，可以在评论中把邮箱留下，我发给你。</p>
+<p>有了翻墙软件，固然神清气爽，但pod update等终端命令发起的网络请求却不能走代理，几乎停滞的下载速度让人窒息，有时候项目稍微大一点，一个pod update命令能跑一上午，这还编什么程序，如果pod update能快到飞起，那是怎样令人神往的感觉？</p>
+<p>办法总是有的，这就是这个时代最迷人的地方。</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><p>再说一遍前提，必须得先能翻墙，并且翻墙后的网速得比较快。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/08/04/podupdate/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-04-22T12:47:10.000Z">2016-04-22</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    23 分钟 读完 (大约 3489 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/04/22/closureCapture/">闭包捕捉(closure capture)浅析</a>
+            
+        </h1>
+        <div class="content">
+            <p>根据Swift官方文档，闭包（closure）会自动捕捉其所在上下文中的外部变量，即使是定义这些变量的上下文已经消失。寥寥数字，其实已经将闭包捕捉说的足够清晰明了，只是其中隐含的诸如捕捉的具体含义、捕捉的时机、被捕捉变量的特性和捕捉列表的意义等细节，如不详加研究，使用闭包还是会错误百出，难以挥洒自如。</p>
+<p>本文中所有代码均在playground中运行，若欲在实际项目中测试，需做部分修改，但基本逻辑和结论不变</p>
+<p>——————— 本文部分结论和例子根据部分读者意见做了修正更新，感谢他们 ———————</p>
+<h2 id="捕捉的含义"><a href="#捕捉的含义" class="headerlink" title="捕捉的含义"></a>捕捉的含义</h2><h3 id="闭包捕捉等同于copy"><a href="#闭包捕捉等同于copy" class="headerlink" title="闭包捕捉等同于copy"></a>闭包捕捉等同于copy</h3><p>闭包捕捉某个变量就意味着copy一份这个变量，值类型的变量直接复制值，引用类型的变量复制引用。复制后的变量名同被捕捉的变量，复制后的变量仍为变量，常量仍为常量。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/04/22/closureCapture/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-04-15T12:47:10.000Z">2016-04-15</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    26 分钟 读完 (大约 3880 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/04/15/concurrency/">iOS并发（concurrency）概念浅析</a>
+            
+        </h1>
+        <div class="content">
+            <p>在进行iOS开发过程中，我们常会遇到网络请求、复杂计算、数据存取等比较耗时的操作，如果处理不合理，将对APP的流畅度产生较大影响。除了优化APP架构，并发（concurrency）是一个常用且较好的解决方法，但并发涉及串行、并发、并行、同步、异步、多线程、GCD、NSOperation和NSOperationQueue等诸多容易混淆的概念，为求概念清晰明了，还请茗茶静坐，听我徐徐道来。</p>
+<h1 id="线程和任务"><a href="#线程和任务" class="headerlink" title="线程和任务"></a>线程和任务</h1><p>线程（thread） 和任务（task）是其他并发概念的基础，因此也是首要需理清的概念，以下是其要点，详细可参考<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29">Thread (computing)</a>和<a href="https://en.wikipedia.org/wiki/Task_(computing">Task (computing)</a>)。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/04/15/concurrency/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-03-25T16:02:23.000Z">2016-03-26</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    3 分钟 读完 (大约 441 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/03/26/typealias/">typealias理解小误区</a>
+            
+        </h1>
+        <div class="content">
+            <p>alias在英语中是别名之意，那<code>typealias</code>，顾名思义，是指类型的别名。Swift的官方文档中对<code>typealias</code>关键词的演示，也是以<code>＝</code>赋值的形式，给一个现有类型取一个恰当的别名，便于在上下文中使用：</p>
+<pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">Container</span> </span>&#123;
+    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span>
+    <span class="hljs-comment">//some other things</span>
+     …
+&#125;
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">IntStack</span>: <span class="hljs-title">Container</span> </span>&#123;
+    <span class="hljs-keyword">typealias</span> <span class="hljs-type">ItemType</span> = <span class="hljs-type">Int</span>
+     <span class="hljs-comment">//some other things</span>
+    …
+&#125;</code></pre>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/03/26/typealias/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
 </div>
                 
                 
@@ -359,6 +694,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -436,25 +790,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -467,29 +802,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -511,49 +825,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -762,7 +1048,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

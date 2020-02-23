@@ -8,13 +8,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-<title>标签: Objective-C - 轻墨</title>
+<title>标签: 感悟 - 轻墨</title>
 
 
     <meta name="description" content="我想擦去一切不幸，我想在大地上，画满窗子，让所有习惯黑暗的眼睛都习惯光明。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="轻墨">
-<meta property="og:url" content="http://yoursite.com/tags/Objective-C/index.html">
+<meta property="og:url" content="http://yoursite.com/tags/%E6%84%9F%E6%82%9F/index.html">
 <meta property="og:site_name" content="轻墨">
 <meta property="og:description" content="我想擦去一切不幸，我想在大地上，画满窗子，让所有习惯黑暗的眼睛都习惯光明。">
 <meta property="og:locale" content="zh_CN">
@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -131,7 +131,7 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li><a href="/tags">标签</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Objective-C</a></li>
+            <li class="is-active"><a href="#" aria-current="page">感悟</a></li>
         </ul>
         </nav>
     </div>
@@ -141,8 +141,8 @@
 <div class="card">
     
     <div class="card-image">
-        <a href="/2017/02/07/fakedata/" class="image is-7by1">
-            <img class="thumbnail" src="/images/fakedatathumbnail.jpg" alt="如何在iOS开发中更好的做假数据？">
+        <a href="/2017/04/01/alwaystrying/" class="image is-7by1">
+            <img class="thumbnail" src="/images/readingbook.jpg" alt="生命的惯性">
         </a>
     </div>
     
@@ -150,13 +150,13 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2017-02-07T13:40:21.000Z">2017-02-07</time>
+                <time class="level-item has-text-grey" datetime="2017-03-31T16:35:29.000Z">2017-04-01</time>
                 
                 
                 <span class="level-item has-text-grey">
                     
                     
-                    24 分钟 读完 (大约 3554 个字)
+                    6 分钟 读完 (大约 848 个字)
                 </span>
                 
                 
@@ -165,19 +165,240 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2017/02/07/fakedata/">如何在iOS开发中更好的做假数据？</a>
+                <a class="has-link-black-ter" href="/2017/04/01/alwaystrying/">生命的惯性</a>
             
         </h1>
         <div class="content">
-            <p>当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。</p>
-<h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：<br>
+            <p><img src="/images/readingbook.jpg" alt=""></p>
+<p>生命好似被上帝精心编排的话剧，年少时学习，长大了工作，然后结婚生子，抚养小孩，照看父母，最后垂垂老去。一幕接着一幕，一幕赶着一幕。貌似自由意志，其实我们只有润色生活这么一点点权限。</p>
+<p>而在某一幕中，比如工作，我们也只是尽己所能完成每一日的事情。当然随着日复一日，年复一年，薪水逐年递增，职位越干越大，工作内容也渐进宏观。从小白程序员，到编程资深程序员，到项目负责人，到CTO。没有什么会一成不变，但也没有什么会突如其来。</p>
+<p>循序渐进，是我们的一生，也是我们的每一天，每一秒，循序渐进就是我们生命的惯性。</p>
+<p>这没啥不好，途中会有焦虑，会有进步，会有责罚，会有掌声，会有层出不穷的新事物。但总觉得有点烦闷，因为一切都是可期的。</p>
+<p>我们渴望着惊喜，因为惊喜让生命充盈、丰厚。</p>
+<p>或在某个小巷，遇到一个丁香一样的姑娘，或在某个不经意的抬头，看见散落满天的星，或在某次与人会谈时，获得生命的顿悟，或在举步维艰之际，遇到一生的贵人。</p>
+<p>生命难逃惯性，我们总期望着惊喜。惊喜也总会不期而至，但并不是无缘无故。今日生命的惊喜大多是我们昨日努力种下的种。<br>
         </div>
         
         
         <div class="level is-mobile">
             <div class="level-start">
                 <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2017/02/07/fakedata/#more">阅读更多</a>
+                <a class="button is-size-7 is-light" href="/2017/04/01/alwaystrying/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2017/01/25/thisYearAndNextYear/" class="image is-7by1">
+            <img class="thumbnail" src="/images/2016summary.jpg" alt="这一年与下一年-2016年度总结正式版">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-01-25T15:35:29.000Z">2017-01-25</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    31 分钟 读完 (大约 4598 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2017/01/25/thisYearAndNextYear/">这一年与下一年-2016年度总结正式版</a>
+            
+        </h1>
+        <div class="content">
+            <h2 id="这一年"><a href="#这一年" class="headerlink" title="这一年"></a>这一年</h2><p>每当总结过去一年的时候，总感觉时间匆匆，一转眼又是一夏，一转眼又过一秋，时间流逝不止，我们只能以成长搪塞逐渐衰老的年华。</p>
+<p>我是6月20日来到贝聊的，处于程序员小白水平的我，当时只能勤奋的追赶，努力的做些小项目练手，同时也疯狂的补齐残缺的编程知识。半年以后到今天，积累起来，完成的项目大大小小，林林总总，也有一二。如网络日志feature、班级列表刷新、老师端班级语音播报、家长端老师端发现改版及再改版、老师端和家长端好习惯首页和详情页、弹窗基础框架、优惠券详情页和帖子详情红包页、一系列小的工具拓展、大图浏览、客服、专属客服、客服评价等等。我是一个不喜欢拖累大家的人，不愿意大家因为我的原因出现拖延，因此这些项目大部分如时的交付，而且作为初学者，写代码时如履薄冰战战兢兢的，千般思虑，万般测试，因此上线后的bug并不多见，整体还算优良。</p>
+<p>其实回想起这段日子，我能分明的感受到自己对编程的认识是一个层次一个层次的成长，每做一个大的feature项目，基本就会遇到一个大的问题，然后就向前进一步。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2017/01/25/thisYearAndNextYear/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2016/12/31/youth/" class="image is-7by1">
+            <img class="thumbnail" src="/images/2016summary.jpg" alt="青葱年华-2016年度总结随写版">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-12-31T15:35:29.000Z">2016-12-31</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    10 分钟 读完 (大约 1512 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/12/31/youth/">青葱年华-2016年度总结随写版</a>
+            
+        </h1>
+        <div class="content">
+            <p>仔细端详着年初许下的誓言，孤零零的转行二字高悬，简单的有点简陋，隐藏了背后所有的心酸。</p>
+<p>2015年下半年，我紧闭着双眼，静静凝视着自己的灵魂，发现多年浸润土木，灵魂却渐渐干瘪了，随处可见的疮痍，应该是多少次默默承受苦痛，留下的伤疤，慢慢溃烂。不转行不行了，多次探索寻觅，最终走上了编程这条又臭又烂的不归路。数不清多少个通宵达旦的刻苦修炼，也不知道多少个无休无止的知识学习，2015年初，终于许下来年开始找工作的誓言和宏远。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/12/31/youth/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-07-11T11:37:28.000Z">2016-07-11</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    11 分钟 读完 (大约 1691 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/07/11/goodbye/">再见土木，hello world!</a>
+            
+        </h1>
+        <div class="content">
+            <p><img src="http://shellhue.github.io/images/1.jpeg" alt=""><br>从07年至今，算下来，我学土木也近十年。十年的浸润，不敢说造诣很深，但至少基础坚实，如果继续努力，相信结果不坏。如今突然离开，跨越至IT，十年的成长轮为羁绊，又回到起点的感觉，惶惶不安。</p>
+<p>其实我并不是一个爱冒险的人，而且结构工程师、设计院，也是不少人梦寐以求的，在社会上颇受尊重，但自己身在其中，总有太多的烦躁相伴，痛苦相随。痛苦是很有价值的感受，因为无论你怎么偏离你命中注定的航线，它都会一点一点地将你校正到正确的方向，即使你不勇敢，它也会让你变得义无反顾。<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/07/11/goodbye/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-01-09T16:35:29.000Z">2016-01-10</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    7 分钟 读完 (大约 1010 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/01/10/believeInGod/">不可不信缘－2015年度总结</a>
+            
+        </h1>
+        <div class="content">
+            <p>回顾2015，我一直试图告别土木工程，寻找属于我的江湖。</p>
+<p>谈及我与土木的相遇，完全是因为高考成绩考砸了的缘故。但相遇即是一种缘分，因此我把这份缘分延续到了现在，可是这是一段不会有结果的旅程。回忆这八年，土木就像是我注定不爱的姑娘，一开始相识并不觉得什么，偶尔牵牵手还有点小愉快，可后来真的在一起了，才发觉一切都那么不自在，每个深夜满心的离开。其实我也不是现在才察觉，只是以前年轻，没有到迫在眉睫非彼即此的境地。现在工作都快整两年了，我也已经25了，我想这是最后的机会，去寻找自己的城。因此，这一年我做了两个大尝试。</p>
+<p>一个是创业，一个是学编程。</p>
+<p>2014年7月，戴瑞珠宝创业项目正式立项，前前后后累计7个人的小团队，当时干的也是风风火火轰轰烈烈。但后来起起伏伏，坎坷不断，2015年8月7日，我正式退出团队。一年有余的兼职创业，虽然没有期许的结果，却让我深刻的体会到，互联网才是年轻人龙争虎斗的天地，那里有梦想，有远方，有希望。而我所处的建筑行业，已然渐近荒原，很难说得上值得拼搏。我虽非大才，但也不甘沉沦，离开土木工程，跨入心向往之的互联网行业势在必行。只是在互联网行业，我去能干什么呢？八年的土木工程生涯，漫长的浸润，已经快把我体制化了。除了画CAD，似乎我什么都不会。隔行如隔山，此时我方体会至深，我该怎么办呢？<br>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/01/10/believeInGod/#more">阅读更多</a>
                 </div>
             </div>
         </div>
@@ -244,6 +465,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -321,25 +561,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -352,29 +573,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -396,49 +596,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -647,7 +819,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

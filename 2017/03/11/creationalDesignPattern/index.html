@@ -20,9 +20,8 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/designpattern.jpg">
 <meta property="article:published_time" content="2017-03-11T12:47:10.000Z">
-<meta property="article:modified_time" content="2020-02-09T09:13:09.152Z">
+<meta property="article:modified_time" content="2020-02-10T15:31:49.886Z">
 <meta property="article:author" content="轻墨">
-<meta property="article:tag" content="swift">
 <meta property="article:tag" content="design pattern">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/designpattern.jpg">
@@ -39,7 +38,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -166,16 +165,260 @@
 <p>本文先讲述《创建型设计模式》(Creational Patterns)。</p>
 <p>创建型设计模式是在创建一个类时用到的设计模式，总共有5种，其中工厂方法模式还可以根据实现的不同，分出简单工厂模式和工厂方法模式。</p>
 <h2 id="简单工厂模式-Factory-Method"><a href="#简单工厂模式-Factory-Method" class="headerlink" title="简单工厂模式(Factory Method)"></a>简单工厂模式(Factory Method)</h2><p>iOS系统<code>Foundation</code>框架中的<code>NSNumber</code>所应用的就是简单工厂模式。<br><a id="more"></a><br>简单工厂模式主要解决不同情况下，需要创建不同子类，而这些子类又需要转化为公共父类让外界去使用的问题，因为这样对外接口只有一个，实际行为却因子类的具体实现而不同。拿<code>NSNumber</code>来说，传入<code>Int</code>、<code>Float</code>、<code>Double</code>、<code>Char</code>和<code>UnsignedChar</code>等具体<code>number</code>，<code>NSNumber</code>返回的是对应的<code>NSNumber</code>子类，而我们使用时只知<code>NSNumber</code>，不知具体的子类。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-keyword">let</span> boolValue: <span class="hljs-type">Bool</span> = <span class="hljs-literal">true</span><br><span class="hljs-keyword">let</span> doubleValue: <span class="hljs-type">Double</span> = <span class="hljs-number">1.0</span><br><br><span class="hljs-keyword">let</span> boolN = <span class="hljs-type">NSNumber</span>(value: boolValue)<br><span class="hljs-keyword">let</span> doubleN = <span class="hljs-type">NSNumber</span>(value: doubleValue)<br><br><span class="hljs-built_in">print</span>(type(of:boolN))<br><span class="hljs-built_in">print</span>(type(of:doubleN))<br></code></pre></td></tr></table></figure>
-<p>输出结果为<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">__NSCFBoolean<br>__NSCFNumber<br></code></pre></td></tr></table></figure></p>
-<p>如果用简单工厂方法实现<code>NSNumber</code>（为了不与系统的<code>NSNumber</code>混淆，本文自己定义的<code>NSNumber</code>均去掉<code>NS</code>前缀，改为<code>Number</code>），代码大致如下：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// 抽象产品</span><br><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">Number</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span><br>&#125;<br><br><span class="hljs-comment">// 生产工厂</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NumberFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Bool)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">return</span> __NSCFBoolean(value: value)<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Double)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">return</span> __CFNumber(value: value)<br>  &#125;<br>&#125;<br><br><span class="hljs-comment">// 具体的产品A</span><br><span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CFBoolean</span>: <span class="hljs-title">Number</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> bool: <span class="hljs-type">Bool</span><br>  <span class="hljs-keyword">init</span>(value: <span class="hljs-type">Bool</span>) &#123;<br>    bool = value<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span> &#123;<br>    <span class="hljs-keyword">return</span> bool ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span><br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span> &#123;<br>    <span class="hljs-keyword">return</span> bool<br>  &#125;<br>&#125;<br><br><span class="hljs-comment">// 具体的产品B</span><br><span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CFNumber</span>: <span class="hljs-title">Number</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> double: <span class="hljs-type">Double</span><br>  <span class="hljs-keyword">init</span>(value: <span class="hljs-type">Double</span>) &#123;<br>    double = value<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span> &#123;<br>    <span class="hljs-keyword">return</span> double<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span> &#123;<br>    <span class="hljs-keyword">return</span> double != <span class="hljs-number">0</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>其中<code>Number</code>是抽象协议，负责定义行为，而<code>__CFNumber</code>和<code>__CFBoolean</code>是实现了<code>Number</code>抽象协议的私有实体类，<code>NumberFactory</code>则是一个创建<code>Number</code>的工厂。</p>
-<p>具体使用时，先创建工厂，然后根据需要创建具体的实体类：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// 先创建工厂</span><br><span class="hljs-keyword">let</span> factory = <span class="hljs-type">NumberFactory</span>()<br><span class="hljs-comment">// 然后根据需要创建实体类</span><br><span class="hljs-keyword">let</span> boolN = factory.createNumber(value: <span class="hljs-literal">false</span>)<br><span class="hljs-keyword">let</span> doubleN = factory.createNumber(value: <span class="hljs-number">2.0</span>)<br></code></pre></td></tr></table></figure><br>而由于<code>Objective-C</code>的初始化方法中可以直接返回子类型，因此不必创建一个单独的工厂类<code>NumberFactory</code>，直接将相应的工厂方法逻辑封装在<code>NSNumber</code>的<code>init</code>方法中即可：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">@implementation <span class="hljs-type">NSNumber</span><br>- (<span class="hljs-type">NSNumber</span> *)initWithBool:(<span class="hljs-type">BOOL</span>)value &#123;<br>  <span class="hljs-keyword">return</span> [[__NSCFBoolean alloc] initWithBool:value];<br>&#125;<br>- (<span class="hljs-type">NSNumber</span> *)initWithDouble:(double)value &#123;<br>  <span class="hljs-keyword">return</span> [[__NSCFNumber alloc] initWithDouble:value];<br>&#125;<br>@end<br></code></pre></td></tr></table></figure><br>而在<code>Swift</code>中不可能从<code>init</code>初始化方法中返回一个子类。(<code>Swift</code>的<code>init</code>方法除了<code>return nil</code>外不能有返回值)</p>
-<h2 id="工厂方法模式-Factory-Method"><a href="#工厂方法模式-Factory-Method" class="headerlink" title="工厂方法模式(Factory Method)"></a>工厂方法模式(Factory Method)</h2><p>简单工厂模式中，工厂只有一个实体类<code>NumberFactory</code>，每当添加新的产品（即新实现<code>Number</code>协议的子类），都需要去修改这个工厂。<br>比如上文新添加一个针对<code>Float</code>实现<code>Number</code>协议的<code>__CFFloat</code>（系统中的<code>NSNumber</code>并没有实体子类<code>__NSCFFloat</code>，而是所有的数字类型都封装为<code>__NSCFNumber</code>），<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// 新添加的具体的产品C</span><br><span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CFFloat</span>: <span class="hljs-title">Number</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> float: <span class="hljs-type">Float</span><br>  <span class="hljs-keyword">init</span>(value: <span class="hljs-type">Float</span>) &#123;<br>    float = value<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-type">Double</span>(float)<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span> &#123;<br>    <span class="hljs-keyword">return</span> float != <span class="hljs-number">0</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>那么<code>NumberFactory</code>也需要改动：<br><figure class="highlight Swift"><table><tr><td class="code"><pre><code class="hljs Swift"><span class="hljs-comment">// 生产工厂</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NumberFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Bool)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">return</span> __NSCFBoolean(value: value)<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Double)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">return</span> __CFNumber(value: value)<br>  &#125;<br>  <span class="hljs-comment">// 新添加的工厂方法</span><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Float)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">return</span> __CFFloat(value: value)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>为解决这个弊端，可以将工厂<code>NumberFactory</code>也抽象一层，定义为一个协议：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// 抽象工厂</span><br><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">NumberFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span><br>&#125;<br></code></pre></td></tr></table></figure><br>然后针对不同的<code>Number</code>实体子类，都定义相应的工厂<code>NumberFactory</code>子类即可：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// Bool 专用的工厂类</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BoolNumberFactory</span>: <span class="hljs-title">NumberFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Bool</span> <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a bool"</span>)<br>    &#125;<br>    <span class="hljs-keyword">return</span> __CFBoolean(value)<br>  &#125;<br>&#125;<br><span class="hljs-comment">// Double 专用的工厂类</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DoubleNumberFactory</span>: <span class="hljs-title">NumberFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Double</span> <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a double"</span>)<br>    &#125;<br>    <span class="hljs-keyword">return</span> __CFNumber(value)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>具体使用中，先创建工厂，然后直接根据相应的工厂创建相应的<code>Number</code>：<br><figure class="highlight Swift"><table><tr><td class="code"><pre><code class="hljs Swift"><span class="hljs-comment">// 先创建工厂</span><br><span class="hljs-keyword">let</span> boolFactory = <span class="hljs-type">BoolNumberFactory</span>()<br><span class="hljs-keyword">let</span> doubleFactory = <span class="hljs-type">DoubleNumberFactory</span>()<br><br><span class="hljs-comment">// 然后直接根据相应的工厂创建相应的Number</span><br><span class="hljs-keyword">let</span> boolN = boolFactory.createNumber(value: <span class="hljs-literal">false</span>)<br><span class="hljs-keyword">let</span> doubleN = doubleFactory.createNumber(value: <span class="hljs-number">2.0</span>)<br></code></pre></td></tr></table></figure><br>如果想新添加一个针对<code>Float</code>实现<code>Number</code>协议的<code>__CFFloat</code>，添加完成后，直接再添加一个对应的<code>NumberFactory</code>子类即可。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// Float 专用的工厂类</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FloatNumberFactory</span>: <span class="hljs-title">NumberFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Float</span> <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a float"</span>)<br>    &#125;<br>    <span class="hljs-keyword">return</span> __CFFloat(value)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>这就是工厂方法模式与简单工厂模式的区别，即工厂方法模式不但抽象了产品，而且抽象了工厂。</p>
-<h2 id="抽象工厂模式-Abstract-Factory"><a href="#抽象工厂模式-Abstract-Factory" class="headerlink" title="抽象工厂模式(Abstract Factory)"></a>抽象工厂模式(Abstract Factory)</h2><p>工厂方法模式抽象了工厂，但只负责生产一种产品。抽象工厂模式与工厂方法模式一般无二，都是抽象了工厂和产品，只是抽象工厂模式中的抽象工厂会负责生产一种以上相关联、会一起使用的产品。<br>还是以<code>Number</code>的抽象工厂<code>NumberFactory</code>举例。<code>Foundation</code>中类似<code>NSNumber</code>类簇的，还有<code>NSArray</code>:<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-keyword">let</span> array0 = <span class="hljs-type">NSArray</span>(array: [])<br><span class="hljs-keyword">let</span> array1 = <span class="hljs-type">NSArray</span>(arrayLiteral: <span class="hljs-number">1</span>, <span class="hljs-number">2</span>)<br><span class="hljs-keyword">let</span> array2 = <span class="hljs-type">NSArray</span>(arrayLiteral: <span class="hljs-number">1</span>)<br><br><span class="hljs-built_in">print</span>(type(of:array0))<br><span class="hljs-built_in">print</span>(type(of:array1))<br><span class="hljs-built_in">print</span>(type(of:array2))<br></code></pre></td></tr></table></figure><br>打印结果如下：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift">__NSArray0<br>__NSArrayI<br>__NSSingleObjectArrayI<br></code></pre></td></tr></table></figure><br>定义<code>NSArray</code>的抽象协议并实现两个私有类<code>__CArray0</code>和<code>__CArrayI</code>，为不与系统中的<code>NSArray</code>和<code>Array</code>混淆，这里取<code>CArray</code>：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">CArray</span> </span>&#123;<br>  <span class="hljs-keyword">var</span> <span class="hljs-built_in">count</span>: <span class="hljs-type">Int</span> &#123; <span class="hljs-keyword">get</span> &#125;<br>  <span class="hljs-comment">// 其他公共接口</span><br>&#125;<br><span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CArray0</span>: <span class="hljs-title">CArray</span> </span>&#123;<br>  <span class="hljs-keyword">var</span> <span class="hljs-built_in">count</span> = <span class="hljs-number">0</span><br>  <span class="hljs-comment">// 其他公共接口实现</span><br><br>&#125;<br><span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CArrayI</span>: <span class="hljs-title">CArray</span> </span>&#123;<br>  <span class="hljs-keyword">var</span> <span class="hljs-built_in">count</span> = <span class="hljs-number">0</span><br>  <span class="hljs-comment">// 其他公共接口实现</span><br>&#125;<br></code></pre></td></tr></table></figure><br>定义<code>Number</code>和<code>CArray</code>的抽象工厂协议<code>NumberAndArrayFactory</code>：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">NumberAndArrayFactory</span> </span>&#123;<br>  <span class="hljs-comment">// 用来生产Number的工厂方法</span><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span><br>  <span class="hljs-comment">// 用来生产CArray的工厂方法</span><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createCArray</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">CArray</span><br>&#125;<br></code></pre></td></tr></table></figure><br>定义抽象工厂<code>NumberAndArrayFactory</code>的具体实现类<code>BoolNumberAndArray0Factory</code>:<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BoolNumberAndArray0Factory</span>: <span class="hljs-title">NumberAndArrayFactory</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;<br>    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Bool</span> <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a bool"</span>)<br>    &#125;<br>    <span class="hljs-keyword">return</span> __CFBoolean(value)<br>  &#125;<br>  <br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createCArray</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">CArray</span> &#123;<br>    <span class="hljs-keyword">return</span> __CArray0()<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>具体使用时，先创建抽象工厂<code>NumberAndArrayFactory</code>的具体实现类，然后在调用这个实现类上的工厂方法，创建相应的产品<code>Number</code>或者<code>CArray</code>：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">// 创建抽象工厂`NumberAndArrayFactory`的具体实现类</span><br><span class="hljs-keyword">let</span> boolNumberAndArray0Factory = <span class="hljs-type">BoolNumberAndArray0Factory</span>()<br><br><span class="hljs-comment">// 调用工厂方法，创建相应的产品</span><br><span class="hljs-keyword">let</span> boolNumber = boolNumberAndArray0Factory.createNumber(<span class="hljs-literal">true</span>)<br><span class="hljs-keyword">let</span> 0CArray = boolNumberAndArray0Factory.createCArray()<br></code></pre></td></tr></table></figure><br>需要注意的是，这里为了说明抽象工厂模式，抽象工厂<code>NumberAndArrayFactory</code>所创建的<code>Number</code>和<code>CArray</code>没有任何关联，在实际项目中，同一抽象工厂所创建的产品是关联的，一般是一起结合使用，如果不关联，也不必用抽象工厂模式。</p>
+<pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-keyword">let</span> boolValue: <span class="hljs-type">Bool</span> = <span class="hljs-literal">true</span>
+<span class="hljs-keyword">let</span> doubleValue: <span class="hljs-type">Double</span> = <span class="hljs-number">1.0</span>
+
+<span class="hljs-keyword">let</span> boolN = <span class="hljs-type">NSNumber</span>(value: boolValue)
+<span class="hljs-keyword">let</span> doubleN = <span class="hljs-type">NSNumber</span>(value: doubleValue)
+
+<span class="hljs-built_in">print</span>(type(of:boolN))
+<span class="hljs-built_in">print</span>(type(of:doubleN))</code></pre>
+<p>输出结果为<br><pre><code class="hljs swift">__NSCFBoolean
+__NSCFNumber</code></pre></p>
+<p>如果用简单工厂方法实现<code>NSNumber</code>（为了不与系统的<code>NSNumber</code>混淆，本文自己定义的<code>NSNumber</code>均去掉<code>NS</code>前缀，改为<code>Number</code>），代码大致如下：<br><pre><code class="hljs swift"><span class="hljs-comment">// 抽象产品</span>
+<span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">Number</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span>
+&#125;
+
+<span class="hljs-comment">// 生产工厂</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NumberFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Bool)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">return</span> __NSCFBoolean(value: value)
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Double)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">return</span> __CFNumber(value: value)
+  &#125;
+&#125;
+
+<span class="hljs-comment">// 具体的产品A</span>
+<span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CFBoolean</span>: <span class="hljs-title">Number</span> </span>&#123;
+  <span class="hljs-keyword">let</span> bool: <span class="hljs-type">Bool</span>
+  <span class="hljs-keyword">init</span>(value: <span class="hljs-type">Bool</span>) &#123;
+    bool = value
+  &#125;
+
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span> &#123;
+    <span class="hljs-keyword">return</span> bool ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>
+  &#125;
+
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span> &#123;
+    <span class="hljs-keyword">return</span> bool
+  &#125;
+&#125;
+
+<span class="hljs-comment">// 具体的产品B</span>
+<span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CFNumber</span>: <span class="hljs-title">Number</span> </span>&#123;
+  <span class="hljs-keyword">let</span> double: <span class="hljs-type">Double</span>
+  <span class="hljs-keyword">init</span>(value: <span class="hljs-type">Double</span>) &#123;
+    double = value
+  &#125;
+
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span> &#123;
+    <span class="hljs-keyword">return</span> double
+  &#125;
+
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span> &#123;
+    <span class="hljs-keyword">return</span> double != <span class="hljs-number">0</span>
+  &#125;
+&#125;</code></pre><br>其中<code>Number</code>是抽象协议，负责定义行为，而<code>__CFNumber</code>和<code>__CFBoolean</code>是实现了<code>Number</code>抽象协议的私有实体类，<code>NumberFactory</code>则是一个创建<code>Number</code>的工厂。</p>
+<p>具体使用时，先创建工厂，然后根据需要创建具体的实体类：<br><pre><code class="hljs swift"><span class="hljs-comment">// 先创建工厂</span>
+<span class="hljs-keyword">let</span> factory = <span class="hljs-type">NumberFactory</span>()
+<span class="hljs-comment">// 然后根据需要创建实体类</span>
+<span class="hljs-keyword">let</span> boolN = factory.createNumber(value: <span class="hljs-literal">false</span>)
+<span class="hljs-keyword">let</span> doubleN = factory.createNumber(value: <span class="hljs-number">2.0</span>)</code></pre><br>而由于<code>Objective-C</code>的初始化方法中可以直接返回子类型，因此不必创建一个单独的工厂类<code>NumberFactory</code>，直接将相应的工厂方法逻辑封装在<code>NSNumber</code>的<code>init</code>方法中即可：<br><pre><code class="hljs swift">@implementation <span class="hljs-type">NSNumber</span>
+- (<span class="hljs-type">NSNumber</span> *)initWithBool:(<span class="hljs-type">BOOL</span>)value &#123;
+  <span class="hljs-keyword">return</span> [[__NSCFBoolean alloc] initWithBool:value];
+&#125;
+- (<span class="hljs-type">NSNumber</span> *)initWithDouble:(double)value &#123;
+  <span class="hljs-keyword">return</span> [[__NSCFNumber alloc] initWithDouble:value];
+&#125;
+@end</code></pre><br>而在<code>Swift</code>中不可能从<code>init</code>初始化方法中返回一个子类。(<code>Swift</code>的<code>init</code>方法除了<code>return nil</code>外不能有返回值)</p>
+<h2 id="工厂方法模式-Factory-Method"><a href="#工厂方法模式-Factory-Method" class="headerlink" title="工厂方法模式(Factory Method)"></a>工厂方法模式(Factory Method)</h2><p>简单工厂模式中，工厂只有一个实体类<code>NumberFactory</code>，每当添加新的产品（即新实现<code>Number</code>协议的子类），都需要去修改这个工厂。<br>比如上文新添加一个针对<code>Float</code>实现<code>Number</code>协议的<code>__CFFloat</code>（系统中的<code>NSNumber</code>并没有实体子类<code>__NSCFFloat</code>，而是所有的数字类型都封装为<code>__NSCFNumber</code>），<br><pre><code class="hljs swift"><span class="hljs-comment">// 新添加的具体的产品C</span>
+<span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CFFloat</span>: <span class="hljs-title">Number</span> </span>&#123;
+  <span class="hljs-keyword">let</span> float: <span class="hljs-type">Float</span>
+  <span class="hljs-keyword">init</span>(value: <span class="hljs-type">Float</span>) &#123;
+    float = value
+  &#125;
+
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">doubleValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Double</span> &#123;
+    <span class="hljs-keyword">return</span> <span class="hljs-type">Double</span>(float)
+  &#125;
+
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boolValue</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">Bool</span> &#123;
+    <span class="hljs-keyword">return</span> float != <span class="hljs-number">0</span>
+  &#125;
+&#125;</code></pre><br>那么<code>NumberFactory</code>也需要改动：<br><pre><code class="hljs Swift"><span class="hljs-comment">// 生产工厂</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NumberFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Bool)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">return</span> __NSCFBoolean(value: value)
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Double)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">return</span> __CFNumber(value: value)
+  &#125;
+  <span class="hljs-comment">// 新添加的工厂方法</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: Float)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">return</span> __CFFloat(value: value)
+  &#125;
+&#125;</code></pre><br>为解决这个弊端，可以将工厂<code>NumberFactory</code>也抽象一层，定义为一个协议：<br><pre><code class="hljs swift"><span class="hljs-comment">// 抽象工厂</span>
+<span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">NumberFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span>
+&#125;</code></pre><br>然后针对不同的<code>Number</code>实体子类，都定义相应的工厂<code>NumberFactory</code>子类即可：<br><pre><code class="hljs swift"><span class="hljs-comment">// Bool 专用的工厂类</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BoolNumberFactory</span>: <span class="hljs-title">NumberFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Bool</span> <span class="hljs-keyword">else</span> &#123;
+       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a bool"</span>)
+    &#125;
+    <span class="hljs-keyword">return</span> __CFBoolean(value)
+  &#125;
+&#125;
+<span class="hljs-comment">// Double 专用的工厂类</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DoubleNumberFactory</span>: <span class="hljs-title">NumberFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Double</span> <span class="hljs-keyword">else</span> &#123;
+       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a double"</span>)
+    &#125;
+    <span class="hljs-keyword">return</span> __CFNumber(value)
+  &#125;
+&#125;</code></pre><br>具体使用中，先创建工厂，然后直接根据相应的工厂创建相应的<code>Number</code>：<br><pre><code class="hljs Swift"><span class="hljs-comment">// 先创建工厂</span>
+<span class="hljs-keyword">let</span> boolFactory = <span class="hljs-type">BoolNumberFactory</span>()
+<span class="hljs-keyword">let</span> doubleFactory = <span class="hljs-type">DoubleNumberFactory</span>()
+
+<span class="hljs-comment">// 然后直接根据相应的工厂创建相应的Number</span>
+<span class="hljs-keyword">let</span> boolN = boolFactory.createNumber(value: <span class="hljs-literal">false</span>)
+<span class="hljs-keyword">let</span> doubleN = doubleFactory.createNumber(value: <span class="hljs-number">2.0</span>)</code></pre><br>如果想新添加一个针对<code>Float</code>实现<code>Number</code>协议的<code>__CFFloat</code>，添加完成后，直接再添加一个对应的<code>NumberFactory</code>子类即可。<br><pre><code class="hljs swift"><span class="hljs-comment">// Float 专用的工厂类</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FloatNumberFactory</span>: <span class="hljs-title">NumberFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Float</span> <span class="hljs-keyword">else</span> &#123;
+       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a float"</span>)
+    &#125;
+    <span class="hljs-keyword">return</span> __CFFloat(value)
+  &#125;
+&#125;</code></pre><br>这就是工厂方法模式与简单工厂模式的区别，即工厂方法模式不但抽象了产品，而且抽象了工厂。</p>
+<h2 id="抽象工厂模式-Abstract-Factory"><a href="#抽象工厂模式-Abstract-Factory" class="headerlink" title="抽象工厂模式(Abstract Factory)"></a>抽象工厂模式(Abstract Factory)</h2><p>工厂方法模式抽象了工厂，但只负责生产一种产品。抽象工厂模式与工厂方法模式一般无二，都是抽象了工厂和产品，只是抽象工厂模式中的抽象工厂会负责生产一种以上相关联、会一起使用的产品。<br>还是以<code>Number</code>的抽象工厂<code>NumberFactory</code>举例。<code>Foundation</code>中类似<code>NSNumber</code>类簇的，还有<code>NSArray</code>:<br><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-keyword">let</span> array0 = <span class="hljs-type">NSArray</span>(array: [])
+<span class="hljs-keyword">let</span> array1 = <span class="hljs-type">NSArray</span>(arrayLiteral: <span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
+<span class="hljs-keyword">let</span> array2 = <span class="hljs-type">NSArray</span>(arrayLiteral: <span class="hljs-number">1</span>)
+
+<span class="hljs-built_in">print</span>(type(of:array0))
+<span class="hljs-built_in">print</span>(type(of:array1))
+<span class="hljs-built_in">print</span>(type(of:array2))</code></pre><br>打印结果如下：<br><pre><code class="hljs swift">__NSArray0
+__NSArrayI
+__NSSingleObjectArrayI</code></pre><br>定义<code>NSArray</code>的抽象协议并实现两个私有类<code>__CArray0</code>和<code>__CArrayI</code>，为不与系统中的<code>NSArray</code>和<code>Array</code>混淆，这里取<code>CArray</code>：<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">CArray</span> </span>&#123;
+  <span class="hljs-keyword">var</span> <span class="hljs-built_in">count</span>: <span class="hljs-type">Int</span> &#123; <span class="hljs-keyword">get</span> &#125;
+  <span class="hljs-comment">// 其他公共接口</span>
+&#125;
+<span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CArray0</span>: <span class="hljs-title">CArray</span> </span>&#123;
+  <span class="hljs-keyword">var</span> <span class="hljs-built_in">count</span> = <span class="hljs-number">0</span>
+  <span class="hljs-comment">// 其他公共接口实现</span>
+
+&#125;
+<span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">__CArrayI</span>: <span class="hljs-title">CArray</span> </span>&#123;
+  <span class="hljs-keyword">var</span> <span class="hljs-built_in">count</span> = <span class="hljs-number">0</span>
+  <span class="hljs-comment">// 其他公共接口实现</span>
+&#125;</code></pre><br>定义<code>Number</code>和<code>CArray</code>的抽象工厂协议<code>NumberAndArrayFactory</code>：<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">protocol</span> <span class="hljs-title">NumberAndArrayFactory</span> </span>&#123;
+  <span class="hljs-comment">// 用来生产Number的工厂方法</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span>
+  <span class="hljs-comment">// 用来生产CArray的工厂方法</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createCArray</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">CArray</span>
+&#125;</code></pre><br>定义抽象工厂<code>NumberAndArrayFactory</code>的具体实现类<code>BoolNumberAndArray0Factory</code>:<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BoolNumberAndArray0Factory</span>: <span class="hljs-title">NumberAndArrayFactory</span> </span>&#123;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createNumber</span><span class="hljs-params">(value: <span class="hljs-keyword">Any</span>)</span></span> -&gt; <span class="hljs-type">Number</span> &#123;
+    <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> value = value <span class="hljs-keyword">as</span>? <span class="hljs-type">Bool</span> <span class="hljs-keyword">else</span> &#123;
+       <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">"value must be a bool"</span>)
+    &#125;
+    <span class="hljs-keyword">return</span> __CFBoolean(value)
+  &#125;
+  
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createCArray</span><span class="hljs-params">()</span></span> -&gt; <span class="hljs-type">CArray</span> &#123;
+    <span class="hljs-keyword">return</span> __CArray0()
+  &#125;
+&#125;</code></pre><br>具体使用时，先创建抽象工厂<code>NumberAndArrayFactory</code>的具体实现类，然后在调用这个实现类上的工厂方法，创建相应的产品<code>Number</code>或者<code>CArray</code>：<br><pre><code class="hljs swift"><span class="hljs-comment">// 创建抽象工厂`NumberAndArrayFactory`的具体实现类</span>
+<span class="hljs-keyword">let</span> boolNumberAndArray0Factory = <span class="hljs-type">BoolNumberAndArray0Factory</span>()
+
+<span class="hljs-comment">// 调用工厂方法，创建相应的产品</span>
+<span class="hljs-keyword">let</span> boolNumber = boolNumberAndArray0Factory.createNumber(<span class="hljs-literal">true</span>)
+<span class="hljs-keyword">let</span> 0CArray = boolNumberAndArray0Factory.createCArray()</code></pre><br>需要注意的是，这里为了说明抽象工厂模式，抽象工厂<code>NumberAndArrayFactory</code>所创建的<code>Number</code>和<code>CArray</code>没有任何关联，在实际项目中，同一抽象工厂所创建的产品是关联的，一般是一起结合使用，如果不关联，也不必用抽象工厂模式。</p>
 <h2 id="建造者模式（builder）"><a href="#建造者模式（builder）" class="headerlink" title="建造者模式（builder）"></a>建造者模式（builder）</h2><p>建造者模式是用来隔离复杂对象的配置过程，将复杂对象的配置过程单独封装成一个<code>builder</code>对象，完成配置后，再获取配置完成的实例对象。</p>
-<p>cocoa中使用建造者模式的类是<code>NSDateComponents</code>,<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> Foundation<br><br><span class="hljs-keyword">var</span> builder = <span class="hljs-type">NSDateComponents</span>()<br><br>builder.hour = <span class="hljs-number">10</span><br>builder.day = <span class="hljs-number">6</span><br>builder.month = <span class="hljs-number">9</span><br>builder.year = <span class="hljs-number">1940</span><br>builder.calendar = <span class="hljs-type">Calendar</span>(identifier: .gregorian)<br><br><span class="hljs-keyword">var</span> date = builder.date<br><span class="hljs-built_in">print</span>(date!)<br></code></pre></td></tr></table></figure><br>输出结果为：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-number">1940</span>-<span class="hljs-number">09</span>-<span class="hljs-number">06</span> <span class="hljs-number">01</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> +<span class="hljs-number">0000</span><br></code></pre></td></tr></table></figure><br><code>NSDateComponents</code>相当于日期的一个<code>builder</code>，<code>NSDateComponents</code>用来配置日期的各个部分，配置完成后，最终获取对应的<code>Date</code>日期。<br><code>NSDateComponents</code>的实现大致如下（为避免与系统中的<code>NSDateComponents</code>和<code>DateComponents</code>混淆，这里取<code>DateBuilder</code>）：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DateBuilder</span> </span>&#123;<br>  <span class="hljs-keyword">var</span> hour = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">var</span> day = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">var</span> month = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">var</span> year = <span class="hljs-number">1970</span><br>  <span class="hljs-keyword">var</span> calendar = <span class="hljs-type">Calendar</span>(identifier: .gregorian)<br><br>  <span class="hljs-keyword">var</span> date: <span class="hljs-type">Date</span> &#123;<br>    <span class="hljs-comment">// 根据date components计算日期，比较复杂，这里省略了计算过程</span><br>    <span class="hljs-keyword">let</span> calculatedDate = ...<br>    <span class="hljs-keyword">return</span> calculatedDate<br>  &#125;  <br>&#125;<br></code></pre></td></tr></table></figure><br>但这使用上不能链式调用，很不方便，加上各个属性的设置方法，返回自己本身，可以实现链式调用：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DateBuilder</span> </span>&#123;<br>  <span class="hljs-keyword">var</span> hour = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">var</span> day = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">var</span> month = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">var</span> year = <span class="hljs-number">1970</span><br>  <span class="hljs-keyword">var</span> calendar = <span class="hljs-type">Calendar</span>(identifier: .gregorian)<br><br>  <span class="hljs-keyword">var</span> date: <span class="hljs-type">Date</span> &#123;<br>    <span class="hljs-comment">// 根据DateComponents计算日期，比较复杂，这里省略了计算过程</span><br>    <span class="hljs-keyword">let</span> calculatedDate = ...<br>    <span class="hljs-keyword">return</span> calculatedDate<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">hour</span><span class="hljs-params">(<span class="hljs-number">_</span> hour: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;<br>    <span class="hljs-keyword">self</span>.hour = hour<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span><br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">day</span><span class="hljs-params">(<span class="hljs-number">_</span> day: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;<br>    <span class="hljs-keyword">self</span>.day = day<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span><br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">month</span><span class="hljs-params">(<span class="hljs-number">_</span> month: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;<br>    <span class="hljs-keyword">self</span>.month = month<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span><br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">year</span><span class="hljs-params">(<span class="hljs-number">_</span> year: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;<br>    <span class="hljs-keyword">self</span>.year = year<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span><br>  &#125;<br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">calendar</span><span class="hljs-params">(<span class="hljs-number">_</span> calendar: Calendar)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;<br>    <span class="hljs-keyword">self</span>.calendar = calendar<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>使用时很方便：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> date = <span class="hljs-type">DateBuilder</span>().hour(<span class="hljs-number">1</span>).day(<span class="hljs-number">2</span>).month(<span class="hljs-number">12</span>).year(<span class="hljs-number">2017</span>).date<br></code></pre></td></tr></table></figure></p>
-<h2 id="原型模式-Prototype"><a href="#原型模式-Prototype" class="headerlink" title="原型模式(Prototype)"></a>原型模式(Prototype)</h2><p>原型模式其实就是一个类能够通过自身copy，创建一个内容一模一样的新实例，这在iOS的系统框架<code>Foundation</code>中挺常见的，<code>NSString</code>、<code>NSArray</code>、<code>NSDictionary</code>和<code>NSParagraphStyle</code>的 <code>copy</code>、<code>mutableCopy</code>方法都能复制一个新的实例，从而免去了从零创建一个复杂类的麻烦。<br>如<code>NSParagraphStyle</code>，当获取到一个<code>paragraphStyle</code>之后，突然又想在其基础上改动同时又不想直接改变原来<code>NSParagraphStyle</code>，最方便的不过<code>copy</code>一份原来的，然后在改动。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> paragraphStyle = <span class="hljs-type">NSParagraphStyle</span>.<span class="hljs-keyword">default</span><br><span class="hljs-keyword">let</span> mutablePara = paragraphStyle.mutableCopy() <span class="hljs-keyword">as</span>! <span class="hljs-type">NSMutableParagraphStyle</span><br>mutablePara.lineSpacing = <span class="hljs-number">10</span><br>mutablePara.paragraphSpacing = <span class="hljs-number">5</span><br></code></pre></td></tr></table></figure><br>如果想实现原型模式，在swift中直接实现<code>NSCopying</code>和<code>NSMutableCopying</code>协议即可。</p>
-<h2 id="单例模式-Singleton"><a href="#单例模式-Singleton" class="headerlink" title="单例模式(Singleton)"></a>单例模式(Singleton)</h2><p>单例模式即一个类至始至终只有一个实例（单例类是可以新创建实例的，但一般都会用公共的那个单例实例），常用于Manager上。单例在iOS系统中十分常用，如<code>NSParagraphStyle.default</code> 、 <code>UIScreen.main</code> 、 <code>UIApplication.shared</code> 、 <code>UserDefaults.standard</code>和<code>FileManager.default</code>等都是单例。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> paragraphStyle = <span class="hljs-type">NSParagraphStyle</span>.<span class="hljs-keyword">default</span><br><span class="hljs-keyword">let</span> screen = <span class="hljs-type">UIScreen</span>.main<br><span class="hljs-keyword">let</span> application = <span class="hljs-type">UIApplication</span>.shared<br><span class="hljs-keyword">let</span> userDefault = <span class="hljs-type">UserDefaults</span>.standard<br><span class="hljs-keyword">let</span> fileManager = <span class="hljs-type">FileManager</span>.<span class="hljs-keyword">default</span><br></code></pre></td></tr></table></figure><br>在swift中实现一个单例模式，也是非常简单的。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Manager</span> </span>&#123;<br>  <span class="hljs-comment">// 单例</span><br>  <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> shared = <span class="hljs-type">Manager</span>()<br>  <span class="hljs-comment">// 私有化后，这个对象只会有单例这一个实例</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">init</span>() &#123;<br><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>上述单例，初始化方法私有化了，因此在整个APP的生命周期中，将只有一个此类的实例，即单例。<br>但有时，单利只是给一个默认配置而已，如果想自定义，可以完全重新初始化一个新的实例，如<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ParagraphStyle</span> </span>&#123;<br>  <span class="hljs-comment">// 单例</span><br>  <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> <span class="hljs-keyword">default</span> = <span class="hljs-type">ParagraphStyle</span>()<br>  <span class="hljs-comment">// 没有私有化，这个对象如果有需要可以创建单例以外的新的实例</span><br>  <span class="hljs-keyword">init</span>() &#123;<br><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure></p>
+<p>cocoa中使用建造者模式的类是<code>NSDateComponents</code>,<br><pre><code class="hljs swift"><span class="hljs-keyword">import</span> Foundation
+
+<span class="hljs-keyword">var</span> builder = <span class="hljs-type">NSDateComponents</span>()
+
+builder.hour = <span class="hljs-number">10</span>
+builder.day = <span class="hljs-number">6</span>
+builder.month = <span class="hljs-number">9</span>
+builder.year = <span class="hljs-number">1940</span>
+builder.calendar = <span class="hljs-type">Calendar</span>(identifier: .gregorian)
+
+<span class="hljs-keyword">var</span> date = builder.date
+<span class="hljs-built_in">print</span>(date!)</code></pre><br>输出结果为：<br><pre><code class="hljs swift"><span class="hljs-number">1940</span>-<span class="hljs-number">09</span>-<span class="hljs-number">06</span> <span class="hljs-number">01</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> +<span class="hljs-number">0000</span></code></pre><br><code>NSDateComponents</code>相当于日期的一个<code>builder</code>，<code>NSDateComponents</code>用来配置日期的各个部分，配置完成后，最终获取对应的<code>Date</code>日期。<br><code>NSDateComponents</code>的实现大致如下（为避免与系统中的<code>NSDateComponents</code>和<code>DateComponents</code>混淆，这里取<code>DateBuilder</code>）：<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DateBuilder</span> </span>&#123;
+  <span class="hljs-keyword">var</span> hour = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">var</span> day = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">var</span> month = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">var</span> year = <span class="hljs-number">1970</span>
+  <span class="hljs-keyword">var</span> calendar = <span class="hljs-type">Calendar</span>(identifier: .gregorian)
+
+  <span class="hljs-keyword">var</span> date: <span class="hljs-type">Date</span> &#123;
+    <span class="hljs-comment">// 根据date components计算日期，比较复杂，这里省略了计算过程</span>
+    <span class="hljs-keyword">let</span> calculatedDate = ...
+    <span class="hljs-keyword">return</span> calculatedDate
+  &#125;  
+&#125;</code></pre><br>但这使用上不能链式调用，很不方便，加上各个属性的设置方法，返回自己本身，可以实现链式调用：<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DateBuilder</span> </span>&#123;
+  <span class="hljs-keyword">var</span> hour = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">var</span> day = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">var</span> month = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">var</span> year = <span class="hljs-number">1970</span>
+  <span class="hljs-keyword">var</span> calendar = <span class="hljs-type">Calendar</span>(identifier: .gregorian)
+
+  <span class="hljs-keyword">var</span> date: <span class="hljs-type">Date</span> &#123;
+    <span class="hljs-comment">// 根据DateComponents计算日期，比较复杂，这里省略了计算过程</span>
+    <span class="hljs-keyword">let</span> calculatedDate = ...
+    <span class="hljs-keyword">return</span> calculatedDate
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">hour</span><span class="hljs-params">(<span class="hljs-number">_</span> hour: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;
+    <span class="hljs-keyword">self</span>.hour = hour
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">day</span><span class="hljs-params">(<span class="hljs-number">_</span> day: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;
+    <span class="hljs-keyword">self</span>.day = day
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">month</span><span class="hljs-params">(<span class="hljs-number">_</span> month: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;
+    <span class="hljs-keyword">self</span>.month = month
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">year</span><span class="hljs-params">(<span class="hljs-number">_</span> year: Int)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;
+    <span class="hljs-keyword">self</span>.year = year
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>
+  &#125;
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">calendar</span><span class="hljs-params">(<span class="hljs-number">_</span> calendar: Calendar)</span></span> -&gt; <span class="hljs-type">DateBuilder</span> &#123;
+    <span class="hljs-keyword">self</span>.calendar = calendar
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>
+  &#125;
+&#125;</code></pre><br>使用时很方便：<br><pre><code class="hljs swift"><span class="hljs-keyword">let</span> date = <span class="hljs-type">DateBuilder</span>().hour(<span class="hljs-number">1</span>).day(<span class="hljs-number">2</span>).month(<span class="hljs-number">12</span>).year(<span class="hljs-number">2017</span>).date</code></pre></p>
+<h2 id="原型模式-Prototype"><a href="#原型模式-Prototype" class="headerlink" title="原型模式(Prototype)"></a>原型模式(Prototype)</h2><p>原型模式其实就是一个类能够通过自身copy，创建一个内容一模一样的新实例，这在iOS的系统框架<code>Foundation</code>中挺常见的，<code>NSString</code>、<code>NSArray</code>、<code>NSDictionary</code>和<code>NSParagraphStyle</code>的 <code>copy</code>、<code>mutableCopy</code>方法都能复制一个新的实例，从而免去了从零创建一个复杂类的麻烦。<br>如<code>NSParagraphStyle</code>，当获取到一个<code>paragraphStyle</code>之后，突然又想在其基础上改动同时又不想直接改变原来<code>NSParagraphStyle</code>，最方便的不过<code>copy</code>一份原来的，然后在改动。<br><pre><code class="hljs swift"><span class="hljs-keyword">let</span> paragraphStyle = <span class="hljs-type">NSParagraphStyle</span>.<span class="hljs-keyword">default</span>
+<span class="hljs-keyword">let</span> mutablePara = paragraphStyle.mutableCopy() <span class="hljs-keyword">as</span>! <span class="hljs-type">NSMutableParagraphStyle</span>
+mutablePara.lineSpacing = <span class="hljs-number">10</span>
+mutablePara.paragraphSpacing = <span class="hljs-number">5</span></code></pre><br>如果想实现原型模式，在swift中直接实现<code>NSCopying</code>和<code>NSMutableCopying</code>协议即可。</p>
+<h2 id="单例模式-Singleton"><a href="#单例模式-Singleton" class="headerlink" title="单例模式(Singleton)"></a>单例模式(Singleton)</h2><p>单例模式即一个类至始至终只有一个实例（单例类是可以新创建实例的，但一般都会用公共的那个单例实例），常用于Manager上。单例在iOS系统中十分常用，如<code>NSParagraphStyle.default</code> 、 <code>UIScreen.main</code> 、 <code>UIApplication.shared</code> 、 <code>UserDefaults.standard</code>和<code>FileManager.default</code>等都是单例。<br><pre><code class="hljs swift"><span class="hljs-keyword">let</span> paragraphStyle = <span class="hljs-type">NSParagraphStyle</span>.<span class="hljs-keyword">default</span>
+<span class="hljs-keyword">let</span> screen = <span class="hljs-type">UIScreen</span>.main
+<span class="hljs-keyword">let</span> application = <span class="hljs-type">UIApplication</span>.shared
+<span class="hljs-keyword">let</span> userDefault = <span class="hljs-type">UserDefaults</span>.standard
+<span class="hljs-keyword">let</span> fileManager = <span class="hljs-type">FileManager</span>.<span class="hljs-keyword">default</span></code></pre><br>在swift中实现一个单例模式，也是非常简单的。<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Manager</span> </span>&#123;
+  <span class="hljs-comment">// 单例</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> shared = <span class="hljs-type">Manager</span>()
+  <span class="hljs-comment">// 私有化后，这个对象只会有单例这一个实例</span>
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">init</span>() &#123;
+
+  &#125;
+&#125;</code></pre><br>上述单例，初始化方法私有化了，因此在整个APP的生命周期中，将只有一个此类的实例，即单例。<br>但有时，单利只是给一个默认配置而已，如果想自定义，可以完全重新初始化一个新的实例，如<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ParagraphStyle</span> </span>&#123;
+  <span class="hljs-comment">// 单例</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> <span class="hljs-keyword">default</span> = <span class="hljs-type">ParagraphStyle</span>()
+  <span class="hljs-comment">// 没有私有化，这个对象如果有需要可以创建单例以外的新的实例</span>
+  <span class="hljs-keyword">init</span>() &#123;
+
+  &#125;
+&#125;</code></pre></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>创建型设计模式在iOS系统中的运用相当广泛，而我们开发中只要有一定的抽象，基本都会用到，尤其是简单工厂模式和工厂模式、单例模式，希望本文的讲解能让大家能真正理解这些开发模式，并在开发中顺利应用。</p>
 <p>参考文章： </p>
 <ol>
@@ -194,7 +437,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/design-pattern/" rel="tag">design pattern</a>, <a class="has-link-grey -link" href="/tags/swift/" rel="tag">swift</a>
+                    <a class="has-link-grey -link" href="/tags/design-pattern/" rel="tag">design pattern</a>
                 </div>
             </div>
         </div>
@@ -303,6 +546,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
@@ -377,25 +639,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -408,29 +651,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -452,49 +674,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -703,7 +897,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>

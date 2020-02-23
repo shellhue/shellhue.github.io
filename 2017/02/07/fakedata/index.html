@@ -20,11 +20,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/images/fakedatathumbnail.jpg">
 <meta property="article:published_time" content="2017-02-07T13:40:21.000Z">
-<meta property="article:modified_time" content="2017-03-17T15:42:45.000Z">
+<meta property="article:modified_time" content="2020-02-10T15:31:56.840Z">
 <meta property="article:author" content="轻墨">
 <meta property="article:tag" content="iOS">
-<meta property="article:tag" content="Swift">
-<meta property="article:tag" content="Objective-C">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/fakedatathumbnail.jpg">
 
@@ -40,7 +38,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -165,8 +163,74 @@
         <div class="content">
             <p>当工期比较紧的时候，项目开发中会经常出现移动端等待后端接口数据的情形，不但耽误项目进度，更让人有种无奈的绝望。所以在开发中，我们常常自己做些假数据，以方便开发和UI调试。然而做假数据方法不同，效率和安全性都各不同，有时稍有不慎，还会产生很大的bug。因此本文拟结合我在贝聊的开发经验，讲一讲我们组在iOS开发中曾经用过的做假数据的方法及其优劣。</p>
 <h2 id="示例项目"><a href="#示例项目" class="headerlink" title="示例项目"></a>示例项目</h2><p>为方便下文的说明，本文主要以贝聊家长版app发现首页的热门帖子列表的实现为例。热门帖子列表的样式如下图：<br><img src="/images/sampleCell.png" alt=""><br>这是比较常见的列表，用常用的<code>UITableView</code>实现即可，但需要自定义一个的<code>UITableViewCell</code>的子类<code>ExploreTableViewCell</code>。项目中，<code>ExploreTableViewCell</code>并没有用xib实现（因为xib日后不好修改，且代码复用性差），而是通过<code>SnapKit</code>用纯代码布的局，具体的布局代码大致如下：<br><a id="more"></a></p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-keyword">import</span> SnapKit<br><span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">ExploreTableViewCell</span>: <span class="hljs-title">UITableViewCell</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> thumbnailImageView: <span class="hljs-type">UIImageView</span><br>  <span class="hljs-keyword">let</span> titleLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-keyword">let</span> avatarImageView: <span class="hljs-type">UIImageView</span><br>  <span class="hljs-keyword">let</span> authorNameLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-keyword">let</span> viewCountLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-keyword">let</span> commentCountLabel: <span class="hljs-type">UILabel</span><br>  <span class="hljs-comment">//...其他属性</span><br><br>  <span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;<br>    <span class="hljs-comment">//创建view</span><br>    thumbnailImageView = <span class="hljs-type">UIImageView</span>()<br>    titleLabel = <span class="hljs-type">UILabel</span>()<br>    avatarImageView = <span class="hljs-type">UIImageView</span>()<br>    authorNameLabel = <span class="hljs-type">UILabel</span>()<br>    viewCountLabel = <span class="hljs-type">UILabel</span>()<br>    commentCountLabel = <span class="hljs-type">UILabel</span>()<br><br>    <span class="hljs-comment">//...其他view的创建</span><br><br>    <span class="hljs-keyword">super</span>.<span class="hljs-keyword">init</span>(style: style, reuseIdentifier: reuseIdentifier)<br>    <span class="hljs-comment">//设置view</span><br>    titleLabel.numberOfLines = <span class="hljs-number">2</span><br>    titleLabel.textColor = <span class="hljs-type">UIColor</span>.black<br>    titleLabel.snp.makeConstraints &#123; (make) -&gt; <span class="hljs-type">Void</span> <span class="hljs-keyword">in</span><br>        make.<span class="hljs-keyword">left</span>.equalTo(thumbnailImageView.snp.<span class="hljs-keyword">right</span>).offset(<span class="hljs-number">15</span>)<br>        make.<span class="hljs-keyword">right</span>.equalTo(contentView.snp.<span class="hljs-keyword">right</span>)<br>        make.top.equalTo(contentView.snp.top)<br>    &#125;<br>    <span class="hljs-comment">//...其他view的设置</span><br>  &#125;<br><br>  <span class="hljs-comment">//...其他业务代码</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<h2 id="源码中写死"><a href="#源码中写死" class="headerlink" title="源码中写死"></a>源码中写死</h2><p>源码中写死数据是最便捷的假数据做法，项目很赶时，为最快速的看到UI效果，一般都会采取这种假数据方式。比如在上述热门帖子列表示例项目中，为查看整个<code>ExploreTableViewCell</code>的布局效果，在<code>titleLabel</code>等<code>subview</code>的设置位置，直接写死假数据。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//...其他代码</span><br><span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;<br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>  <span class="hljs-comment">//写死的假数据代码</span><br>  titleLabel.text = <span class="hljs-string">"这是一个标题这是一个标题这是一个标题这是一个标题这"</span><br>  thumbnailImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>  avatarImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>  authorNameLabel.text = <span class="hljs-string">"作者名"</span><br>  viewCountLabel.text = <span class="hljs-string">"1000"</span><br>  commentCountLabel.text = <span class="hljs-string">"1000"</span><br><br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>&#125;<br><span class="hljs-comment">//...其他代码</span><br></code></pre></td></tr></table></figure><br>源码中写死假数据虽然方便，但稍有不慎就容易直接上线上环境（因为测试在测试时一般都会有数据，假数据被遮盖了），演变成一个有可能非常严重也有可能很轻的bug（贝聊就切实出现过这样的bug，而且还是个影响广泛的大bug），为安全起见，所有写死的假数据都应该包在条件编译宏内。<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-comment">//...其他代码</span><br><span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;<br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>  <span class="hljs-comment">//写死的假数据代码，包裹在条件编译宏内</span><br>  #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span><br>    titleLabel.text = <span class="hljs-string">"这是一个标题这是一个标题这是一个标题这是一个标题这"</span><br>    thumbnailImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>    avatarImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)<br>    authorNameLabel.text = <span class="hljs-string">"作者名"</span><br>    viewCountLabel.text = <span class="hljs-string">"1000"</span><br>    commentCountLabel.text = <span class="hljs-string">"1000"</span><br>  #endif<br>  <span class="hljs-comment">//...其他初始化代码</span><br><br>&#125;<br><span class="hljs-comment">//...其他代码</span><br></code></pre></td></tr></table></figure><br>包在条件编译宏内，就可以保证不污染正式环境的代码，从而保证安全性。</p>
+<pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit
+<span class="hljs-keyword">import</span> SnapKit
+<span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">ExploreTableViewCell</span>: <span class="hljs-title">UITableViewCell</span> </span>&#123;
+  <span class="hljs-keyword">let</span> thumbnailImageView: <span class="hljs-type">UIImageView</span>
+  <span class="hljs-keyword">let</span> titleLabel: <span class="hljs-type">UILabel</span>
+  <span class="hljs-keyword">let</span> avatarImageView: <span class="hljs-type">UIImageView</span>
+  <span class="hljs-keyword">let</span> authorNameLabel: <span class="hljs-type">UILabel</span>
+  <span class="hljs-keyword">let</span> viewCountLabel: <span class="hljs-type">UILabel</span>
+  <span class="hljs-keyword">let</span> commentCountLabel: <span class="hljs-type">UILabel</span>
+  <span class="hljs-comment">//...其他属性</span>
+
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;
+    <span class="hljs-comment">//创建view</span>
+    thumbnailImageView = <span class="hljs-type">UIImageView</span>()
+    titleLabel = <span class="hljs-type">UILabel</span>()
+    avatarImageView = <span class="hljs-type">UIImageView</span>()
+    authorNameLabel = <span class="hljs-type">UILabel</span>()
+    viewCountLabel = <span class="hljs-type">UILabel</span>()
+    commentCountLabel = <span class="hljs-type">UILabel</span>()
+
+    <span class="hljs-comment">//...其他view的创建</span>
+
+    <span class="hljs-keyword">super</span>.<span class="hljs-keyword">init</span>(style: style, reuseIdentifier: reuseIdentifier)
+    <span class="hljs-comment">//设置view</span>
+    titleLabel.numberOfLines = <span class="hljs-number">2</span>
+    titleLabel.textColor = <span class="hljs-type">UIColor</span>.black
+    titleLabel.snp.makeConstraints &#123; (make) -&gt; <span class="hljs-type">Void</span> <span class="hljs-keyword">in</span>
+        make.<span class="hljs-keyword">left</span>.equalTo(thumbnailImageView.snp.<span class="hljs-keyword">right</span>).offset(<span class="hljs-number">15</span>)
+        make.<span class="hljs-keyword">right</span>.equalTo(contentView.snp.<span class="hljs-keyword">right</span>)
+        make.top.equalTo(contentView.snp.top)
+    &#125;
+    <span class="hljs-comment">//...其他view的设置</span>
+  &#125;
+
+  <span class="hljs-comment">//...其他业务代码</span>
+&#125;</code></pre>
+<h2 id="源码中写死"><a href="#源码中写死" class="headerlink" title="源码中写死"></a>源码中写死</h2><p>源码中写死数据是最便捷的假数据做法，项目很赶时，为最快速的看到UI效果，一般都会采取这种假数据方式。比如在上述热门帖子列表示例项目中，为查看整个<code>ExploreTableViewCell</code>的布局效果，在<code>titleLabel</code>等<code>subview</code>的设置位置，直接写死假数据。<br><pre><code class="hljs swift"><span class="hljs-comment">//...其他代码</span>
+<span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;
+  <span class="hljs-comment">//...其他初始化代码</span>
+
+  <span class="hljs-comment">//写死的假数据代码</span>
+  titleLabel.text = <span class="hljs-string">"这是一个标题这是一个标题这是一个标题这是一个标题这"</span>
+  thumbnailImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)
+  avatarImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)
+  authorNameLabel.text = <span class="hljs-string">"作者名"</span>
+  viewCountLabel.text = <span class="hljs-string">"1000"</span>
+  commentCountLabel.text = <span class="hljs-string">"1000"</span>
+
+  <span class="hljs-comment">//...其他初始化代码</span>
+
+&#125;
+<span class="hljs-comment">//...其他代码</span></code></pre><br>源码中写死假数据虽然方便，但稍有不慎就容易直接上线上环境（因为测试在测试时一般都会有数据，假数据被遮盖了），演变成一个有可能非常严重也有可能很轻的bug（贝聊就切实出现过这样的bug，而且还是个影响广泛的大bug），为安全起见，所有写死的假数据都应该包在条件编译宏内。<br><pre><code class="hljs swift"><span class="hljs-comment">//...其他代码</span>
+<span class="hljs-keyword">override</span> <span class="hljs-keyword">init</span>(style: <span class="hljs-type">UITableViewCellStyle</span>, reuseIdentifier: <span class="hljs-type">String?</span>) &#123;
+  <span class="hljs-comment">//...其他初始化代码</span>
+
+  <span class="hljs-comment">//写死的假数据代码，包裹在条件编译宏内</span>
+  #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span>
+    titleLabel.text = <span class="hljs-string">"这是一个标题这是一个标题这是一个标题这是一个标题这"</span>
+    thumbnailImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)
+    avatarImageView.image = <span class="hljs-type">UIImage</span>(named:<span class="hljs-string">"sampleImage"</span>)
+    authorNameLabel.text = <span class="hljs-string">"作者名"</span>
+    viewCountLabel.text = <span class="hljs-string">"1000"</span>
+    commentCountLabel.text = <span class="hljs-string">"1000"</span>
+  #endif
+  <span class="hljs-comment">//...其他初始化代码</span>
+
+&#125;
+<span class="hljs-comment">//...其他代码</span></code></pre><br>包在条件编译宏内，就可以保证不污染正式环境的代码，从而保证安全性。</p>
 <h2 id="利用单元测试的网络请求stub做假数据"><a href="#利用单元测试的网络请求stub做假数据" class="headerlink" title="利用单元测试的网络请求stub做假数据"></a>利用单元测试的网络请求stub做假数据</h2><p>在源码中写死假数据，有以下三个缺点，</p>
 <ul>
 <li>污染源代码<br>假数据写在源代码中，即使用宏包裹起来，只是保证了一定的安全性，但依然污染了源代码，如果上线前忘了把假数据代码移除，它一直会残留在源代码中，而且还会一直影响<code>DEBUG</code>环境的调试。</li>
@@ -182,7 +246,43 @@
 <li>在ViewController中完成网络请求的发起，并完成从网络数据到Model的转换</li>
 <li>应用Model填充UI</li>
 </ol>
-<p>整个功能开发按照有真实网络请求进行，但事实上并没有网络请求，因为后台并未搭好，没关系，先按照后台给出的接口和数据格式定义，创建一个本地JSON文件。对于本文的示例（假定只有列表数据）来说，文件名暂为<code>hotTopics.json</code>，内容大致如下（贝聊发现首页实际上有很多其他元素，网络请求返回的JSON也比这个复杂的多）：<br><figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&#123;<br>  hotTopics: [<br>    &#123;<br>      &quot;title&quot;: &quot;这是一个标题这是一个标题这是一个标题&quot;,<br>      &quot;thumbnail&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdlafjlfp34523.jpg&quot;,<br>      &quot;author&quot;: &quot;小黄老师&quot;,<br>      &quot;authorAvatar&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdlafjlfp34523.jpg&quot;,<br>      &quot;commentCount&quot;: 1000,<br>      &quot;viewCount&quot;: 3000<br>    &#125;,<br>    &#123;<br>      &quot;title&quot;: &quot;这是另外一个标题这是另外一个标题这是另外一个标题&quot;,<br>      &quot;thumbnail&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdla32131fjlfp34523.jpg&quot;,<br>      &quot;author&quot;: &quot;小李老师&quot;,<br>      &quot;authorAvatar&quot;: &quot;https:&#x2F;&#x2F;api.beiliao.com&#x2F;explore&#x2F;image&#x2F;fdl232afjlfp34523.jpg&quot;,<br>      &quot;commentCount&quot;: 1030,<br>      &quot;viewCount&quot;: 3400<br>    &#125;<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure><br>然后在<code>ViewController</code>中<code>stub</code>本<code>ViewController</code>中所有的网络请求，我在开发中用的是<a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>，大致的代码如下：<br><figure class="highlight swift"><table><tr><td class="code"><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExploreViewController</span>: <span class="hljs-title">UITableViewController</span> </span>&#123;<br>  <span class="hljs-comment">//...其他代码</span><br>  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">viewDidLoad</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">super</span>.viewDidLoad()<br>    <span class="hljs-comment">//...其他代码</span><br>    #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span><br>        stubRequests()<br>    #endif<br>    <span class="hljs-comment">//...其他代码</span><br>  &#125;<br>  <span class="hljs-comment">//...其他代码</span><br>  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">stubRequests</span><span class="hljs-params">()</span></span> &#123;<br>    stub(isPath(<span class="hljs-string">"/explore/hotTopics"</span>)) &#123; <span class="hljs-number">_</span> <span class="hljs-keyword">in</span><br>      <span class="hljs-keyword">let</span> stubPath = <span class="hljs-type">OHPathForFile</span>(<span class="hljs-string">"hotTopics.json"</span>, type(of: <span class="hljs-keyword">self</span>))<br>      <span class="hljs-keyword">return</span> fixture(filePath: stubPath!, headers: [<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>])<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure><br>注意所创建的JSON文件一定要加到项目目录中。添加完上述代码后，path为<code>/explore/hotTopics</code>的网络请求将被stub，返回的数据将是所指定JSON文件中的数据，这样就跟真实的网络请求没有任何的区别了。而且利用<a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>还可以模拟网络请求失败、网络请求超时以及<code>throttle</code>等各种网络请求状态，从而更全面的调试UI和整个功能。</p>
+<p>整个功能开发按照有真实网络请求进行，但事实上并没有网络请求，因为后台并未搭好，没关系，先按照后台给出的接口和数据格式定义，创建一个本地JSON文件。对于本文的示例（假定只有列表数据）来说，文件名暂为<code>hotTopics.json</code>，内容大致如下（贝聊发现首页实际上有很多其他元素，网络请求返回的JSON也比这个复杂的多）：<br><pre><code class="hljs clojure">&#123;
+  hotTopics: [
+    &#123;
+      <span class="hljs-string">"title"</span>: <span class="hljs-string">"这是一个标题这是一个标题这是一个标题"</span>,
+      <span class="hljs-string">"thumbnail"</span>: <span class="hljs-string">"https://api.beiliao.com/explore/image/fdlafjlfp34523.jpg"</span>,
+      <span class="hljs-string">"author"</span>: <span class="hljs-string">"小黄老师"</span>,
+      <span class="hljs-string">"authorAvatar"</span>: <span class="hljs-string">"https://api.beiliao.com/explore/image/fdlafjlfp34523.jpg"</span>,
+      <span class="hljs-string">"commentCount"</span>: <span class="hljs-number">1000</span>,
+      <span class="hljs-string">"viewCount"</span>: <span class="hljs-number">3000</span>
+    &#125;,
+    &#123;
+      <span class="hljs-string">"title"</span>: <span class="hljs-string">"这是另外一个标题这是另外一个标题这是另外一个标题"</span>,
+      <span class="hljs-string">"thumbnail"</span>: <span class="hljs-string">"https://api.beiliao.com/explore/image/fdla32131fjlfp34523.jpg"</span>,
+      <span class="hljs-string">"author"</span>: <span class="hljs-string">"小李老师"</span>,
+      <span class="hljs-string">"authorAvatar"</span>: <span class="hljs-string">"https://api.beiliao.com/explore/image/fdl232afjlfp34523.jpg"</span>,
+      <span class="hljs-string">"commentCount"</span>: <span class="hljs-number">1030</span>,
+      <span class="hljs-string">"viewCount"</span>: <span class="hljs-number">3400</span>
+    &#125;
+  ]
+&#125;</code></pre><br>然后在<code>ViewController</code>中<code>stub</code>本<code>ViewController</code>中所有的网络请求，我在开发中用的是<a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>，大致的代码如下：<br><pre><code class="hljs swift"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExploreViewController</span>: <span class="hljs-title">UITableViewController</span> </span>&#123;
+  <span class="hljs-comment">//...其他代码</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">viewDidLoad</span><span class="hljs-params">()</span></span> &#123;
+    <span class="hljs-keyword">super</span>.viewDidLoad()
+    <span class="hljs-comment">//...其他代码</span>
+    #<span class="hljs-keyword">if</span> <span class="hljs-type">DEBUG</span>
+        stubRequests()
+    #endif
+    <span class="hljs-comment">//...其他代码</span>
+  &#125;
+  <span class="hljs-comment">//...其他代码</span>
+  <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">stubRequests</span><span class="hljs-params">()</span></span> &#123;
+    stub(isPath(<span class="hljs-string">"/explore/hotTopics"</span>)) &#123; <span class="hljs-number">_</span> <span class="hljs-keyword">in</span>
+      <span class="hljs-keyword">let</span> stubPath = <span class="hljs-type">OHPathForFile</span>(<span class="hljs-string">"hotTopics.json"</span>, type(of: <span class="hljs-keyword">self</span>))
+      <span class="hljs-keyword">return</span> fixture(filePath: stubPath!, headers: [<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>])
+    &#125;
+  &#125;
+&#125;</code></pre><br>注意所创建的JSON文件一定要加到项目目录中。添加完上述代码后，path为<code>/explore/hotTopics</code>的网络请求将被stub，返回的数据将是所指定JSON文件中的数据，这样就跟真实的网络请求没有任何的区别了。而且利用<a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>还可以模拟网络请求失败、网络请求超时以及<code>throttle</code>等各种网络请求状态，从而更全面的调试UI和整个功能。</p>
 <p>利用stub做假数据可以真实的做到基本不污染代码、集中管理和完全真实的数据流通流程，与在源码中写死这种方式相比，近乎完美。然而当你真正用过一段时间后，你会发现，这种方式还是有一个致命的缺点和一个不那么重要的缺点。</p>
 <ul>
 <li>不适合做UI调试<br>因为每改动一次数据，都需要重新编译，而iOS编译是很慢的，尤其是Swift。而要想做UI调试，频繁的改动数据，查看各种边界条件下的UI是必然的。</li>
@@ -226,7 +326,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/Objective-C/" rel="tag">Objective-C</a>, <a class="has-link-grey -link" href="/tags/Swift/" rel="tag">Swift</a>, <a class="has-link-grey -link" href="/tags/iOS/" rel="tag">iOS</a>
+                    <a class="has-link-grey -link" href="/tags/iOS/" rel="tag">iOS</a>
                 </div>
             </div>
         </div>
@@ -335,6 +435,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/10/adaboost/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="从一个demo学习AdaBoost">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
+                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2017/07/21/asyndisplaykit/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
@@ -409,25 +528,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/03/18/structuralpattern/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/designpattern.jpg" alt="《结构型设计模式》之iOS系统框架实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-18T12:47:10.000Z">2017-03-18</time></div>
-                    <a href="/2017/03/18/structuralpattern/" class="title has-link-black-ter is-size-6 has-text-weight-normal">《结构型设计模式》之iOS系统框架实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -440,29 +540,8 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/Objective-C/">
-                        <span class="tag">Objective-C</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/Swift/">
-                        <span class="tag">Swift</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/closure/">
-                        <span class="tag">closure</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/commit/">
-                        <span class="tag">commit</span>
+                    <a class="tags has-addons" href="/tags/Machine-Learning/">
+                        <span class="tag">Machine Learning</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -484,49 +563,21 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/iOS/">
                         <span class="tag">iOS</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/swift/">
-                        <span class="tag">swift</span>
-                        <span class="tag is-grey">7</span>
+                    <a class="tags has-addons" href="/tags/leetcode/">
+                        <span class="tag">leetcode</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
                 <div class="control">
-                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E6%96%87/">
-                        <span class="tag">人文</span>
+                    <a class="tags has-addons" href="/tags/%E6%84%9F%E6%82%9F/">
+                        <span class="tag">感悟</span>
                         <span class="tag is-grey">5</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/">
-                        <span class="tag">小技巧</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="tag">并发</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        <span class="tag">数据结构</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/%E7%AE%97%E6%B3%95/">
-                        <span class="tag">算法</span>
-                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -735,7 +786,8 @@ document.addEventListener('DOMContentLoaded', function () {
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
