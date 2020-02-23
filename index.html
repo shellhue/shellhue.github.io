@@ -140,7 +140,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    22 分钟 读完 (大约 3345 个字)
+                    22 分钟 读完 (大约 3346 个字)
                 </span>
                 
                 
@@ -157,79 +157,17 @@
 <p>提升算法直观上也很好理解，如果多个弱学习器各自擅长解决问题的某一些互相不同的场景，那么多个弱学习器有可能比单个擅长任何场景的学习性能好，三个臭皮匠胜过一个诸葛亮。</p>
 <p>具体怎么学习和组合这一系列的弱学习器，各个boost算法着重点不同，常用的是三大boost算法，AdaBoost、GBDT和XGBoost。</p>
 <p><strong>提升算法的性能取决于各个弱分类器的多样性，AdaBoost通过改变训练数据的权重，来增强各个基本分类器的多样性。</strong></p>
-<p>本文以一个demo为例，庖丁解牛式的学习AdaBoost。</p>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>给定下表所示二分类问题的训练数据，总共10个样本，x的取值0~9，y是类别，取值1或-1，代表两种类别。假设弱分类器由$x&gt;v$或$x&lt;v$产生，其阈值v使该分类器在训练数据集上分类误差率最低，试用AdaBoost算法学习一个强分类器。</p>
-<!-- ![](/images/adaboost_example.png) -->
-<pre><code class="hljs gherkin">// 训练数据表
-num |<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 2 </span>|<span class="hljs-string"> 3 </span>|<span class="hljs-string">  4 </span>|<span class="hljs-string">  5 </span>|<span class="hljs-string">  6 </span>|<span class="hljs-string"> 7 </span>|<span class="hljs-string"> 8 </span>|<span class="hljs-string"> 9 </span>|<span class="hljs-string"> 10  </span>|
- x  |<span class="hljs-string"> 0 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 2 </span>|<span class="hljs-string">  3 </span>|<span class="hljs-string">  4 </span>|<span class="hljs-string">  5 </span>|<span class="hljs-string"> 6 </span>|<span class="hljs-string"> 7 </span>|<span class="hljs-string"> 8 </span>|<span class="hljs-string">  9  </span>|
- y  |<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> -1 </span>|<span class="hljs-string"> -1 </span>|<span class="hljs-string"> -1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> -1  </span>|</code></pre>
-<p>弱分类器的形式是决策树桩：<br><pre><code class="hljs angelscript">g(x) = x &gt; v ? <span class="hljs-number">1</span> : <span class="hljs-number">-1</span>;
-或者
-g(x) = x &lt; v ? <span class="hljs-number">1</span> : <span class="hljs-number">-1</span>;</code></pre><br>由于大括号的公式MathJax不支持，这里以代码代替。</p>
-<h2 id="AdaBoost算法"><a href="#AdaBoost算法" class="headerlink" title="AdaBoost算法"></a>AdaBoost算法</h2><p>AdaBoost，是Adaptive Boosting（自适应增强）的缩写，由Yoav Freund和Robert Schapire在1995年提出。它的自适应在于：前一个基本分类器分错的样本会得到加强，加权后的全体样本再次被用来训练下一个基本分类器。同时，在每一轮中加入一个新的弱分类器，直到达到某个预定的足够小的错误率或达到预先指定的最大迭代次数。</p>
-<p><strong>算法1: AdaBoost</strong><br>输入：训练数据集$T=\left\{ (x_{1}, y_{1}),(x_{2}, y_{2}),…,(x_{N}, y_{N}) \right\}$，其中$x_{i}\in X\subseteq R^{n}$，$y_{i}\in Y=\{1,-1\}$；<br>输入：弱学习算法；<br>输出：最终的分类器$G(x)$.<br>步骤：<br><strong>（1）初始化训练数据的权值分布，$D_{1}=(w_{11},w_{12},…,w_{1N})，w_{1i}=\frac{1}{N}，i=1,2,…,N$</strong><br><strong>（2）对$m=1,2,…,M$</strong><br>（a）使用具有权值分布$D_{m}$的训练数据集学习，得到基本分类器</p>
-<script type="math/tex; mode=display">G_{m}: X \rightarrow \{-1,+1\}</script><p>（b）计算基本分类器$G_{m}$在训练数据集上的分类误差率</p>
-<script type="math/tex; mode=display">e_{m}=\sum_{i=1}^{N}P(G_{m}(x_{i})\neq y_{i})=\sum_{i=1}^{N}w_{mi}I(G_{m}(x_{i})\neq y_{i})</script><p>（c）计算$G_{m}$的系数</p>
-<script type="math/tex; mode=display">\alpha_{m}=\frac{1}{2}log\frac{1-e_{m}}{e_{m}}</script><p>这里的对数是自然对数.<br>（d）更新训练数据集的权值分布</p>
-<script type="math/tex; mode=display">D_{m+1}=(w_{m+1,1},w_{m+1,2},...,w_{m+1,N})</script><script type="math/tex; mode=display">w_{m+1,i}=\frac{w_{mi}}{Z_{m}}exp(-\alpha_{m}y_{i}G_{m}(x_{i}))，i=1,2,...,N</script><p>这里，$Z_{m}$是归一因子</p>
-<script type="math/tex; mode=display">Z_{m}=\sum_{i=1}^{N}w_{mi}exp(-\alpha_{m}y_{i}G_{m}(x_{i}))</script><p>它使$D_{m+1}$成为一个概率分布.<br><strong>（3）构建基本分类器的线性组合</strong></p>
-<script type="math/tex; mode=display">f(x)=\sum_{m=1}^{M}\alpha_{m}G_{m}(x)</script><p>得到最终分类器</p>
-<script type="math/tex; mode=display">G(x)=sign(f(x))=sign(\sum_{m=1}^{M}\alpha_{m}G_{m}(x))</script><h2 id="用AdaBoost解上述例子"><a href="#用AdaBoost解上述例子" class="headerlink" title="用AdaBoost解上述例子"></a>用AdaBoost解上述例子</h2><p>我们把训练数据表挪过来，方便对照。<br><pre><code class="hljs gherkin">// 训练数据表
-num |<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 2 </span>|<span class="hljs-string"> 3 </span>|<span class="hljs-string">  4 </span>|<span class="hljs-string">  5 </span>|<span class="hljs-string">  6 </span>|<span class="hljs-string"> 7 </span>|<span class="hljs-string"> 8 </span>|<span class="hljs-string"> 9 </span>|<span class="hljs-string"> 10  </span>|
- x  |<span class="hljs-string"> 0 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 2 </span>|<span class="hljs-string">  3 </span>|<span class="hljs-string">  4 </span>|<span class="hljs-string">  5 </span>|<span class="hljs-string"> 6 </span>|<span class="hljs-string"> 7 </span>|<span class="hljs-string"> 8 </span>|<span class="hljs-string">  9  </span>|
- y  |<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> -1 </span>|<span class="hljs-string"> -1 </span>|<span class="hljs-string"> -1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> 1 </span>|<span class="hljs-string"> -1  </span>|</code></pre></p>
-<h4 id="（1）第一轮迭代m-1"><a href="#（1）第一轮迭代m-1" class="headerlink" title="（1）第一轮迭代m=1"></a><strong>（1）第一轮迭代m=1</strong></h4><p>（a）初始化数据权值分布</p>
-<script type="math/tex; mode=display">D_{1}=(w_{1,1},w_{1,2},...,w_{1,10})</script><script type="math/tex; mode=display">w_{1,i}=0.1，i=1,2,...,10</script><p>（b）在权值分布为$D_{1}$的训练数据集上，训练弱分类器。<br>可以发现当阈值$v=2.5$时，分类误差率最低，故基本分类器为：<br><pre><code class="hljs angelscript">G1(x)= x &lt; <span class="hljs-number">2.5</span> ? <span class="hljs-number">1</span> : <span class="hljs-number">-1</span></code></pre><br>（c）计算$G_{1}(x)$在训练数据集上的误差率<br>对每一个样本计算$G_{1}(x_{i})，i=1,2,…,10$，发现共有7、8、9等三个样本分类错误。将这三个错误分类样本的权值相加，得到分类误差率：</p>
-<script type="math/tex; mode=display">e_{1}=\sum_{i=1}^{10}w_{1i}I(G_{1}(x_{i})\neq y_{i})=w_{1,7}+w_{1,8}+w_{1,9}=0.3</script><p>（d）计算$G_{1}(x)$的权重系数：$\alpha_{1}=\frac{1}{2}log\frac{1-e_{1}}{e_{1}}$=0.4236<br>（e）此阶段得到的分类器为</p>
-<script type="math/tex; mode=display">f_{1}(x)=0.4236G_{1}(x)</script><p>分类器$sign[f_{1}(x)]$在训练数据集上有3个误分类点。</p>
-<h4 id="（2）第二轮迭代m-2"><a href="#（2）第二轮迭代m-2" class="headerlink" title="（2）第二轮迭代m=2"></a><strong>（2）第二轮迭代m=2</strong></h4><p>（a）更新数据集权值分布</p>
-<script type="math/tex; mode=display">D_{2}=(w_{2,1},w_{2,2},...,w_{2,10})</script><script type="math/tex; mode=display">w_{2i}=w_{1i}\times exp(-\alpha_{1}y_{i}G_{1}(x_{i}))，i=1,2,...,10</script><p>归一化上述$w_{2i}$成一个概率分布:</p>
-<script type="math/tex; mode=display">Z_{1}=\sum_{i=1}^{10}w_{2i}</script><script type="math/tex; mode=display">w_{2i}\leftarrow\frac{w_{2i}}{Z_{1}}，i=1,2,...,10</script><p>这里不一一计算各个权值，最终得到的新的权值分布为：</p>
-<script type="math/tex; mode=display">D_{2}=(0.07143,0.07143,0.07143,0.07143,\\0.07143,0.07143,0.07143, \color{red}{0.16667,0.16667,0.16667},0.07143)</script><p>标红的是$G_{1}$错误分类的三个样本7、8、9，更新后的权重，明显的，$G_{1}$正确分类的减小，错误分类的加大。<br>（b）在权值分布为$D_{2}$的训练数据集上，训练弱分类器。<br>可以发现当阈值$v=8.5$时，分类误差率最低，故基本分类器为：<br><pre><code class="hljs angelscript">G2(x)= x &lt; <span class="hljs-number">8.5</span> ? <span class="hljs-number">1</span> : <span class="hljs-number">-1</span></code></pre><br>（c）计算$G_{2}(x)$在训练数据集上的误差率<br>对每一个样本计算$G_{2}(x_{i})，i=1,2,…,10$，发现共有4、5、6等三个样本分类错误。将这三个错误分类样本的权值相加，得到分类误差率：</p>
-<script type="math/tex; mode=display">e_{2}=\sum_{i=1}^{10}w_{2i}I(G_{2}(x_{i})\neq y_{i})=w_{2,4}+w_{2,5}+w_{2,6}=0.2143</script><p>（d）计算$\alpha_{2}=\frac{1}{2}log\frac{1-e_{2}}{e_{2}}$=0.6496<br>（e）此阶段得到的分类器为</p>
-<script type="math/tex; mode=display">f_{2}(x)=0.4236G_{1}(x)+0.6496G_{2}(x)</script><p>分类器$sign[f_{2}(x)]$在训练数据集上有3个误分类点。</p>
-<h4 id="（3）第三轮迭代m-3"><a href="#（3）第三轮迭代m-3" class="headerlink" title="（3）第三轮迭代m=3"></a><strong>（3）第三轮迭代m=3</strong></h4><p>（a）更新数据集权值分布</p>
-<script type="math/tex; mode=display">D_{3}=(w_{3,1},w_{3,2},...,w_{3,10})</script><script type="math/tex; mode=display">w_{3i}=w_{2i}\times exp(-\alpha_{2}y_{i}G_{2}(x_{i}))，i=1,2,...,10</script><p>归一化上述$w_{3i}$成一个概率分布:</p>
-<script type="math/tex; mode=display">Z_{2}=\sum_{i=1}^{10}w_{3i}</script><script type="math/tex; mode=display">w_{3i}\leftarrow\frac{w_{3i}}{Z_{2}}，i=1,2,...,10</script><p>这里不一一计算各个权值，最终得到的新的权值分布为：</p>
-<script type="math/tex; mode=display">D_{2}=(0.0455,0.0455,0.0455,\color{red}{0.1667,0.1667,0.1667},\\0.1060, 0.1060,0.1060,0.0455)</script><p>标红的是$G_{2}$错误分类的三个样本4、5、6，更新后的权重，明显的，$G_{2}$正确分类的减小，错误分类的加大。<br>（b）在权值分布为$D_{3}$的训练数据集上，训练弱分类器。<br>可以发现当阈值$v=5.5$时，分类误差率最低，故基本分类器为：<br><pre><code class="hljs angelscript">G3(x)= x &gt; <span class="hljs-number">5.5</span> ? <span class="hljs-number">1</span> : <span class="hljs-number">-1</span></code></pre><br>（c）计算$G_{3}(x)$在训练数据集上的误差率<br>对每一个样本计算$G_{3}(x_{i})，i=1,2,…,10$，发现共有1、2、3、10等四个样本分类错误。将这四个错误分类样本的权值相加，得到分类误差率：</p>
-<script type="math/tex; mode=display">e_{3}=\sum_{i=1}^{10}w_{3i}I(G_{3}(x_{i})\neq y_{i})=w_{3,1}+w_{3,2}+w_{3,3}+w_{3,10}=0.1820</script><p>（d）计算$\alpha_{3}=\frac{1}{2}log\frac{1-e_{3}}{e_{3}}$=0.7514<br>（e）此阶段得到的分类器为</p>
-<script type="math/tex; mode=display">f_{3}(x)=0.4236G_{1}(x)+0.6496G_{2}(x)+0.7514G_{3}(x)</script><p>分类器$sign[f_{3}(x)]$在训练数据集上有0个误分类点，停止迭代。</p>
-<p>于是最终分类器为：</p>
-<script type="math/tex; mode=display">G(x)=sign[f_{3}(x)]=sign[0.4236G_{1}(x)+0.6496G_{2}(x)+0.7514G_{3}(x)]</script><p><strong>观察可知，$G_{1}、G_{2}、G_{3}$的误差率分别为0.3、0.2143、0.1820，对应的权重分别为0.4236、0.6496、0.7514，明显的误差越低，在最终分类器中所占的比重越大，表决权越大。还可以看出，AdaBoost的收敛速度是很快的，上述例子仅需三步训练误差就降为0，事实上对AdaBoost做误差分析可知，AdaBoost的误差是以指数速率下降的。</strong></p>
-<h2 id="AdaBoost算法推导"><a href="#AdaBoost算法推导" class="headerlink" title="AdaBoost算法推导"></a>AdaBoost算法推导</h2><p>经过前文的demo，相信大家对AdaBoost已经有个较为全面的认知。本文尝试推导AdaBoost</p>
-<p>AdaBoost算法实际上是模型为加法模型、损失函数为指数函数、学习算法为前向分步算法的二分类学习方法。</p>
-<h4 id="加法模型与前向分步算法"><a href="#加法模型与前向分步算法" class="headerlink" title="加法模型与前向分步算法"></a><strong>加法模型与前向分步算法</strong></h4><p>加法模型（additive model）是模型由若干个基函数线性组合而成：</p>
-<script type="math/tex; mode=display">f(x)=\sum_{m=1}^{M}\beta_{m}b(x;\gamma_{m})</script><p>其中，$b(x;\gamma_{m})$为基函数，$\gamma_{m}$为基函数的参数，$\beta_{m}$为基函数的系数，显然的AdaBoost算法的最终分类器是一个加法模型。</p>
-<p>在给定训练数据及损失函数$L(y,f(x))$的条件下，学习加法模型$f(x)$成为经验风险极小化即损失函数极小化的问题：</p>
-<script type="math/tex; mode=display">\min_{\beta_{m},\gamma_{m}}\sum_{i=1}^{N}L(y_{i}, \sum_{m=1}^{M}\beta_{m}b(x;\gamma_{m}))</script><p>通常这是一个非常复杂的优化问题，前向分步算法（forward stagewise algorithm）求解这一优化问题的想法是：因为学习的是加法模型，如果能够从前向后，每一步只学习一个基函数及其系数，逐步逼近上述优化目标函数，那么就可以简化优化的复杂度，具体地，每一步只需要优化如下损失函数：</p>
-<script type="math/tex; mode=display">\min_{\beta,\gamma}\sum_{i=1}^{N}L(y_{i}, \beta b(x;\gamma))</script><p><strong>算法2：前向分布算法</strong><br>输入：训练数据集$T=\left\{ (x_{1}, y_{1}),(x_{2}, y_{2}),…,(x_{N}, y_{N}) \right\}$，其中$x_{i}\in X\subseteq R^{n}$，$y_{i}\in Y=\{1,-1\}$；<br>输入：基函数集${b(x;\gamma)}$<br>输出：加法模型$f(x)$<br><strong>（1）初始化$f_{0}(x)=0$</strong><br><strong>（2）对$m=1,2,…,M$</strong><br>（a）极小化损失函数</p>
-<script type="math/tex; mode=display">(\beta_{m},\gamma_{m})=arg\min_{\beta,\gamma}\sum_{i=1}^{N}L(y_{i},f_{m-1}(x_{i})+\beta b(x_{i};\beta))</script><p>得到参数$\beta_{m}，\gamma_{m}$<br>（b）更新</p>
-<script type="math/tex; mode=display">f_{m}(x)=f_{m-1}(x)+\beta_{m}b(x;\gamma_{m})</script><p><strong>（3）得到加法模型</strong></p>
-<script type="math/tex; mode=display">f(x)=f_{M}(x)=\sum_{m=1}^{M}\beta_{m}b(x;\gamma_{m})</script><p><strong>这样，前向分步算法将同时求解从$m=1$到$M$所有参数$\beta_{m}，\gamma_{m}$的优化问题，简化为逐次求解各个$\beta_{m}，\gamma_{m}$的优化问题。</strong></p>
-<h4 id="AdaBoost推导"><a href="#AdaBoost推导" class="headerlink" title="AdaBoost推导"></a><strong>AdaBoost推导</strong></h4><p>AdaBoost只是一个前向分步加法算法的特例，这时，模型是由基本分类器组成的加法模型，损失函数是指数函数。<br>指数损失函数的形式是：</p>
-<script type="math/tex; mode=display">L(y,f(x))=exp[-yf(x)]</script><p>假定经过$m-1$轮迭代，前向分步算法已经得到$f_{m-1}(x)$:</p>
-<script type="math/tex; mode=display">f_{m-1}(x)=f_{m-2}(x)+\alpha_{m-1}G_{m-1}(x)=\alpha_{1}G_{1}(x)+...+\alpha_{m-1}G_{m-1}(x)</script><p>在第$m$轮迭代得到$\alpha_{m}$，$G_{m}(x)$和$f_{m}(x)$.</p>
-<script type="math/tex; mode=display">f_{m}(x)=f_{m-1}(x)+\alpha_{m}G_{m}(x)</script><p>目标是使前向分步算法得到的$\alpha_{m}$和$G_{m}(x)$使$f_{m}(x)$在训练数据集$T$上的指数损失最小，即</p>
-<script type="math/tex; mode=display">(\alpha_{m},G_{m}(x))=arg\min_{\alpha,G}\sum_{i=1}^{N}exp[-y_{i}(f_{m-1}(x_{i})+\alpha G(x_{i}))]</script><p>记$\bar{w}_{mi}=exp[-y_{i}f_{m-1}(x_{i})]$，则</p>
-<script type="math/tex; mode=display">=arg\min_{\alpha,G}\sum_{i=1}^{N}\bar{w}_{mi}exp[-y_{i}\alpha G(x_{i})]</script><p>求解上式，可分为两步：<br>首先，求$G_{m}(x)$. 对任意$\alpha&gt;0$，使得上式最小的$G(x)$由下式得到：</p>
-<script type="math/tex; mode=display">G_{m}(x)=arg\min_{G}\sum_{i=1}^{N}\bar{w}_{mi}I(y_{i}\neq G(x_{i}))</script><p>之后，求$\alpha_{m}$</p>
-<script type="math/tex; mode=display">\sum_{i=1}^{N}\bar{w}_{mi}exp[-y_{i}\alpha G_{m}(x_{i})] \\ =\sum_{y_{i}=G_{m}(x_{i})}\bar{w}_{mi}e^{-\alpha}+\sum_{y_{i}\neq G_{m}(x_{i})}\bar{w}_{mi}e^{\alpha} \\ =(e^{\alpha}-e^{-\alpha})\sum_{i=1}^{N}\bar{w}_{mi}I(y_{i}\neq G_{m}(x_{i}))+e^{-\alpha}\sum_{i=1}^{N}\bar{w}_{mi}</script><p>上式是$\alpha$的单变量函数，记为$h(\alpha)$，对$\alpha$求导，并令其等于0</p>
-<script type="math/tex; mode=display">\frac{d h(\alpha)}{d \alpha}=(e^{\alpha}+e^{-\alpha})\sum_{i=1}^{N}\bar{w}_{mi}I(y_{i}\neq G_{m}(x_{i}))-e^{-\alpha}\sum_{i=1}^{N}\bar{w}_{mi}=0</script><script type="math/tex; mode=display">(e^{\alpha}+e^{-\alpha})\sum_{i=1}^{N}\bar{w}_{mi}I(y_{i}\neq G_{m}(x_{i}))=e^{-\alpha}\sum_{i=1}^{N}\bar{w}_{mi}</script><script type="math/tex; mode=display">\frac{e^{-\alpha}}{e^{\alpha}+e^{-\alpha}}=\frac{\sum_{i=1}^{N}\bar{w}_{mi}I(y_{i}\neq G_{m}(x_{i}))}{\sum_{i=1}^{N}w_{mi}}</script><script type="math/tex; mode=display">\frac{1}{e^{2\alpha}+1}=\frac{\sum_{i=1}^{N}\bar{w}_{mi}I(y_{i}\neq G_{m}(x_{i}))}{\sum_{i=1}^{N}\bar{w}_{mi}}</script><script type="math/tex; mode=display">\frac{1}{e^{2\alpha}+1}=\sum_{i=1}^{N}\frac{\bar{w}_{mi}}{\sum_{j=1}^{N}\bar{w}_{mj}}I(y_{i}\neq G_{m}(x_{i}))</script><p>记，归一化的权重$\bar{w}_{mi}$为$w_{mi}$，则</p>
-<script type="math/tex; mode=display">\frac{1}{e^{2\alpha}+1}=\sum_{i=1}^{N}w_{mi}I(y_{i}\neq G_{m}(x_{i}))</script><p>记，$e_{m}=\sum_{i=1}^{N}w_{mi}I(y_{i}\neq G_{m}(x_{i}))$，则</p>
-<script type="math/tex; mode=display">\frac{1}{e^{2\alpha}+1}=e_{m}</script><p>最终得到$\alpha_{m}$：</p>
-<script type="math/tex; mode=display">\alpha_{m}=\frac{1}{2}log\frac{1-e_{m}}{e_{m}}</script><p>最后来看每一轮样本权值的更新. 由</p>
-<script type="math/tex; mode=display">f_{m}(x)=f_{m-1}(x)+\alpha_{m}G_{m}(x)</script><p>以及$\bar{w}_{mi}=exp[-y_{i}f_{m-1}(x_{i})]$，可得</p>
-<script type="math/tex; mode=display">\bar{w}_{m+1,i}=\bar{w}_{m,i}exp[-y_{i}\alpha_{m}G_{m}(x_{i})]</script><p>归一化后得，</p>
-<script type="math/tex; mode=display">{w}_{m+1,i}=\frac{\bar{w}_{m+1,i}}{\sum_{j=1}^{N}\bar{w}_{m+1,j}}</script><p>这与AdaBoost的权值更新公式完全相同。</p>
-<p>上述的$G_{m}(x)、\alpha_{m}、{w}_{m+1,i}$的迭代公式与AdaBoost的$G_{m}(x)、\alpha_{m}、{w}_{m+1,i}$的迭代公式完全相同，推导完毕。</p>
-<p><strong>需要说明的是，权重的归一化是$\alpha_{m}$中$e_{m}$的计算所要求的，$G_{m}(x)$的迭代并不需要权值归一化。</strong></p>
-<h2 id="文献"><a href="#文献" class="headerlink" title="文献"></a>文献</h2><ol>
-<li>李航老师《统计学习方法》第八章 提升方法</li>
-</ol>
-
+<p>本文以一个demo为例，庖丁解牛式的学习AdaBoost。<br>
         </div>
         
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2020/02/10/adaboost/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
         
         
     </div>
