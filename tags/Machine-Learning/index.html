@@ -141,6 +141,92 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2020/04/28/efficientnet/" class="image is-7by1">
+            <img class="thumbnail" src="/images/efficientnet_1.png" alt="细说EfficientNet">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-04-28T15:35:29.000Z">2020-04-28</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    10 分钟 读完 (大约 1456 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/04/28/efficientnet/">细说EfficientNet</a>
+            
+        </h1>
+        <div class="content">
+            <p>EfficientNet发布于2019年5月28日，发布之初就以其在图片分类上各种SOTA结果而惊艳整个CV届。有多惊艳，且看下图，简直是在各个角度吊打现有的算法模型，完全做到了又快又准。</p>
+<p><img src="/images/efficientnet_1.png" alt=""></p>
+<p>那是不是作者做出了一些令人叹为观止的创新呢？非也，作者的思路十分朴素，四两拨千斤。</p>
+<p><strong>1. 利用NAS(神经网络搜索)搜索出一个更好的Backbone，也即上图中的EfficientNet-B0。</strong><br><strong>2. 对B0模型的宽度、深度和图片分辨率同时缩放，便得到了令人惊艳的B1-B7。</strong></p>
+<p>为什么简单缩放就能得到极其优异的模型呢？</p>
+<p>这就是作者的核心创新，作者核心探讨了如何对模型的宽度、深度和图片分辨率等三个维度做缩放，可以得到最佳的性能提升。</p>
+<h2 id="模型缩放"><a href="#模型缩放" class="headerlink" title="模型缩放"></a>模型缩放</h2><p>当我们得到一个基础模型后，为了提高模型的复杂度，进而提高模型的性能，我们一般会对模型做适当的缩放。常用的缩放方法是<br>1）增大模型的宽度<br>也就是增加每一个卷积层的通道数<br>2）增大模型的深度<br>将每一个stage重复的单元增加多一些，如resnet50到resnet101的扩展<br>3) 增大输入图片的分辨率</p>
+<p>如下图。<br><img src="/images/efficientnet_2.png" alt=""></p>
+<p>如果单一缩放这三个维度，模型精度都有提升，但很快都饱和了，如下图。这里有个重要问题，大家要思考，为什么饱和了？模型参数不是变多了，为啥新增加的参数不起效果？我以前阅读resnet论文时，非常疑惑为啥ResNet1000和ResNet101的性能几乎一样。作者这里就给出了部分答案，模型的宽度、深度和图片分辨率三者是互相关联的，当深度增加时，模型的宽度、输入图片的分辨率都要跟着增加才会得到最好的效果。</p>
+<p>直观上也很好理解，当深度增加时，需要更高的输入图片分辨率，来保证感受野的有效性，也需要更宽的网络，保证能捕捉更多的特征。是不是有点拗口，反过来说可能更好理解，大分辨率的图片，需要更深的网络，来增加感受野，从而捕捉有效语义，也需要更宽的网络捕捉更精细的特征。</p>
+<p><img src="/images/efficientnet_3.png" alt=""></p>
+<h2 id="组合缩放系数"><a href="#组合缩放系数" class="headerlink" title="组合缩放系数"></a>组合缩放系数</h2><p>当计算资源增加时，如果彻底的去搜索宽度、深度、图片分辨率这三个变量的各种组合，那么搜索空间将无限大，搜索效率会非常低。</p>
+<p>因此作者提出了组合缩放的方法：<br><img src="/images/efficientnet_4.png" alt=""></p>
+<p>用单一的组合缩放系数$\phi$，同时缩放宽度、深度和图片分辨率，缩放公式如上图。而深度、宽度和分辨率的缩放基数$\alpha、\beta、\gamma$，由在基准模型上取$\phi = 1$做参数搜索得到，作者在Efficient-B0上搜索的最终结果是$\alpha =1.2、\beta =1.1、\gamma =1.15$。</p>
+<p>需要解释一下，为啥要做如下约束：</p>
+<script type="math/tex; mode=display">\alpha \cdot \beta^{2} \cdot \gamma^{2} = 2</script><p>当对模型的深度、宽度和分辨率分别做$\alpha^{\phi}、\beta^{\phi}、\gamma^{\phi}$缩放时，对应的计算量，大约增加为：</p>
+<script type="math/tex; mode=display">\alpha^{\phi} \cdot {(\beta^{\phi})}^{2} \cdot {(\gamma^{\phi})}^{2} = \alpha^{\phi} \cdot {(\beta^{2})}^{\phi} \cdot {(\gamma^{2})}^{\phi} = {(\alpha \cdot \beta^{2} \cdot \gamma^{2})}^{\phi}</script><p>这是因为当模型深度增加时，计算量成线性增加，当模型宽度和分辨率增加时，计算量以二次方增加。<br>因此，如果约束$\alpha \cdot \beta^{2} \cdot \gamma^{2} = 2$，则当模型深度、宽度和分辨率统一缩放$\phi$时，最终的计算量大约增加为$2^{\phi}$，这就很好计算。有了这个关系，就可以根据计算资源的变化来反推组合缩放系数$\phi$的大小。</p>
+<p>简单举个例子，假如当前算力增加到原来的10倍，那么组合缩放系数$\phi$计算公式如下：</p>
+<script type="math/tex; mode=display">2^{\phi}=10</script><p>得到$\phi = 3.32$，然后按$\alpha^{\phi}、\beta^{\phi}、\gamma^{\phi}$缩放模型的深度、宽度和分辨率即可。</p>
+<p>我们直观感受下B0-B7缩放的尺度。<br><pre><code class="hljs yaml"><span class="hljs-comment"># Coefficients:   width,depth,res,dropout</span>
+<span class="hljs-attr">'efficientnet-b0':</span> <span class="hljs-string">(1.0,</span> <span class="hljs-number">1.0</span><span class="hljs-string">,</span> <span class="hljs-number">224</span><span class="hljs-string">,</span> <span class="hljs-number">0.2</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b1':</span> <span class="hljs-string">(1.0,</span> <span class="hljs-number">1.1</span><span class="hljs-string">,</span> <span class="hljs-number">240</span><span class="hljs-string">,</span> <span class="hljs-number">0.2</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b2':</span> <span class="hljs-string">(1.1,</span> <span class="hljs-number">1.2</span><span class="hljs-string">,</span> <span class="hljs-number">260</span><span class="hljs-string">,</span> <span class="hljs-number">0.3</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b3':</span> <span class="hljs-string">(1.2,</span> <span class="hljs-number">1.4</span><span class="hljs-string">,</span> <span class="hljs-number">300</span><span class="hljs-string">,</span> <span class="hljs-number">0.3</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b4':</span> <span class="hljs-string">(1.4,</span> <span class="hljs-number">1.8</span><span class="hljs-string">,</span> <span class="hljs-number">380</span><span class="hljs-string">,</span> <span class="hljs-number">0.4</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b5':</span> <span class="hljs-string">(1.6,</span> <span class="hljs-number">2.2</span><span class="hljs-string">,</span> <span class="hljs-number">456</span><span class="hljs-string">,</span> <span class="hljs-number">0.4</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b6':</span> <span class="hljs-string">(1.8,</span> <span class="hljs-number">2.6</span><span class="hljs-string">,</span> <span class="hljs-number">528</span><span class="hljs-string">,</span> <span class="hljs-number">0.5</span><span class="hljs-string">),</span>
+<span class="hljs-attr">'efficientnet-b7':</span> <span class="hljs-string">(2.0,</span> <span class="hljs-number">3.1</span><span class="hljs-string">,</span> <span class="hljs-number">600</span><span class="hljs-string">,</span> <span class="hljs-number">0.5</span><span class="hljs-string">),</span></code></pre></p>
+<h2 id="如何评价EfficientNet"><a href="#如何评价EfficientNet" class="headerlink" title="如何评价EfficientNet"></a>如何评价EfficientNet</h2><p>EfficientNet之所以被众人所知，唯一原因就是其又快又准的SOTA结果。</p>
+<p>而能够有如此结果，其实是组合缩放+更好的Backbone(EfficientNet-B0)双重作用的结果。而Efficient-B0是用NAS搜索出来的，这也意味着即使你和作者有相同的创意idea，如果没有足够的计算资源，你也做不出EfficientNet，作为普通的科研人员，是不是有点忧伤。</p>
+<p>而更让EfficientNet大放异彩的是，基于EfficientNet的目标检测算法EfficientDet也屠榜，有时间我们再一起研究研究。</p>
+<h2 id="问题思考"><a href="#问题思考" class="headerlink" title="问题思考"></a>问题思考</h2><p>这里我给出几个问题供大家思考，如果能解决，说不定能发论文。</p>
+<ol>
+<li>即使是组合缩放，为什么最终的性能仍然会饱和？</li>
+<li>对于不同的backbone，是不是组合缩放的最佳缩放基数$\alpha、\beta、\gamma$是否相同？</li>
+</ol>
+<h2 id="文献"><a href="#文献" class="headerlink" title="文献"></a>文献</h2><ol>
+<li><a href="https://arxiv.org/abs/1911.09070">EfficientNet论文</a></li>
+</ol>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2020/02/10/adaboost/" class="image is-7by1">
             <img class="thumbnail" src="/images/adaboost.jpg" alt="从一个demo学习AdaBoost">
         </a>
@@ -250,6 +336,25 @@
         
         <article class="media">
             
+            <a href="/2020/04/28/efficientnet/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/efficientnet_1.png" alt="细说EfficientNet">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-28T15:35:29.000Z">2020-04-28</time></div>
+                    <a href="/2020/04/28/efficientnet/" class="title has-link-black-ter is-size-6 has-text-weight-normal">细说EfficientNet</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/04/19/investbelief/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/invest_is_belief_cover.jpg" alt="投资是一种信仰">
@@ -324,25 +429,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2017/04/01/alwaystrying/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/readingbook.jpg" alt="生命的惯性">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-03-31T16:35:29.000Z">2017-04-01</time></div>
-                    <a href="/2017/04/01/alwaystrying/" class="title has-link-black-ter is-size-6 has-text-weight-normal">生命的惯性</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -357,7 +443,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/Machine-Learning/">
                         <span class="tag">Machine Learning</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -386,6 +472,13 @@
                     <a class="tags has-addons" href="/tags/leetcode/">
                         <span class="tag">leetcode</span>
                         <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%B0%8F%E7%BA%B8%E5%B1%91/">
+                        <span class="tag">小纸屑</span>
+                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
