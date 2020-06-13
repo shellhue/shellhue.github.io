@@ -324,6 +324,44 @@
         
         <article class="media">
             
+            <a href="/2020/06/13/workonce/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/workonce_1.jpg" alt="一劳永逸的财富观">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-06-12T16:02:23.000Z">2020-06-13</time></div>
+                    <a href="/2020/06/13/workonce/" class="title has-link-black-ter is-size-6 has-text-weight-normal">一劳永逸的财富观</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/06/07/aitop/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/deep_learning_floor.jpg" alt="当前深度学习算法工程师的职业天花板">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-06-07T14:35:29.000Z">2020-06-07</time></div>
+                    <a href="/2020/06/07/aitop/" class="title has-link-black-ter is-size-6 has-text-weight-normal">当前深度学习算法工程师的职业天花板</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/05/10/investment/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/investment_1.jpg" alt="要做短线投机之前，先做一个简单的数学题">
@@ -379,44 +417,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/02/10/adaboost/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/adaboost.jpg" alt="从一个demo学习AdaBoost">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-10T15:35:29.000Z">2020-02-10</time></div>
-                    <a href="/2020/02/10/adaboost/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从一个demo学习AdaBoost</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2017/07/21/asyndisplaykit/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/asyncdisplaykit.png" alt="AsyncDisplayKit近一年的使用体会及疑难点">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2017-07-21T06:35:29.000Z">2017-07-21</time></div>
-                    <a href="/2017/07/21/asyndisplaykit/" class="title has-link-black-ter is-size-6 has-text-weight-normal">AsyncDisplayKit近一年的使用体会及疑难点</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -464,6 +464,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">
+                        <span class="tag">人工智能</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/%E5%B0%8F%E7%BA%B8%E5%B1%91/">
                         <span class="tag">小纸屑</span>
                         <span class="tag is-grey">1</span>
@@ -480,7 +487,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/%E6%85%A2%E6%8A%95%E8%B5%84/">
                         <span class="tag">慢投资</span>
-                        <span class="tag is-grey">2</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -673,8 +680,24 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script src="/js/insight.js" defer></script>
 <link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/insight.css">
     
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 
 </html>
