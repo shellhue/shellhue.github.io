@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分钟 读完 (大约 2126 个字)
+                    16 分钟 读完 (大约 2405 个字)
                 </span>
                 
                 
@@ -169,13 +169,14 @@
             
         </h1>
         <div class="content">
-            <p>早期的物体检测算法，无论是一步式的还是两步式的，通常都是直接在Backbone的最后一个stage（分辨率相同的所有卷积层归类为一个stage）最后一层的特征图，外接检测头去做物体检测。因为Backbone的最后一个stage的stride通常是32，导致输出的特征图特征图分辨率太小，不利于物体检测，因此一般会将最后一个stage的MaxPooling去掉或者将stride为2的conv改为stride为1的conv，以增大最后一个分辨率。</p>
-<p>由于图片中的物体scale变化不一，用单一stage的特征图同时表征不同scale的物体，会出现尺度不一的情况。因此，后来物体检测算法，就逐渐发展为利用不同stage的特征图，形成特征金字塔网络（feature parymid network），表征不同scale的物体，然后再基于特征金字塔做物体检测。</p>
+            <p>早期的物体检测算法，无论是一步式的，还是两步式的，通常都是在Backbone的最后一个stage（特征图分辨率相同的所有卷积层归类为一个stage）最后一层的特征图，直接外接检测头做物体检测。此种物体检测算法，可以称之为单stage物体检测算法。</p>
+<p>由于单stage物体检测算法中，Backbone的最后一个stage的stride通常是32，导致输出的特征图分辨率是输入图片分辨率的1/32，太小，不利于物体检测，因此单stage的物体检测算法，一般会将最后一个stage的MaxPooling去掉或者将stride为2的conv改为stride为1的conv，以增大最后一个分辨率。</p>
+<p>后来研究发现，单stage物体检测算法中，无法用单一stage的特征图同时有效的表征各个尺度的物体，因此，后来物体检测算法，就逐渐发展为利用不同stage的特征图，形成特征金字塔网络（feature parymid network），表征不同scale的物体，然后再基于特征金字塔做物体检测，也就是进入了FPN时代。</p>
 <p>本文将认真梳理物体检测中常用的各种FPN。</p>
-<h2 id="解构物体检测"><a href="#解构物体检测" class="headerlink" title="解构物体检测"></a><strong>解构物体检测</strong></h2><p>我们常见的物体检测算法，其实可以分解为三个递进的阶段：</p>
+<h2 id="解构物体检测各个阶段"><a href="#解构物体检测各个阶段" class="headerlink" title="解构物体检测各个阶段"></a><strong>解构物体检测各个阶段</strong></h2><p>我们常见的物体检测算法，其实可以分解为三个递进的阶段：</p>
 <p><strong>1）Backbone生成特征阶段</strong></p>
 <p>计算机视觉任务一般都是基于常用预训练的Backbone，生成抽象的语义特征，再进行特定任务微调。物体检测也是如此。</p>
-<p>Backbone生成的特征，一般按stage划分，分别记作C1、C2、C3、C4、C5、C6、C7等，其中的数字与stage的编号相同，代表的是分辨率减半的次数，如C2代表，stage2输出的特征图，分辨率为输入图片的1/4，C5代表，stage5输出的特征图，分辨率为输入图片的1/32。</p>
+<p>Backbone生成的特征，一般按stage划分，分别记作C1、C2、C3、C4、C5、C6、C7等，其中的数字与stage的编号相同，代表的是分辨率减半的次数，如C2代表stage2输出的特征图，分辨率为输入图片的1/4，C5代表，stage5输出的特征图，分辨率为输入图片的1/32。</p>
 <p><strong>2）特征融合阶段</strong></p>
 <p>这个是FPN特有的阶段，FPN一般将上一步生成的不同分辨率特征作为输入，输出经过融合后的特征。输出的特征一般以P作为编号标记。如FPN的输入是，C2、C3、C4、C5、C6，经过融合后，输出为P2、P3、P4、P5、P6。这个过程可以用数学公式表达：</p>
 <script type="math/tex; mode=display">P_{i}、P_{i+1}、...、P_{i+n}=f(C_{i}、C_{i+1}、...、C_{i+n})</script><p><strong>3）检测头输出bounding box</strong><br>FPN输出融合后的特征后，就可以输入到检测头做具体的物体检测。</p>
@@ -184,27 +185,40 @@
 <h2 id="FPN的演进"><a href="#FPN的演进" class="headerlink" title="FPN的演进"></a><strong>FPN的演进</strong></h2><p>物体检测性能提升，一般主要通过数据增强、改进Backbone、改进FPN、改进检测头、改进loss、改进后处理等6个常用手段。</p>
 <p>其中FPN自从被提出来，先后迭代了不少版本。大致迭代路径如下图：</p>
 <p><img src="/images/fpn_11.png" alt=""></p>
-<h3 id="1）无融合"><a href="#1）无融合" class="headerlink" title="1）无融合"></a><strong>1）无融合</strong></h3><p>无融合，又利用多尺度特征的典型代表就是2016年日出的鼎鼎有名的SSD，它直接利用不同scale的特征图分别负责不同scale大小物体的检测。<br><img src="/images/fpn_12.png" alt=""></p>
-<h3 id="2）自上而下单向融合"><a href="#2）自上而下单向融合" class="headerlink" title="2）自上而下单向融合"></a><strong>2）自上而下单向融合</strong></h3><p>自上而下单向融合的FPN，事实上仍然是当前物体检测模型的主流融合模式。如我们常见的Faster RCNN、Mask RCNN、Yolov3、RetinaNet、Cascade RCNN等，具体各个FPN的内部细节如下图。</p>
+<h3 id="1）无融合"><a href="#1）无融合" class="headerlink" title="1）无融合"></a><strong>1）无融合</strong></h3><p>无融合，又利用多尺度特征的典型代表就是2016年日出的鼎鼎有名的<a href="https://arxiv.org/abs/1512.02325">SSD</a>，它直接利用不同stage的特征图分别负责不同scale大小物体的检测。<br><img src="/images/fpn_12.png" alt=""></p>
+<h3 id="2）自上而下单向融合"><a href="#2）自上而下单向融合" class="headerlink" title="2）自上而下单向融合"></a><strong>2）自上而下单向融合</strong></h3><p>自上而下单向融合的FPN，事实上仍然是当前物体检测模型的主流融合模式。如我们常见的<a href="https://arxiv.org/abs/1506.01497">Faster RCNN</a>、<a href="https://arxiv.org/abs/1703.06870">Mask RCNN</a>、<a href="https://pjreddie.com/media/files/papers/YOLOv3.pdf">Yolov3</a>、<a href="https://arxiv.org/abs/1708.02002">RetinaNet</a>、<a href="https://arxiv.org/abs/1712.00726">Cascade RCNN</a>等，具体各个FPN的内部细节如下图。</p>
 <p><img src="/images/fpn_16.png" alt=""></p>
 <p><strong>a）Faster/Master/Cascade RCNN中的FPN</strong></p>
-<p>Faster/Master/Cascade RCNN中的FPN，利用了C2-C6五个stage的特征，其中C6是从C5直接施加1x1/2的MaxPooling操作得到。FPN融合后得到P3-P7，其中P6直接等于C6，P5是先经过1x1Conv，再经过3x3Conv得到，P2-P4均是先经过1x1Conv，再融合上一层Upsample的特征，再经过3x3Conv得到。具体过程可以看上图。</p>
+<p>Faster/Master/Cascade RCNN中的FPN，利用了C2-C6五个stage的特征，其中C6是从C5直接施加1x1/2的MaxPooling操作得到。FPN融合后得到P2-P6，其中P6直接等于C6，P5是先经过1x1Conv，再经过3x3Conv得到，P2-P4均是先经过1x1Conv，再融合上一层2xUpsample的特征，再经过3x3Conv得到。具体过程可以看上图。</p>
 <p><strong>b）RetinaNet中的FPN</strong></p>
-<p>RetinaNet中的FPN，利用了C3-C7五个stage的特征，其中C6是从C5直接施加3x3/2的Conv操作得到，C7是从C6直接施加3x3/2的Conv操作得到。FPN融合后得到P3-P7，其中P6、P7直接等于C6、C7，P5是先经过1x1Conv，再经过3x3Conv得到，3-P4均是先经过1x1Conv，再融合上一层Upsample的特征，再经过3x3Conv得到。具体过程可以看上图。<br>可以看出，RetinaNet基本与Faster/Master/Cascade RCNN中的FPN一脉相承。只是利用的stage的特征略有差别，Faster/Master/Cascade RCNN利用了高分辨率低语义的C2，RetinaNet利用了更低分辨率更高语义的C7。其他都是细微的差别。</p>
+<p>RetinaNet中的FPN，利用了C3-C7五个stage的特征，其中C6是从C5直接施加3x3/2的Conv操作得到，C7是从C6直接施加3x3/2的Conv操作得到。FPN融合后得到P3-P7，其中P6、P7直接等于C6、C7，P5是先经过1x1Conv，再经过3x3Conv得到，P3-P4均是先经过1x1Conv，再融合上一层2xUpsample的特征，再经过3x3Conv得到。具体过程可以看上图。</p>
+<p>可以看出，RetinaNet基本与Faster/Master/Cascade RCNN中的FPN一脉相承。只是利用的stage的特征略有差别，Faster/Master/Cascade RCNN利用了高分辨率低语义的C2，RetinaNet利用了更低分辨率更高语义的C7。其他都是细微的差别。</p>
 <p><strong>c）Yolov3中的FPN</strong></p>
-<p>Yolov3中的FPN与上述两个有比较大的区别。首先，Yolov3中的FPN只利用到了C3-C5三个stage的特征；其次，从C5征到P5特征，会先经过5层Conv，然后再经过一层3x3Conv；最后，C3-C4到P3-P4特征，上一层特征会先经过1x1Conv+2xUpsample，然后先与本层特征concatenate，再经过5层Conv，然后经过一层3x3Conv。看图最清楚。</p>
-<h3 id="3）简单双向融合"><a href="#3）简单双向融合" class="headerlink" title="3）简单双向融合"></a><strong>3）简单双向融合</strong></h3><p>FPN自从提出来以后，均是只有从上向下的融合，PANet是第一个提出从下向上二次融合的模型，并且PANet就是在Faster/Master/Cascade RCNN中的FPN的基础上，简单增了从下而上的融合路径。看下图。<br><img src="/images/fpn_8.png" alt=""></p>
-<h3 id="4）复杂的双向融合"><a href="#4）复杂的双向融合" class="headerlink" title="4）复杂的双向融合"></a><strong>4）复杂的双向融合</strong></h3><p>PANet的提出证明了双向融合的有效性，而PANet的双向融合较为简单，因此不少文章在FPN的方向上更进一步，尝试了更复杂的双向融合，如ASFF、NAS-FPN和BiFPN。</p>
+<p>Yolov3中的FPN与上述两个有比较大的区别。首先，Yolov3中的FPN只利用到了C3-C5三个stage的特征；其次，从C5征到P5特征，会先经过5层Conv，然后再经过一层3x3Conv；最后，C3-C4到P3-P4特征，上一层特征会先经过1x1Conv+2xUpsample，然后先与本层特征concatenate，再经过5层Conv，之后经过一层3x3Conv。看图最清楚。</p>
+<p>可以看图仔细对比Yolov3与Faster/Master/Cascade RCNN以及RetinaNet细节上的区别。</p>
+<h3 id="3）简单双向融合"><a href="#3）简单双向融合" class="headerlink" title="3）简单双向融合"></a><strong>3）简单双向融合</strong></h3><p>FPN自从提出来以后，均是只有从上向下的融合，<a href="https://arxiv.org/abs/1803.01534">PANet</a>是第一个提出从下向上二次融合的模型，并且PANet就是在Faster/Master/Cascade RCNN中的FPN的基础上，简单增了从下而上的融合路径。看下图。<br><img src="/images/fpn_8.png" alt=""></p>
+<h3 id="4）复杂的双向融合"><a href="#4）复杂的双向融合" class="headerlink" title="4）复杂的双向融合"></a><strong>4）复杂的双向融合</strong></h3><p>PANet的提出证明了双向融合的有效性，而PANet的双向融合较为简单，因此不少文章在FPN的方向上更进一步，尝试了更复杂的双向融合，如<a href="https://arxiv.org/abs/1911.09516">ASFF</a>、<a href="https://arxiv.org/abs/1904.07392">NAS-FPN</a>和<a href="https://arxiv.org/abs/1911.09070">BiFPN</a>。</p>
 <p><strong>ASFF</strong><br>ASFF（论文：Learning Spatial Fusion for Single-Shot Object Detection）作者在YOLOV3的FPN的基础上，研究了每一个stage再次融合三个stage特征的效果。如下图。其中不同stage特征的融合，采用了注意力机制，这样就可以控制其他stage对本stage特征的贡献度。<br><img src="/images/fpn_7.png" alt=""></p>
 <p><strong>NAS-FPN和BiFPN</strong><br>NAS-FPN和BiFPN，都是google出品，思路也一脉相承，都是在FPN中寻找一个有效的block，然后重复叠加，这样就可以弹性的控制FPN的大小。<br><img src="/images/fpn_17.png" alt=""><br>其中BiFPN的具体细节如下图。<br><img src="/images/fpn_9.png" alt=""></p>
-<p><strong>Recursive-FPN</strong><br>递归FPN是此文写作之时前两周刚刚新出炉的（原论文是DetectoRS: Detecting Objects with Recursive Feature Pyramid and Switchable Atrous Convolution），效果之好令人惊讶，使用递归FPN的DetectoRS是目前物体检测（COCO mAP 54.7）、实体分割和全景分割的SOTA，太强悍了。</p>
+<p><strong>Recursive-FPN</strong><br>递归FPN是此文写作之时前两周刚刚新出炉的（原论文是<a href="https://arxiv.org/abs/2006.02334">DetectoRS: Detecting Objects with Recursive Feature Pyramid and Switchable Atrous Convolution</a>），效果之好令人惊讶，使用递归FPN的DetectoRS是目前物体检测（COCO mAP 54.7）、实体分割和全景分割的SOTA，太强悍了。</p>
 <p>递归FPN理解起来很容易，就是将传统FPN的融合后的输出，再输入给Backbone，进行二次循环，如下图。<br><img src="/images/fpn_21.png" alt=""></p>
 <p>下图给出了FPN与Recursive-FPN的区别，并且把一个2层的递归FPN展开了，非常简单明了，不做过多介绍。<br><img src="/images/fpn_20.png" alt=""></p>
-<h3 id="5）M2det中的SFAM"><a href="#5）M2det中的SFAM" class="headerlink" title="5）M2det中的SFAM"></a><strong>5）M2det中的SFAM</strong></h3><p>M2det中的SFAM（M2det: A single-shot object detector based on multi-level feature pyramid network），比较复杂，它是先把C3与C5两个stage的特征融合成一个与C3分辨率相同的特征图（下图中的FFM1模块），然后再在此特征图上叠加多个UNet（下图中的TUM模块），最后将每个UNet生成的多个分辨率中相同分辨率特征一起融合（下图中的SFAM模块），从而生成最终的P3、P4、P5、P6特征，以供检测头使用。具体如下图。</p>
+<h3 id="5）M2det中的SFAM"><a href="#5）M2det中的SFAM" class="headerlink" title="5）M2det中的SFAM"></a><strong>5）M2det中的SFAM</strong></h3><p><a href="https://arxiv.org/abs/1811.04533">M2det</a>中的SFAM，比较复杂，它是先把C3与C5两个stage的特征融合成一个与C3分辨率相同的特征图（下图中的FFM1模块），然后再在此特征图上叠加多个UNet（下图中的TUM模块），最后将每个UNet生成的多个分辨率中相同分辨率特征一起融合（下图中的SFAM模块），从而生成最终的P3、P4、P5、P6特征，以供检测头使用。具体如下图。</p>
 <p><img src="/images/fpn_18.png" alt=""></p>
 <p>每一个模块的详细细节如下图。<br><img src="/images/fpn_19.png" alt=""></p>
 <h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>FPN的优化会显著带来物体检测的性能提升，当前最好的FPN是递归FPN，期待将来更有效的FPN出现。</p>
 <p>最近Facebook出了一篇文章object detection by transformer，如果transformer与各种强大的FPN结合，效果如何还是值得期待。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://arxiv.org/abs/1512.02325">SSD: Single Shot Multibox Detector</a></li>
+<li><a href="https://arxiv.org/abs/1506.01497">Faster RCNN: Towards Real-Time Object Detection with Region Proposal Networks</a></li>
+<li><a href="https://arxiv.org/abs/1703.06870">Mask RCNN</a></li>
+<li><a href="https://pjreddie.com/media/files/papers/YOLOv3.pdf">Yolov3: An Incremental Improvement</a></li>
+<li><a href="https://arxiv.org/abs/1708.02002">RetinaNet: Focal Loss for Dense Object Detection</a></li>
+<li><a href="https://arxiv.org/abs/1712.00726">Cascade RCNN: Delving into High Quality Object Detection</a></li>
+<li><a href="https://arxiv.org/abs/1803.01534">PANet: Path Aggregation Network for Instance Segmentation</a></li>
+<li><a href="https://arxiv.org/abs/1911.09516">ASFF: Learning Spatial Fusion for Single-Shot Object Detection</a></li>
+<li><a href="https://arxiv.org/abs/1904.07392">NAS-FPN: Learning Scalable Feature Pyramid Architecture for Object Detection</a><br>10.<a href="https://arxiv.org/abs/1911.09070">BiFPN: (EfficientDet: Scalable and Efficient Object Detection)</a><br>11.<a href="https://arxiv.org/abs/2006.02334">DetectoRS: Detecting Objects with Recursive Feature Pyramid and Switchable Atrous Convolution</a><br>12.<a href="https://arxiv.org/abs/1811.04533">SFAM（M2det: A single-shot object detector based on multi-level feature pyramid network）</a></li>
+</ol>
 
         </div>
         
